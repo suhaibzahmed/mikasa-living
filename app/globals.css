@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -118,5 +118,29 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  h1 {
+    @apply text-4xl lg:text-5xl font-bold text-primary capitalize font-[inria-serif-regular];
+  }
+
+  h2 {
+    @apply text-4xl font-bold text-primary;
+  }
+
+  h3 {
+    @apply text-3xl font-bold text-primary;
+  }
+
+  h4 {
+    @apply text-xl lg:text-2xl font-bold text-primary;
+  }
+
+  h5 {
+    @apply text-lg lg:text-xl font-bold;
+  }
+
+  h6 {
+    @apply text-lg font-bold;
   }
 }
