@@ -8,7 +8,7 @@ const UserLayout = ({
   return (
     <main>
       <Navbar />
-      <div className="container sm:px-6 lg:px-8 mx-auto">{children}</div>
+      <div className="container sm:px-6 lg:px-8 mx-auto my-12">{children}</div>
     </main>
   )
 }

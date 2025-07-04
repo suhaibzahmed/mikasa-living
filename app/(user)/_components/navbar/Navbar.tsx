@@ -2,7 +2,8 @@ import ThemeToggle from '@/components/ThemeToggle'
 import CitySelect from './CitySelect'
 import Logo from './Logo'
 import SearchVendors from './SearchVendors'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
+import Link from 'next/link'
 
 const Navbar = () => {
   return (
@@ -11,7 +12,12 @@ const Navbar = () => {
         <Logo />
         <CitySelect />
         <SearchVendors />
-        <Button variant="outline">For Vendors</Button>
+        <Link
+          href="/vendor/sign-in"
+          className={buttonVariants({ variant: 'outline' })}
+        >
+          For Vendors
+        </Link>
         <Button>Login/Register</Button>
         <ThemeToggle />
       </div>
