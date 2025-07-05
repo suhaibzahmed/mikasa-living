@@ -3,20 +3,20 @@
 
 import { createContext, useContext, useState, ReactNode } from 'react'
 import {
-  VendorPaymentData,
-  VendorPlanSelectionData,
-  VendorRegisterData,
+  PaymentData,
+  PlanSelectionData,
+  RegisterData,
 } from '@/schemas/vendor.schema'
 
 interface VendorRegistrationContextType {
   step: number
   setStep: (step: number) => void
-  vendorData: VendorRegisterData | null
-  setVendorData: (data: VendorRegisterData) => void
-  planData: VendorPlanSelectionData | null
-  setPlanData: (data: VendorPlanSelectionData) => void
-  paymentData: VendorPaymentData | null
-  setPaymentData: (data: VendorPaymentData) => void
+  vendorData: RegisterData | null
+  setVendorData: (data: RegisterData) => void
+  planData: PlanSelectionData | null
+  setPlanData: (data: PlanSelectionData) => void
+  paymentData: PaymentData | null
+  setPaymentData: (data: PaymentData) => void
   nextStep: () => void
   prevStep: () => void
 }
@@ -31,9 +31,9 @@ export function VendorRegistrationProvider({
   children: ReactNode
 }) {
   const [step, setStep] = useState(2)
-  const [vendorData, setVendorData] = useState<VendorRegisterData | null>(null)
-  const [planData, setPlanData] = useState<VendorPlanSelectionData | null>(null)
-  const [paymentData, setPaymentData] = useState<VendorPaymentData | null>(null)
+  const [vendorData, setVendorData] = useState<RegisterData | null>(null)
+  const [planData, setPlanData] = useState<PlanSelectionData | null>(null)
+  const [paymentData, setPaymentData] = useState<PaymentData | null>(null)
 
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 4))
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1))

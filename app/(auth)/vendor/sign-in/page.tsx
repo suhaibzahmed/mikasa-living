@@ -11,15 +11,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
 
-const VendorSignInPage = ({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) => {
+const VendorSignInPage = () => {
   return (
     <div className="flex flex-col gap-y-4 min-h-svh w-full items-center justify-center p-6 md:p-10">
       <h4>Vendor Sign In</h4>
       <div className="w-full max-w-sm">
-        <div className={cn('flex flex-col gap-6', className)} {...props}>
+        <div className={cn('flex flex-col gap-6')}>
           <Card>
             <CardHeader>
               <CardTitle>Login to your account</CardTitle>

@@ -8,10 +8,25 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum UserRole {
-  USER
-  VENDOR
-  ADMIN
+model User {
+  id        String   @id @default(uuid())
+  name      String?
+  email     String   @unique
+  phone     String
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Vendor {
+  id           String       @id @default(uuid())
+  companyName  String
+  gstNumber    String
+  phone        String
+  plan         PlanType
+  billingCycle BillingCycle
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
 }
 
 enum PlanType {
@@ -21,32 +36,17 @@ enum PlanType {
   PLATINUM
 }
 
-model User {
-  id        String   @id @default(uuid())
-  name      String?
-  email     String   @unique
-  role      UserRole @default(USER)
-  vendors   Vendor?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Vendor {
-  id          String   @id @default(uuid())
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String   @unique
-  companyName String
-  gstNumber   String
-  phone       String
-  plan        PlanType
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+enum BillingCycle {
+  MONTHLY
+  QUARTERLY
+  YEARLY
 }
 
 model Plan {
   id        String   @id @default(uuid())
   type      PlanType
   monthly   Float
+  quarterly Float
   yearly    Float
   features  String[]
   createdAt DateTime @default(now())
