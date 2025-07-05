@@ -23,17 +23,12 @@ model Vendor {
   companyName  String
   gstNumber    String
   phone        String
-  plan         PlanType
+  email        String       @unique
+  plan         Plan         @relation(fields: [planId], references: [id])
+  planId       String
   billingCycle BillingCycle
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
-}
-
-enum PlanType {
-  BRONZE
-  SILVER
-  GOLD
-  PLATINUM
 }
 
 enum BillingCycle {
@@ -49,6 +44,14 @@ model Plan {
   quarterly Float
   yearly    Float
   features  String[]
+  vendor    Vendor[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum PlanType {
+  BRONZE
+  SILVER
+  GOLD
+  PLATINUM
 }

@@ -2,7 +2,10 @@
 
 'use client'
 
-import { VendorDetailsData, vendorDetailsSchema } from '@/schemas/vendor.schema'
+import {
+  VendorRegistrationData,
+  vendorRegistrationSchema,
+} from '@/schemas/vendor.schema'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -15,8 +18,8 @@ import { useEffect } from 'react'
 const VendorDetails = () => {
   const { vendorData, setVendorData, nextStep } = useVendorStore()
 
-  const form = useForm<VendorDetailsData>({
-    resolver: zodResolver(vendorDetailsSchema),
+  const form = useForm<VendorRegistrationData>({
+    resolver: zodResolver(vendorRegistrationSchema),
     defaultValues: {
       email: vendorData.email || '',
       phone: vendorData.phone || '',
@@ -34,7 +37,7 @@ const VendorDetails = () => {
     })
   }, [vendorData, form])
 
-  function onSubmit(data: z.infer<typeof vendorDetailsSchema>) {
+  function onSubmit(data: z.infer<typeof vendorRegistrationSchema>) {
     console.log(data)
     setVendorData(data)
     nextStep()
@@ -74,7 +77,7 @@ const VendorDetails = () => {
         <FormSubmitButton
           isPending={form.formState.isSubmitting}
           title="Next Step"
-          pendingText="Adding"
+          pendingText="Saving..."
         />
       </form>
     </Form>
