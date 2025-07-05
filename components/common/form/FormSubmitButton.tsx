@@ -19,12 +19,7 @@ const FormSubmitButton = ({
     | 'link'
 }) => {
   return (
-    <Button
-      type="submit"
-      disabled={isPending}
-      className="w-full"
-      variant={variant}
-    >
+    <Button type="submit" disabled={isPending} variant={variant}>
       {isPending ? (
         <>
           <LoaderCircle className="animate-spin" /> {pendingText}

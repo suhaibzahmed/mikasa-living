@@ -5,9 +5,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
 import { useEffect, useState } from 'react'
 import { BillingCycle as BillingCycleEnum, Plan } from '@prisma/client'
+import { Button } from '@/components/ui/button'
 
 const BillingCycle = () => {
-  const { vendorData, setVendorData } = useVendorStore()
+  const { vendorData, setVendorData, prevStep, nextStep, step } =
+    useVendorStore()
   const [selectedBillingCycle, setSelectedBillingCycle] =
     useState<BillingCycleEnum>(vendorData.billingCycle || 'MONTHLY')
   const [plan, setPlan] = useState<Plan | null>(null)
@@ -70,6 +72,15 @@ const BillingCycle = () => {
           </div>
         ))}
       </RadioGroup>
+      <div className="w-full flex justify-between">
+        <Button onClick={prevStep}>Prev</Button>
+        <Button
+          onClick={nextStep}
+          disabled={step === 3 && !vendorData.billingCycle}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   )
 }

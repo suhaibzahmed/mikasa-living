@@ -6,10 +6,12 @@ import { useEffect, useState } from 'react'
 import { useVendorStore } from '@/lib/store/vendorStore'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 
 const PlanSelection = () => {
   const [plans, setPlans] = useState<Plan[]>([])
-  const { vendorData, setVendorData } = useVendorStore()
+  const { vendorData, setVendorData, prevStep, nextStep, step } =
+    useVendorStore()
   const [selectedPlanId, setSelectedPlanId] = useState<string>(
     vendorData.planId || ''
   )
@@ -54,6 +56,13 @@ const PlanSelection = () => {
           </div>
         ))}
       </RadioGroup>
+
+      <div className="w-full flex justify-between">
+        <Button onClick={prevStep}>Prev</Button>
+        <Button onClick={nextStep} disabled={step === 2 && !vendorData.planId}>
+          Next
+        </Button>
+      </div>
     </div>
   )
 }

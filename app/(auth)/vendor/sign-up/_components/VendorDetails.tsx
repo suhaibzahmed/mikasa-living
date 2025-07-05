@@ -74,11 +74,13 @@ const VendorDetails = () => {
           placeholder="GST Number"
           type="text"
         />
-        <FormSubmitButton
-          isPending={form.formState.isSubmitting}
-          title="Next Step"
-          pendingText="Saving..."
-        />
+        <div className="w-full flex justify-end">
+          <FormSubmitButton
+            isPending={form.formState.isSubmitting}
+            title="Next Step"
+            pendingText="Proceeding to Select Plan"
+          />
+        </div>
       </form>
     </Form>
   )

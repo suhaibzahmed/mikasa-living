@@ -19,9 +19,11 @@ const Confirmation = () => {
       <pre className="p-4 bg-gray-100 rounded-md">
         {JSON.stringify(vendorData, null, 2)}
       </pre>
-      <Button onClick={() => router.push('/vendor/dashboard')}>
-        Go to Dashboard
-      </Button>
+      <div className="w-full flex justify-end">
+        <Button onClick={() => router.push('/vendor/dashboard')}>
+          Go to Dashboard
+        </Button>
+      </div>
     </div>
   )
 }

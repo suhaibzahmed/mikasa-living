@@ -1,10 +1,9 @@
 'use client'
 
 import { useVendorStore } from '@/lib/store/vendorStore'
-import { Button } from '@/components/ui/button'
 
 const Steps = () => {
-  const { step, nextStep, prevStep, vendorData } = useVendorStore()
+  const { step } = useVendorStore()
 
   const steps = [
     { number: 1, title: 'Vendor Details' },
@@ -13,11 +12,6 @@ const Steps = () => {
     { number: 4, title: 'Payment' },
     { number: 5, title: 'Confirmation' },
   ]
-
-  const isNextDisabled =
-    (step === 2 && !vendorData.planId) ||
-    (step === 3 && !vendorData.billingCycle)
-
   return (
     <div className="flex flex-col items-center gap-y-4">
       <div className="flex items-center space-x-4">
@@ -44,23 +38,6 @@ const Steps = () => {
             )}
           </div>
         ))}
-      </div>
-      <div className="flex gap-x-4">
-        {step > 1 && step < 5 && (
-          <Button onClick={prevStep} variant="outline">
-            Previous
-          </Button>
-        )}
-        {step > 1 && step < 3 && (
-          <Button onClick={nextStep} disabled={isNextDisabled}>
-            Next
-          </Button>
-        )}
-        {step === 3 && (
-          <Button onClick={nextStep} disabled={isNextDisabled}>
-            Proceed to Payment
-          </Button>
-        )}
       </div>
     </div>
   )

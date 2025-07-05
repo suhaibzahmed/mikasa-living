@@ -10,6 +10,7 @@ import { z } from 'zod'
 import { createNewVendor } from '@/actions/vendor/actions'
 import { toast } from 'sonner'
 import { vendorRegistrationSchema } from '@/schemas/vendor.schema'
+import { Button } from '@/components/ui/button'
 
 const paymentSchema = z.object({
   cardNumber: z.string().min(5).max(16),
@@ -18,7 +19,7 @@ const paymentSchema = z.object({
 })
 
 const PaymentForm = () => {
-  const { vendorData, nextStep } = useVendorStore()
+  const { vendorData, nextStep, prevStep } = useVendorStore()
 
   const form = useForm<z.infer<typeof paymentSchema>>({
     resolver: zodResolver(paymentSchema),
@@ -78,11 +79,14 @@ const PaymentForm = () => {
           label="CVC"
           placeholder="***"
         />
-        <FormSubmitButton
-          isPending={form.formState.isSubmitting}
-          title="Confirm Payment"
-          pendingText="Processing..."
-        />
+        <div className="w-full flex justify-between">
+          <Button onClick={prevStep}>Prev</Button>
+          <FormSubmitButton
+            isPending={form.formState.isSubmitting}
+            title="Confirm Payment"
+            pendingText="Processing Payment"
+          />
+        </div>
       </form>
     </Form>
   )
