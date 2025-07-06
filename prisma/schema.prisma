@@ -27,6 +27,7 @@ model Vendor {
   plan         Plan         @relation(fields: [planId], references: [id])
   planId       String
   billingCycle BillingCycle
+  isVerified   Boolean      @default(false)
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 }

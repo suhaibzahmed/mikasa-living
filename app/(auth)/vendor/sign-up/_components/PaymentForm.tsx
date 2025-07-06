@@ -59,36 +59,38 @@ const PaymentForm = () => {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-        <FormInput
-          control={form.control}
-          name="cardNumber"
-          label="Card Number"
-          placeholder="**** **** **** ****"
-        />
-        <FormInput
-          control={form.control}
-          name="expiryDate"
-          label="Expiry Date"
-          placeholder="MM/YY"
-        />
-        <FormInput
-          control={form.control}
-          name="cvc"
-          label="CVC"
-          placeholder="***"
-        />
-        <div className="w-full flex justify-between">
-          <Button onClick={prevStep}>Prev</Button>
-          <FormSubmitButton
-            isPending={form.formState.isSubmitting}
-            title="Confirm Payment"
-            pendingText="Processing Payment"
+    <div className="w-full">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className=" space-y-6">
+          <FormInput
+            control={form.control}
+            name="cardNumber"
+            label="Card Number"
+            placeholder="**** **** **** ****"
           />
-        </div>
-      </form>
-    </Form>
+          <FormInput
+            control={form.control}
+            name="expiryDate"
+            label="Expiry Date"
+            placeholder="MM/YY"
+          />
+          <FormInput
+            control={form.control}
+            name="cvc"
+            label="CVC"
+            placeholder="***"
+          />
+          <div className="w-full flex justify-between">
+            <Button onClick={prevStep}>Prev</Button>
+            <FormSubmitButton
+              isPending={form.formState.isSubmitting}
+              title="Confirm Payment"
+              pendingText="Processing Payment"
+            />
+          </div>
+        </form>
+      </Form>
+    </div>
   )
 }
 

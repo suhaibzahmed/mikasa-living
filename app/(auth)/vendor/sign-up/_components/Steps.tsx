@@ -13,32 +13,32 @@ const Steps = () => {
     { number: 5, title: 'Confirmation' },
   ]
   return (
-    <div className="flex flex-col items-center gap-y-4">
-      <div className="flex items-center space-x-4">
-        {steps.map((s, index) => (
-          <div key={s.number} className="flex items-center">
+    <div className="flex items-center justify-between ">
+      {steps.map((s, index) => (
+        <div key={s.number} className="flex  items-center">
+          <div className="flex flex-col items-center gap-y-2">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+              className={`w-8 h-8 rounded-full border flex items-center justify-center text-sm font-medium ${
                 step >= s.number
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-600'
+                  : 'bg-secondary text-secondary-foreground'
               }`}
             >
               {s.number}
             </div>
             <span
-              className={`ml-2 text-sm ${
+              className={`text-sm ${
                 step >= s.number ? 'text-blue-600' : 'text-gray-500'
               }`}
             >
               {s.title}
             </span>
-            {index < steps.length - 1 && (
-              <div className="w-12 h-px bg-gray-300 mx-4" />
-            )}
           </div>
-        ))}
-      </div>
+          {/* {index < steps.length - 1 && (
+              <div className="w-12 h-px bg-gray-300 mx-4" />
+            )} */}
+        </div>
+      ))}
     </div>
   )
 }

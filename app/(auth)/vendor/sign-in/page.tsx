@@ -13,7 +13,7 @@ import Link from 'next/link'
 
 const VendorSignInPage = () => {
   return (
-    <div className="flex flex-col gap-y-4 min-h-svh w-full items-center justify-center p-6 md:p-10">
+    <div className="w-full flex flex-col items-center gap-y-4">
       <h4>Vendor Sign In</h4>
       <div className="w-full max-w-sm">
         <div className={cn('flex flex-col gap-6')}>

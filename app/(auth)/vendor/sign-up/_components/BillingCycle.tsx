@@ -1,11 +1,11 @@
 'use client'
 
 import { useVendorStore } from '@/lib/store/vendorStore'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
 import { useEffect, useState } from 'react'
 import { BillingCycle as BillingCycleEnum, Plan } from '@prisma/client'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const BillingCycle = () => {
   const { vendorData, setVendorData, prevStep, nextStep, step } =
@@ -37,11 +37,11 @@ const BillingCycle = () => {
     if (!plan) return ''
     switch (cycle) {
       case 'MONTHLY':
-        return `$${plan.monthly}/month`
+        return `₹${plan.monthly.toLocaleString()}/month`
       case 'QUARTERLY':
-        return `$${plan.quarterly}/quarter`
+        return `₹${plan.quarterly.toLocaleString()}/quarter`
       case 'YEARLY':
-        return `$${plan.yearly}/year`
+        return `₹${plan.yearly.toLocaleString()}/year`
       default:
         return ''
     }
@@ -49,29 +49,37 @@ const BillingCycle = () => {
 
   return (
     <div className="space-y-4">
-      <h4 className="text-lg font-semibold">Billing Cycle</h4>
-      <RadioGroup
-        onValueChange={(value: BillingCycleEnum) =>
-          setSelectedBillingCycle(value)
-        }
-        value={selectedBillingCycle}
-        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-      >
-        {Object.values(BillingCycleEnum).map((cycle) => (
-          <div
-            key={cycle}
-            className="flex items-center space-x-2 rounded-md border p-4"
-          >
-            <RadioGroupItem value={cycle} id={cycle} />
-            <Label htmlFor={cycle} className="flex flex-col">
-              <span className="font-medium">{cycle}</span>
-              <span className="text-sm text-muted-foreground">
-                {getPrice(cycle)}
-              </span>
-            </Label>
-          </div>
-        ))}
-      </RadioGroup>
+      <h4 className="text-lg font-semibold">Choose Your Billing Cycle</h4>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {Object.values(BillingCycleEnum).map((cycle) => {
+          const priceString = getPrice(cycle)
+          const [price, period] = priceString
+            ? priceString.split('/')
+            : ['', '']
+          return (
+            <Card
+              key={cycle}
+              onClick={() => setSelectedBillingCycle(cycle)}
+              className={cn('cursor-pointer transition-all text-center  ', {
+                'ring-2 ring-offset-2 ring-primary':
+                  selectedBillingCycle === cycle,
+              })}
+            >
+              <CardHeader>
+                <CardTitle className="capitalize">
+                  {cycle.toLowerCase()}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <span className="text-4xl font-bold text-primary">{price}</span>
+                {period && (
+                  <p className="text-sm text-muted-foreground">/ {period}</p>
+                )}
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
       <div className="w-full flex justify-between">
         <Button onClick={prevStep}>Prev</Button>
         <Button
