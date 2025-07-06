@@ -18,7 +18,9 @@ const Navbar = () => {
         >
           For Vendors
         </Link>
-        <Button>Login/Register</Button>
+        <Button asChild>
+          <Link href="/user/sign-in">Login / Register</Link>
+        </Button>
         <ThemeToggle />
       </div>
     </nav>
