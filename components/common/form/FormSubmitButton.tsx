@@ -6,6 +6,7 @@ const FormSubmitButton = ({
   title,
   pendingText,
   variant = 'default',
+  className,
 }: {
   isPending: boolean
   title: string
@@ -17,9 +18,15 @@ const FormSubmitButton = ({
     | 'secondary'
     | 'ghost'
     | 'link'
+  className?: string
 }) => {
   return (
-    <Button type="submit" disabled={isPending} variant={variant}>
+    <Button
+      type="submit"
+      disabled={isPending}
+      variant={variant}
+      className={className}
+    >
       {isPending ? (
         <>
           <LoaderCircle className="animate-spin" /> {pendingText}

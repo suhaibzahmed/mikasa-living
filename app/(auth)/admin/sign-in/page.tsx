@@ -2,7 +2,6 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-
 import { cn } from '@/lib/utils'
 import {
   Card,
@@ -33,8 +32,8 @@ const AdminSignInPage = () => {
   }
 
   return (
-    <div className="flex flex-col gap-y-4 min-h-svh w-full items-center justify-center border">
-      <h4>Admin Sign In</h4>
+    <div className="w-full flex flex-col items-center gap-y-4">
+      <h4>Admin Sign-in</h4>
       <div className="w-full max-w-sm">
         <div className={cn('flex flex-col gap-6')}>
           <Card>

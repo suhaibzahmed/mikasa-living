@@ -14,7 +14,7 @@ type FormInputProps<T extends FieldValues> = {
   name: FieldPath<T>
   type?: string
   placeholder?: string
-  label: string
+  label?: string
 }
 
 const FormInput = <T extends FieldValues>({
@@ -30,7 +30,7 @@ const FormInput = <T extends FieldValues>({
       name={name}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>{label}</FormLabel>
+          {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
             <Input
               placeholder={placeholder}

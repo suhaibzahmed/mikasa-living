@@ -1,5 +1,6 @@
+'use client'
+
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -7,8 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -16,11 +15,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import Link from 'next/link'
+import { Form, FormField, FormItem, FormLabel } from '@/components/ui/form'
+import FormInput from '@/components/common/form/FormInput'
+import FormSubmitButton from '@/components/common/form/FormSubmitButton'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { UserSignUpData, userSignUpSchema } from '@/schemas/user.schema'
 
 const UserSignUpPage = () => {
+  const router = useRouter()
+  const form = useForm<UserSignUpData>({
+    resolver: zodResolver(userSignUpSchema),
+    defaultValues: {
+      name: '',
+      phone: '',
+      email: '',
+    },
+  })
+
+  const onSubmit = (data: UserSignUpData) => {
+    console.log(data)
+    router.push('/')
+  }
+
   return (
-    <div className="flex flex-col gap-y-4 min-h-svh w-full items-center justify-center p-6 md:p-10">
+    <div className="w-full flex flex-col items-center gap-y-4">
       <h4>User Registration</h4>
       <div className="w-full max-w-sm">
         <div className={cn('flex flex-col gap-6')}>
@@ -32,59 +52,70 @@ const UserSignUpPage = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form>
-                <div className="flex flex-col gap-6">
-                  <div className="grid gap-3">
-                    <Label htmlFor="name">Full Name</Label>
-                    <Input id="name" type="text" placeholder="John Doe" />
-                  </div>
-                  <div className="grid gap-3">
-                    <Label htmlFor="phone">Phone</Label>
-                    <div className="flex gap-x-2">
-                      <Select>
-                        <SelectTrigger>
-                          <SelectValue placeholder="+91" defaultValue="+91" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="+91">+91 (India)</SelectItem>
-                          <SelectItem value="+1">+1 (USA)</SelectItem>
-                          <SelectItem value="+44">+44 (UK)</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        placeholder="Enter your phone number"
-                      />
-                    </div>
-                  </div>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="flex flex-col gap-y-4"
+                >
+                  <FormInput
+                    control={form.control}
+                    name="name"
+                    label="Full Name"
+                    placeholder="John Doe"
+                  />
 
-                  <div className="grid gap-3">
-                    <Label htmlFor="email">
-                      Email{' '}
-                      <span className="text-muted-foreground">(optional)</span>
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="john@example.com"
-                    />
-                  </div>
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({}) => (
+                      <FormItem>
+                        <FormLabel
+                          className={cn(
+                            form.formState.errors.phone && 'text-destructive'
+                          )}
+                        >
+                          Phone Number
+                        </FormLabel>
+                        <div className="flex items-start gap-x-2 ">
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue
+                                placeholder="+91"
+                                defaultValue="+91"
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="+91">+91 (IN)</SelectItem>
+                              <SelectItem value="+1">+1 (US)</SelectItem>
+                              <SelectItem value="+44">+44 (UK)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <div className="flex-1">
+                            <FormInput
+                              control={form.control}
+                              name="phone"
+                              placeholder="1234567890"
+                            />
+                          </div>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
 
-                  <Button type="submit" className="w-full" asChild>
-                    <Link href="/user/verify-otp">Get OTP</Link>
-                  </Button>
-                </div>
-                <div className="mt-4 text-center text-sm">
-                  Don&apos;t have an account?{' '}
-                  <Link
-                    href="/user/sign-up"
-                    className="underline underline-offset-4"
-                  >
-                    Sign up
-                  </Link>
-                </div>
-              </form>
+                  <FormInput
+                    control={form.control}
+                    name="email"
+                    label="Email (optional)"
+                    placeholder="john@gmail.com"
+                  />
+
+                  <FormSubmitButton
+                    title="Login"
+                    pendingText="Logging in"
+                    isPending={form.formState.isSubmitting}
+                  />
+                </form>
+              </Form>
             </CardContent>
           </Card>
         </div>
