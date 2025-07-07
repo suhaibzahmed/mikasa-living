@@ -28,6 +28,7 @@ model Vendor {
   planId       String
   billingCycle BillingCycle
   isVerified   Boolean      @default(false)
+  profileImage String?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 }

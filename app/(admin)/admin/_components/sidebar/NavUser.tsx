@@ -22,6 +22,7 @@ import {
   User as UserIcon,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import ThemeToggle from '@/components/ThemeToggle'
 
 const NavUser = () => {
   const user = {
@@ -84,6 +85,9 @@ const NavUser = () => {
               <DropdownMenuItem>
                 <Settings />
                 Settings
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <ThemeToggle />
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
