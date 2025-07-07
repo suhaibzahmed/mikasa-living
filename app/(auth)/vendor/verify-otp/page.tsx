@@ -42,9 +42,23 @@ const VerifyVendorOtpPage = () => {
       if (!confirmationResult) {
         throw new Error('No confirmation result found.')
       }
-      await confirmationResult.confirm(data.otp)
-      toast.success('Logged in successfully!')
-      router.push('/vendor/dashboard')
+      const userCredential = await confirmationResult.confirm(data.otp)
+      const idToken = await userCredential.user.getIdToken()
+
+      const response = await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idToken }),
+      })
+
+      if (response.ok) {
+        toast.success('Logged in successfully!')
+        router.push('/vendor/dashboard')
+      } else {
+        toast.error('Failed to create session.')
+      }
     } catch (error) {
       toast.error('Invalid OTP. Please try again.')
       console.error(error)

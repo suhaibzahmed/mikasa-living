@@ -6,13 +6,21 @@ import {
 import { Separator } from '@/components/ui/separator'
 import ThemeToggle from '@/components/ThemeToggle'
 import AppSidebar from '@/components/common/sidebar/AppSidebar'
+import { verifySession } from '@/lib/session'
+import { redirect } from 'next/navigation'
 import CurrentPageHeader from '@/components/common/sidebar/CurrentPageHeader'
 
-const VendorLayout = ({
+const VendorLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) => {
+  const session = await verifySession()
+
+  if (!session) {
+    redirect('/vendor/sign-in')
+  }
+
   return (
     <main className="min-h-svh flex">
       <SidebarProvider>

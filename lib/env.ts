@@ -9,6 +9,9 @@ export const env = createEnv({
     SUPABASE_URL: z.string().url(),
     SUPABASE_KEY: z.string().min(1),
     SUPABASE_BUCKET_NAME: z.string().min(1),
+    FIREBASE_PROJECT_ID: z.string().min(1),
+    FIREBASE_CLIENT_EMAIL: z.string().min(1),
+    FIREBASE_PRIVATE_KEY: z.string().min(1),
   },
 
   clientPrefix: 'NEXT_PUBLIC_',
