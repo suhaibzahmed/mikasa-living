@@ -22,6 +22,7 @@ import { UserSignInData, userSignInSchema } from '@/schemas/user.schema'
 import { Form, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import FormInput from '@/components/common/form/FormInput'
+import Link from 'next/link'
 
 const UserSignInPage = () => {
   const router = useRouter()
@@ -98,6 +99,16 @@ const UserSignInPage = () => {
                     pendingText="Sending OTP"
                     isPending={form.formState.isSubmitting}
                   />
+
+                  <div className=" text-center text-sm">
+                    Don&apos;t have an account?{' '}
+                    <Link
+                      href="/user/sign-up"
+                      className=" underline underline-offset-4 "
+                    >
+                      Sign up
+                    </Link>
+                  </div>
                 </form>
               </Form>
             </CardContent>

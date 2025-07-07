@@ -22,6 +22,7 @@ import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UserSignUpData, userSignUpSchema } from '@/schemas/user.schema'
+import Link from 'next/link'
 
 const UserSignUpPage = () => {
   const router = useRouter()
@@ -36,7 +37,7 @@ const UserSignUpPage = () => {
 
   const onSubmit = (data: UserSignUpData) => {
     console.log(data)
-    router.push('/')
+    router.push('/user/verify-otp')
   }
 
   return (
@@ -110,10 +111,20 @@ const UserSignUpPage = () => {
                   />
 
                   <FormSubmitButton
-                    title="Login"
-                    pendingText="Logging in"
+                    title="Create Account"
+                    pendingText="Creating Account"
                     isPending={form.formState.isSubmitting}
                   />
+
+                  <div className=" text-center text-sm">
+                    Already have an account?{' '}
+                    <Link
+                      href="/user/sign-in"
+                      className="underline underline-offset-4"
+                    >
+                      Sign in
+                    </Link>
+                  </div>
                 </form>
               </Form>
             </CardContent>
