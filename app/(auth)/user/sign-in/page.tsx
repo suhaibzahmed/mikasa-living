@@ -23,8 +23,11 @@ import { Form, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import FormInput from '@/components/common/form/FormInput'
 import Link from 'next/link'
+import { useState } from 'react'
 
 const UserSignInPage = () => {
+  const [countryCode, setCountryCode] = useState('+91')
+
   const router = useRouter()
   const form = useForm<UserSignInData>({
     resolver: zodResolver(userSignInSchema),
@@ -69,7 +72,10 @@ const UserSignInPage = () => {
                           Phone Number
                         </FormLabel>
                         <div className="flex items-start gap-x-2 ">
-                          <Select>
+                          <Select
+                            onValueChange={setCountryCode}
+                            defaultValue={countryCode}
+                          >
                             <SelectTrigger>
                               <SelectValue
                                 placeholder="+91"

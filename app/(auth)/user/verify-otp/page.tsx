@@ -14,39 +14,117 @@ import {
 } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
+import { createUser } from '@/actions/user/actions'
+import {
+  UserSignUpData,
+  VerifyOTPData,
+  verifyOTPSchema,
+} from '@/schemas/user.schema'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form'
+import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 
 const VerifyOtpPage = () => {
   const router = useRouter()
+  const form = useForm<VerifyOTPData>({
+    resolver: zodResolver(verifyOTPSchema),
+    defaultValues: {
+      otp: '',
+    },
+  })
 
-  const handleOtpChange = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    toast.success('OTP verified successfully!')
-    router.push('/')
+  const onSubmit = async (data: VerifyOTPData) => {
+    try {
+      const confirmationResult = window.confirmationResult
+      if (!confirmationResult) {
+        throw new Error('No confirmation result found.')
+      }
+      await confirmationResult.confirm(data.otp)
+      const userString = sessionStorage.getItem('user-signup-data')
+      if (!userString) {
+        throw new Error('No user data found in session storage.')
+      }
+      const userData: UserSignUpData = JSON.parse(userString)
+      await createUser(userData)
+      toast.success('OTP verified successfully!')
+      router.push('/')
+    } catch (error) {
+      toast.error('Invalid OTP. Please try again.')
+      console.error(error)
+    }
   }
 
   return (
     <div className="flex flex-col gap-y-4 min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <Card>
-        <CardHeader>
+      <Card className="max-w-sm w-full">
+        <CardHeader className="text-center">
           <CardTitle>Verify OTP</CardTitle>
           <CardDescription>
-            Enter the OTP sent to your mobile number
+            Enter the 6-digit code sent to your mobile number
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <InputOTP maxLength={4}>
-            <InputOTPGroup>
-              <InputOTPSlot index={0} />
-              <InputOTPSlot index={1} />
-              <InputOTPSlot index={2} />
-              <InputOTPSlot index={3} />
-            </InputOTPGroup>
-          </InputOTP>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-y-6"
+            >
+              <FormField
+                control={form.control}
+                name="otp"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-center">
+                    <FormLabel>One-Time Password</FormLabel>
+                    <FormControl>
+                      <InputOTP maxLength={6} {...field}>
+                        <InputOTPGroup className="gap-2">
+                          <InputOTPSlot
+                            index={0}
+                            className="rounded-md border"
+                          />
+                          <InputOTPSlot
+                            index={1}
+                            className="rounded-md border"
+                          />
+                          <InputOTPSlot
+                            index={2}
+                            className="rounded-md border"
+                          />
+                          <InputOTPSlot
+                            index={3}
+                            className="rounded-md border"
+                          />
+                          <InputOTPSlot
+                            index={4}
+                            className="rounded-md border"
+                          />
+                          <InputOTPSlot
+                            index={5}
+                            className="rounded-md border"
+                          />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormSubmitButton
+                title="Verify OTP"
+                pendingText="Verifying"
+                isPending={form.formState.isSubmitting}
+              />
+            </form>
+          </Form>
         </CardContent>
-        <Button type="submit" className="w-full" onClick={handleOtpChange}>
-          Verify OTP
-        </Button>
       </Card>
     </div>
   )

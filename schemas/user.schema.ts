@@ -14,5 +14,10 @@ export const userSignUpSchema = z.object({
   phone: z.string().min(10, { message: 'Phone number is required' }),
 })
 
+export const verifyOTPSchema = z.object({
+  otp: z.string().min(6, { message: 'OTP must be 6 characters long' }),
+})
+
 export type UserSignUpData = z.infer<typeof userSignUpSchema>
 export type UserSignInData = z.infer<typeof userSignInSchema>
+export type VerifyOTPData = z.infer<typeof verifyOTPSchema>
