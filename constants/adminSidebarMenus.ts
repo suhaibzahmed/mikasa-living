@@ -17,12 +17,12 @@ export const adminSidebarMenus = [
     id: 3,
     name: 'Vendors',
     icon: Store,
-    href: '/admin/vendors',
+    href: '/admin/vendor-management',
   },
   {
     id: 4,
     name: 'Users',
     icon: Users,
-    href: '/admin/users',
+    href: '/admin/user-management',
   },
 ]

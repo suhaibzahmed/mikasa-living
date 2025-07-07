@@ -24,7 +24,7 @@ const AdminDashboardPage = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <ManagementCard
           title="Vendor Management"
-          href="/admin/vendors"
+          href="/admin/vendor-management"
           icon={ShieldCheck}
         />
         <ManagementCard
