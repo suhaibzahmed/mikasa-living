@@ -23,7 +23,11 @@ import { Form, FormField, FormItem, FormLabel } from '@/components/ui/form'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import FormInput from '@/components/common/form/FormInput'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth'
+import { auth } from '@/lib/firebase'
+import { toast } from 'sonner'
+import { verifyUser } from '@/actions/user/actions'
 
 const UserSignInPage = () => {
   const [countryCode, setCountryCode] = useState('+91')
@@ -36,9 +40,45 @@ const UserSignInPage = () => {
     },
   })
 
-  const onSubmit = (data: UserSignInData) => {
-    console.log(data)
-    router.push('/user/verify-otp')
+  useEffect(() => {
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      auth,
+      'recaptcha-container',
+      {
+        size: 'invisible',
+        callback: () => {},
+      }
+    )
+  }, [])
+
+  const onSubmit = async (data: UserSignInData) => {
+    try {
+      const result = await verifyUser(data.phone)
+      if (!result.success) {
+        toast.error(result.message)
+        return
+      }
+
+      if (!result.data) {
+        toast.error('User not found. Please sign up.')
+        router.push('/user/sign-up')
+        return
+      }
+
+      const verifier = window.recaptchaVerifier
+      const fullPhoneNumber = `${countryCode}${data.phone}`
+      window.confirmationResult = await signInWithPhoneNumber(
+        auth,
+        fullPhoneNumber,
+        verifier
+      )
+      sessionStorage.setItem('user-signin-phone', data.phone)
+      sessionStorage.setItem('auth-flow', 'signin')
+      router.push('/user/verify-otp')
+    } catch (error) {
+      console.error('Failed to send OTP', error)
+      toast.error('Failed to send OTP. Please try again.')
+    }
   }
 
   return (
@@ -105,7 +145,7 @@ const UserSignInPage = () => {
                     pendingText="Sending OTP"
                     isPending={form.formState.isSubmitting}
                   />
-
+                  <div id="recaptcha-container"></div>
                   <div className=" text-center text-sm">
                     Don&apos;t have an account?{' '}
                     <Link

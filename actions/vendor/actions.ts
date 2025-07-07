@@ -1,31 +1,22 @@
 'use server'
 
 import { prisma } from '@/lib/db'
+import { getErrorMessage } from '@/lib/error'
 import {
   vendorRegistrationSchema,
   VendorRegistrationData,
 } from '@/schemas/vendor.schema'
 
 export const createNewVendor = async (data: VendorRegistrationData) => {
-  const validationResult = vendorRegistrationSchema.safeParse(data)
-
-  if (!validationResult.success) {
-    return { success: false, message: 'Invalid data' }
-  }
-
   try {
-    const plan = await prisma.plan.findUnique({
-      where: {
-        id: validationResult.data.planId,
-      },
-    })
+    const validationResult = vendorRegistrationSchema.safeParse(data)
 
-    if (!plan) {
-      return { success: false, message: 'Plan not found' }
+    if (!validationResult.success) {
+      throw new Error('Invalid data')
     }
 
     if (!validationResult.data.billingCycle) {
-      return { success: false, message: 'Billing cycle not found' }
+      throw new Error('Billing cycle is required.')
     }
 
     const newVendor = await prisma.vendor.create({
@@ -36,16 +27,14 @@ export const createNewVendor = async (data: VendorRegistrationData) => {
         email: validationResult.data.email,
         plan: {
           connect: {
-            id: plan.id,
+            id: validationResult.data.planId,
           },
         },
         billingCycle: validationResult.data.billingCycle,
       },
     })
-    console.log('🚀 ~ createNewVendor ~ newVendor:', newVendor)
-    return { success: true, message: 'Registered successfully!' }
+    return { success: true, data: newVendor }
   } catch (error) {
-    console.error('Error creating new vendor:', error)
-    return { success: false, message: 'Failed to create new vendor.' }
+    return { success: false, message: getErrorMessage(error) }
   }
 }

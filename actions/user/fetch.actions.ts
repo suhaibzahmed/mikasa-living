@@ -1,7 +1,7 @@
 'server only'
 
 import { prisma } from '@/lib/db'
-import { handleError } from '@/lib/error'
+import { getErrorMessage } from '@/lib/error'
 
 export async function getUsers(params: {
   page?: number
@@ -38,6 +38,6 @@ export async function getUsers(params: {
       },
     }
   } catch (error) {
-    return handleError(error, 'getUsers')
+    return { success: false, message: getErrorMessage(error) }
   }
 }

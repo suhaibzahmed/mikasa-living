@@ -1,30 +1,28 @@
+import { Prisma } from '@prisma/client'
 import { ZodError } from 'zod'
 
-interface ErrorResponse {
-  success: false
-  message: string
-  errors?: { field: string; message: string }[]
-  source?: string
-}
-
-export const handleError = (error: unknown, source?: string): ErrorResponse => {
-  const response: ErrorResponse = {
-    success: false,
-    message: 'An unexpected error occurred.',
-    source,
-  }
-
+export const getErrorMessage = (error: unknown): string => {
   if (error instanceof ZodError) {
-    response.message = 'Validation failed'
-    response.errors = error.errors.map((err) => ({
-      field: err.path.join('.'),
-      message: err.message,
-    }))
-  } else if (error instanceof Error) {
-    response.message = error.message
+    return 'Invalid input provided.'
   }
 
-  console.error(`Error in ${source || 'unknown function'}:`, error)
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    // See https://www.prisma.io/docs/reference/api-reference/error-reference#error-codes
+    switch (error.code) {
+      case 'P2002':
+        // Unique constraint failed
+        return `An entry with this value already exists.`
+      case 'P2025':
+        // Record to update not found
+        return 'The record to update was not found.'
+      default:
+        return 'A database error occurred.'
+    }
+  }
 
-  return response
+  if (error instanceof Error) {
+    return error.message
+  }
+
+  return 'Internal Server Error. Please try again.'
 }

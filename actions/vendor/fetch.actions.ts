@@ -1,15 +1,14 @@
-'server only'
+'use server'
 
 import { prisma } from '@/lib/db'
-import { handleError } from '@/lib/error'
-import { Plan } from '@prisma/client'
+import { getErrorMessage } from '@/lib/error'
 
 export async function getPlans() {
   try {
-    const plans: Plan[] = await prisma.plan.findMany()
+    const plans = await prisma.plan.findMany()
     return { success: true, data: plans }
   } catch (error) {
-    return handleError(error, 'getPlans')
+    return { success: false, message: getErrorMessage(error) }
   }
 }
 
@@ -55,6 +54,6 @@ export async function getVendors(params: {
       },
     }
   } catch (error) {
-    return handleError(error, 'getVendors')
+    return { success: false, message: getErrorMessage(error) }
   }
 }

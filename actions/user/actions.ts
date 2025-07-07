@@ -1,6 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/db'
+import { getErrorMessage } from '@/lib/error'
 import { UserSignUpData } from '@/schemas/user.schema'
 
 export const createUser = async (data: UserSignUpData) => {
@@ -12,9 +13,21 @@ export const createUser = async (data: UserSignUpData) => {
         email: data.email,
       },
     })
-    return user
+    return { success: true, data: user }
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to create user.')
+    return { success: false, message: getErrorMessage(error) }
+  }
+}
+
+export const verifyUser = async (phone: string) => {
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        phone,
+      },
+    })
+    return { success: true, data: user }
+  } catch (error) {
+    return { success: false, message: getErrorMessage(error) }
   }
 }
