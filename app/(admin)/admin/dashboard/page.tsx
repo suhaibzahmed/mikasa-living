@@ -29,7 +29,7 @@ const AdminDashboardPage = () => {
         />
         <ManagementCard
           title="User Management"
-          href="/admin/users"
+          href="/admin/user-management"
           icon={Users2}
         />
         <ManagementCard

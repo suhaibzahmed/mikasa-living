@@ -56,7 +56,7 @@ const PendingVendors = () => {
           </div>
         ))}
         <Button asChild className="mt-4 w-full">
-          <Link href="/admin/vendors">View All</Link>
+          <Link href="/admin/vendor-management">View All</Link>
         </Button>
       </CardContent>
     </Card>

@@ -1,7 +1,7 @@
 import { getVendors } from '@/actions/vendor/fetch.actions'
 import VendorTable from '../_components/vendors/VendorTable'
 
-const VendorsPage = async () => {
+const VendorManagementPage = async () => {
   const vendorsResponse = await getVendors({})
 
   const initialVendors = vendorsResponse.success
@@ -15,4 +15,4 @@ const VendorsPage = async () => {
   )
 }
 
-export default VendorsPage
+export default VendorManagementPage
