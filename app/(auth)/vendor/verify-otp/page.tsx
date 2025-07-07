@@ -14,12 +14,7 @@ import {
 } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import { createUser } from '@/actions/user/actions'
-import {
-  UserSignUpData,
-  VerifyOTPData,
-  verifyOTPSchema,
-} from '@/schemas/user.schema'
+import { VerifyOTPData, verifyOTPSchema } from '@/schemas/user.schema'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
@@ -32,7 +27,7 @@ import {
 } from '@/components/ui/form'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 
-const VerifyUserOtpPage = () => {
+const VerifyVendorOtpPage = () => {
   const router = useRouter()
   const form = useForm<VerifyOTPData>({
     resolver: zodResolver(verifyOTPSchema),
@@ -48,37 +43,19 @@ const VerifyUserOtpPage = () => {
         throw new Error('No confirmation result found.')
       }
       await confirmationResult.confirm(data.otp)
-
-      const authFlow = sessionStorage.getItem('auth-flow')
-      if (authFlow === 'signin') {
-        toast.success('Logged in successfully!')
-        router.push('/')
-      } else {
-        const userString = sessionStorage.getItem('user-signup-data')
-        if (!userString) {
-          throw new Error('No user data found in session storage.')
-        }
-        const userData: UserSignUpData = JSON.parse(userString)
-        const result = await createUser(userData)
-        if (result.success) {
-          toast.success('OTP verified successfully!')
-          router.push('/')
-        } else {
-          toast.error(result.message)
-        }
-      }
+      toast.success('Logged in successfully!')
+      router.push('/vendor/dashboard')
     } catch (error) {
       toast.error('Invalid OTP. Please try again.')
       console.error(error)
     } finally {
       sessionStorage.removeItem('auth-flow')
       sessionStorage.removeItem('user-signin-phone')
-      sessionStorage.removeItem('user-signup-data')
     }
   }
 
   return (
-    <div className="w-full flex flex-col items-center gap-y-4">
+    <div className="flex flex-col gap-y-4 min-h-svh w-full items-center justify-center p-6 md:p-10">
       <Card className="max-w-sm w-full">
         <CardHeader className="text-center">
           <CardTitle>Verify OTP</CardTitle>
@@ -145,4 +122,4 @@ const VerifyUserOtpPage = () => {
   )
 }
 
-export default VerifyUserOtpPage
+export default VerifyVendorOtpPage

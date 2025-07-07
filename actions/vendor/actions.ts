@@ -33,7 +33,24 @@ export const createNewVendor = async (data: VendorRegistrationData) => {
         billingCycle: validationResult.data.billingCycle,
       },
     })
-    return { success: true, data: newVendor }
+    return {
+      success: true,
+      data: newVendor,
+      message: 'You are registered successfully!',
+    }
+  } catch (error) {
+    return { success: false, message: getErrorMessage(error) }
+  }
+}
+
+export const verifyVendor = async (phone: string) => {
+  try {
+    const vendor = await prisma.vendor.findFirst({
+      where: {
+        phone,
+      },
+    })
+    return { success: true, data: vendor }
   } catch (error) {
     return { success: false, message: getErrorMessage(error) }
   }
