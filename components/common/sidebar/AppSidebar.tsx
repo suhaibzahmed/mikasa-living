@@ -67,8 +67,8 @@ const AppSidebar = ({ role, ...props }: AppSidebarProps) => {
 
   const handleLogout = async () => {
     await logout()
-    toast.success('Logged out successfully')
     router.push('/vendor/sign-in')
+    toast.success('Logged out successfully')
   }
 
   const user = {

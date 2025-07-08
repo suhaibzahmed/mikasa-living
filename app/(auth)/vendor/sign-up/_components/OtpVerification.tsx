@@ -48,7 +48,7 @@ const OtpVerification = () => {
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full flex flex-col items-center gap-y-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className=" space-y-6">
           <FormField

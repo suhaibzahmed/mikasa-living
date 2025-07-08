@@ -83,8 +83,8 @@ const VerifyVendorOtpPage = () => {
       })
 
       if (response.ok) {
-        toast.success('Logged in successfully!')
         router.push('/vendor/dashboard')
+        toast.success('Logged in successfully!')
       } else {
         toast.error('Failed to create session.')
       }
@@ -99,7 +99,7 @@ const VerifyVendorOtpPage = () => {
   }
 
   return (
-    <div className="flex flex-col gap-y-4 min-h-svh w-full items-center justify-center p-6 md:p-10">
+    <div className="w-full flex flex-col items-center gap-y-4">
       <Card className="max-w-sm w-full">
         <CardHeader className="text-center">
           <CardTitle>Verify OTP</CardTitle>

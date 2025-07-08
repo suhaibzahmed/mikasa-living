@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/db'
 import { getErrorMessage } from '@/lib/error'
-import { verifySession } from '@/lib/session'
+import { checkVendorAuth } from '../checkAuth'
 
 export async function getPlans() {
   try {
@@ -15,10 +15,7 @@ export async function getPlans() {
 
 export async function getVendorDetails() {
   try {
-    const session = await verifySession()
-    if (!session) {
-      return { success: false, message: 'Not authenticated' }
-    }
+    const session = await checkVendorAuth()
 
     const vendor = await prisma.vendor.findUnique({
       where: {
