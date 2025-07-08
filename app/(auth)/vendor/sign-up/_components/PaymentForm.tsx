@@ -6,22 +6,19 @@ import { Form } from '@/components/ui/form'
 import { useVendorStore } from '@/lib/store/vendorStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { createNewVendor } from '@/actions/vendor/actions'
 import { toast } from 'sonner'
-import { vendorRegistrationSchema } from '@/schemas/vendor.schema'
+import {
+  paymentSchema,
+  PaymentData,
+  vendorRegistrationSchema,
+} from '@/schemas/vendor.schema'
 import { Button } from '@/components/ui/button'
-
-const paymentSchema = z.object({
-  cardNumber: z.string().min(5).max(16),
-  expiryDate: z.string().min(5).max(5),
-  cvc: z.string().min(3).max(3),
-})
 
 const PaymentForm = () => {
   const { vendorData, nextStep, prevStep } = useVendorStore()
 
-  const form = useForm<z.infer<typeof paymentSchema>>({
+  const form = useForm<PaymentData>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
       cardNumber: '',
@@ -30,7 +27,7 @@ const PaymentForm = () => {
     },
   })
 
-  async function onSubmit(data: z.infer<typeof paymentSchema>) {
+  async function onSubmit(data: PaymentData) {
     try {
       console.log('Payment details (not stored):', data)
 
@@ -49,12 +46,12 @@ const PaymentForm = () => {
         toast.error('Something went wrong. Please try again.')
         return
       }
-      const result = await createNewVendor(
-        validationResult.data,
-        vendorData.firebaseUid
-      )
+      const result = await createNewVendor({
+        ...validationResult.data,
+        firebaseUid: vendorData.firebaseUid,
+      })
       if (result.success) {
-        toast.success(result.message)
+        toast.success('Vendor created successfully!')
         nextStep()
       } else {
         toast.error(result.message)

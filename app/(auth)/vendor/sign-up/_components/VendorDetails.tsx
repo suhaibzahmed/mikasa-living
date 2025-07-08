@@ -1,24 +1,12 @@
-// take vendor details like name, phone, email, company name, gst number
-
 'use client'
 
-import { vendorRegistrationSchema } from '@/schemas/vendor.schema'
+import { vendorDetailsSchema, VendorDetailsData } from '@/schemas/vendor.schema'
 import { useForm } from 'react-hook-form'
-import z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form } from '@/components/ui/form'
 import FormInput from '@/components/common/form/FormInput'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import { useVendorStore } from '@/lib/store/vendorStore'
-import { useEffect } from 'react'
-
-const vendorDetailsSchema = vendorRegistrationSchema.pick({
-  companyName: true,
-  email: true,
-  gstNumber: true,
-})
-
-type VendorDetailsData = z.infer<typeof vendorDetailsSchema>
 
 const VendorDetails = () => {
   const { vendorData, setVendorData, nextStep } = useVendorStore()
@@ -31,14 +19,6 @@ const VendorDetails = () => {
       gstNumber: vendorData.gstNumber || '',
     },
   })
-
-  useEffect(() => {
-    form.reset({
-      email: vendorData.email || '',
-      companyName: vendorData.companyName || '',
-      gstNumber: vendorData.gstNumber || '',
-    })
-  }, [vendorData, form])
 
   function onSubmit(data: VendorDetailsData) {
     setVendorData(data)

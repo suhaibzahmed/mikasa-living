@@ -17,3 +17,31 @@ export const vendorSignInSchema = z.object({
 })
 
 export type VendorSignInData = z.infer<typeof vendorSignInSchema>
+
+export const vendorPhoneSchema = z.object({
+  phone: z.string().min(10, { message: 'Phone number is required' }),
+})
+
+export type VendorPhoneData = z.infer<typeof vendorPhoneSchema>
+
+export const vendorVerifyOTPSchema = z.object({
+  otp: z.string().min(6, { message: 'OTP must be 6 characters long' }),
+})
+
+export type VendorVerifyOTPData = z.infer<typeof vendorVerifyOTPSchema>
+
+export const vendorDetailsSchema = vendorRegistrationSchema.pick({
+  companyName: true,
+  email: true,
+  gstNumber: true,
+})
+
+export type VendorDetailsData = z.infer<typeof vendorDetailsSchema>
+
+export const paymentSchema = z.object({
+  cardNumber: z.string().min(5).max(16),
+  expiryDate: z.string().min(5).max(5),
+  cvc: z.string().min(3).max(3),
+})
+
+export type PaymentData = z.infer<typeof paymentSchema>

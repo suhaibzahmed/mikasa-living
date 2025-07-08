@@ -1,26 +1,10 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import {
-  VendorRegistrationData,
-  vendorSignInSchema,
-} from '@/schemas/vendor.schema'
+import { VendorRegistrationData } from '@/schemas/vendor.schema'
 import { cookies } from 'next/headers'
 import { authAdmin } from '@/lib/firebase-admin'
-
-export const sendOTP = async (phone: string) => {
-  try {
-    const validatedData = vendorSignInSchema.parse({ phone })
-
-    // TODO: Implement OTP sending using Firebase Admin
-    console.log('Sending OTP to', validatedData.phone)
-
-    return { success: true, message: 'OTP sent successfully' }
-  } catch (error) {
-    console.error('Failed to send OTP', error)
-    return { success: false, message: 'Failed to send OTP. Please try again.' }
-  }
-}
+import { checkVendorAuth } from '../checkAuth'
 
 export const verifyVendor = async (phone: string) => {
   try {
@@ -89,6 +73,51 @@ export const createSession = async (idToken: string) => {
     })
 
     return { success: true }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
+
+export async function getPlans() {
+  try {
+    const plans = await prisma.plan.findMany()
+    return { success: true, data: plans }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
+
+export const getPlanById = async (id: string) => {
+  try {
+    const plan = await prisma.plan.findUnique({
+      where: {
+        id,
+      },
+    })
+    return { success: true, data: plan }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
+
+export async function getVendorDetails() {
+  try {
+    const session = await checkVendorAuth()
+
+    const vendor = await prisma.vendor.findUnique({
+      where: {
+        firebaseUid: session.uid,
+      },
+    })
+
+    if (!vendor) {
+      return { success: false, message: 'Vendor not found' }
+    }
+
+    return { success: true, data: vendor }
   } catch (error) {
     console.log(error)
     return { success: false, message: 'An unexpected error occurred.' }

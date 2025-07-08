@@ -2,35 +2,27 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+import { Form } from '@/components/ui/form'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import { useVendorStore } from '@/lib/store/vendorStore'
 import { toast } from 'sonner'
 import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from '@/components/ui/input-otp'
-import { VerifyOTPData, verifyOTPSchema } from '@/schemas/user.schema'
+  VendorVerifyOTPData,
+  vendorVerifyOTPSchema,
+} from '@/schemas/vendor.schema'
+import FormOtpInput from '@/components/common/form/FormOtpInput'
 
 const OtpVerification = () => {
   const { nextStep, setVendorData } = useVendorStore()
 
-  const form = useForm<VerifyOTPData>({
-    resolver: zodResolver(verifyOTPSchema),
+  const form = useForm<VendorVerifyOTPData>({
+    resolver: zodResolver(vendorVerifyOTPSchema),
     defaultValues: {
       otp: '',
     },
   })
 
-  const onSubmit = async (data: VerifyOTPData) => {
+  const onSubmit = async (data: VendorVerifyOTPData) => {
     try {
       const confirmationResult = window.confirmationResult
       if (!confirmationResult) {
@@ -51,27 +43,10 @@ const OtpVerification = () => {
     <div className="w-full flex flex-col items-center gap-y-4">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className=" space-y-6">
-          <FormField
+          <FormOtpInput
             control={form.control}
             name="otp"
-            render={({ field }) => (
-              <FormItem className="flex flex-col items-center">
-                <FormLabel>One-Time Password</FormLabel>
-                <FormControl>
-                  <InputOTP maxLength={6} {...field}>
-                    <InputOTPGroup className="gap-2">
-                      <InputOTPSlot index={0} className="rounded-md border" />
-                      <InputOTPSlot index={1} className="rounded-md border" />
-                      <InputOTPSlot index={2} className="rounded-md border" />
-                      <InputOTPSlot index={3} className="rounded-md border" />
-                      <InputOTPSlot index={4} className="rounded-md border" />
-                      <InputOTPSlot index={5} className="rounded-md border" />
-                    </InputOTPGroup>
-                  </InputOTP>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="One-Time Password"
           />
           <div className="w-full flex justify-end">
             <FormSubmitButton

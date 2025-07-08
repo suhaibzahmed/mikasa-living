@@ -3,36 +3,21 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form } from '@/components/ui/form'
-import FormInput from '@/components/common/form/FormInput'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import { useVendorStore } from '@/lib/store/vendorStore'
 import { useEffect, useState } from 'react'
 import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { toast } from 'sonner'
-import { z } from 'zod'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { FormField, FormItem, FormLabel } from '@/components/ui/form'
-import { cn } from '@/lib/utils'
-
-const phoneSchema = z.object({
-  phone: z.string().min(10, { message: 'Phone number is required' }),
-})
-
-type PhoneData = z.infer<typeof phoneSchema>
+import { VendorPhoneData, vendorPhoneSchema } from '@/schemas/vendor.schema'
+import FormPhoneInput from '@/components/common/form/FormPhoneInput'
 
 const PhoneNumberInput = () => {
   const { setVendorData, nextStep } = useVendorStore()
   const [countryCode, setCountryCode] = useState('+91')
 
-  const form = useForm<PhoneData>({
-    resolver: zodResolver(phoneSchema),
+  const form = useForm<VendorPhoneData>({
+    resolver: zodResolver(vendorPhoneSchema),
     defaultValues: {
       phone: '',
     },
@@ -49,7 +34,7 @@ const PhoneNumberInput = () => {
     )
   }, [])
 
-  const onSubmit = async (data: PhoneData) => {
+  const onSubmit = async (data: VendorPhoneData) => {
     try {
       const verifier = window.recaptchaVerifier
       const fullPhoneNumber = `${countryCode}${data.phone}`
@@ -70,42 +55,12 @@ const PhoneNumberInput = () => {
     <div className="w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className=" space-y-6">
-          <FormField
+          <FormPhoneInput
             control={form.control}
             name="phone"
-            render={({}) => (
-              <FormItem>
-                <FormLabel
-                  className={cn(
-                    form.formState.errors.phone && 'text-destructive'
-                  )}
-                >
-                  Phone Number
-                </FormLabel>
-                <div className="flex items-start gap-x-2 ">
-                  <Select
-                    onValueChange={setCountryCode}
-                    defaultValue={countryCode}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="+91" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="+91">+91 (IN)</SelectItem>
-                      <SelectItem value="+1">+1 (US)</SelectItem>
-                      <SelectItem value="+44">+44 (UK)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <div className="flex-1">
-                    <FormInput
-                      control={form.control}
-                      name="phone"
-                      placeholder="1234567890"
-                    />
-                  </div>
-                </div>
-              </FormItem>
-            )}
+            label="Phone Number"
+            countryCode={countryCode}
+            setCountryCode={setCountryCode}
           />
           <div id="recaptcha-container"></div>
           <div className="w-full flex justify-end">

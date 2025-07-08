@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { Plan } from '@prisma/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2 } from 'lucide-react'
+import { getPlanById } from '@/actions/vendor/actions'
 
 const DetailItem = ({ label, value }: { label: string; value?: string }) => (
   <div>
@@ -24,9 +25,10 @@ const Confirmation = () => {
     const fetchPlan = async () => {
       if (vendorData.planId) {
         try {
-          const result = await fetch(`/api/vendor/plans/${vendorData.planId}`)
-          const data = await result.json()
-          setPlan(data)
+          const result = await getPlanById(vendorData.planId)
+          if (result.success && result.data) {
+            setPlan(result.data)
+          }
         } catch (error) {
           console.error('Failed to fetch plan details:', error)
         }
