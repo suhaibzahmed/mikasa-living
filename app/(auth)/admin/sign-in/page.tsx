@@ -15,6 +15,10 @@ import { Form } from '@/components/ui/form'
 import FormInput from '@/components/common/form/FormInput'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import { useRouter } from 'next/navigation'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '@/lib/firebase'
+import { toast } from 'sonner'
+import { verifyAdminAndCreateSession } from '@/actions/admin/actions'
 
 const AdminSignInPage = () => {
   const router = useRouter()
@@ -26,9 +30,31 @@ const AdminSignInPage = () => {
     },
   })
 
-  const onSubmit = (data: AdminLoginData) => {
-    console.log(data)
-    router.push('/admin/dashboard')
+  const onSubmit = async (data: AdminLoginData) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password
+      )
+      const idToken = await userCredential.user.getIdToken()
+      const result = await verifyAdminAndCreateSession(idToken)
+
+      if (result.success) {
+        router.push('/admin/dashboard')
+        toast.success('Logged in successfully!')
+      } else {
+        console.log('error in else')
+        toast.error(result.message || 'An unknown error occurred')
+      }
+    } catch (error) {
+      console.error('error in catch')
+      if (error instanceof Error) {
+        toast.error('Invalid email or password')
+      } else {
+        toast.error('An unknown error occurred during sign-in.')
+      }
+    }
   }
 
   return (

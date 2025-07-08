@@ -28,3 +28,11 @@ export const checkUserAuth = async () => {
   }
   return session
 }
+
+export const checkAdminAuth = async () => {
+  const session = await verifySession()
+  if (!session) {
+    redirect('/admin/sign-in')
+  }
+  return session
+}

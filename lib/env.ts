@@ -12,6 +12,8 @@ export const env = createEnv({
     FIREBASE_PROJECT_ID: z.string().min(1),
     FIREBASE_CLIENT_EMAIL: z.string().min(1),
     FIREBASE_PRIVATE_KEY: z.string().min(1),
+    ADMIN_EMAIL: z.string().min(1),
+    ADMIN_PASSWORD: z.string().min(1),
   },
 
   clientPrefix: 'NEXT_PUBLIC_',
