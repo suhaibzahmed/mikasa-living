@@ -27,7 +27,6 @@ import { useEffect, useState } from 'react'
 import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import { toast } from 'sonner'
-import { verifyVendor } from '@/actions/vendor/actions'
 
 const VendorSignInPage = () => {
   const [countryCode, setCountryCode] = useState('+91')
@@ -53,18 +52,6 @@ const VendorSignInPage = () => {
 
   const onSubmit = async (data: UserSignInData) => {
     try {
-      const result = await verifyVendor(data.phone)
-      if (!result.success) {
-        toast.error(result.message)
-        return
-      }
-
-      if (!result.data) {
-        toast.error('Vendor not found. Please register.')
-        router.push('/vendor/sign-up')
-        return
-      }
-
       const verifier = window.recaptchaVerifier
       const fullPhoneNumber = `${countryCode}${data.phone}`
       window.confirmationResult = await signInWithPhoneNumber(
@@ -72,7 +59,6 @@ const VendorSignInPage = () => {
         fullPhoneNumber,
         verifier
       )
-      sessionStorage.setItem('user-signin-phone', data.phone)
       sessionStorage.setItem('auth-flow', 'signin')
       router.push('/vendor/verify-otp')
     } catch (error) {

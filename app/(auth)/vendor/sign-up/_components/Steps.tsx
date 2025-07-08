@@ -6,15 +6,17 @@ const Steps = () => {
   const { step } = useVendorStore()
 
   const steps = [
-    { number: 1, title: 'Vendor Details' },
-    { number: 2, title: 'Select Plan' },
-    { number: 3, title: 'Billing Cycle' },
-    { number: 4, title: 'Payment' },
-    { number: 5, title: 'Confirmation' },
+    { number: 1, title: 'Phone Number' },
+    { number: 2, title: 'Verify OTP' },
+    { number: 3, title: 'Vendor Details' },
+    { number: 4, title: 'Select Plan' },
+    { number: 5, title: 'Billing Cycle' },
+    { number: 6, title: 'Payment' },
+    { number: 7, title: 'Confirmation' },
   ]
   return (
     <div className="flex items-center justify-between ">
-      {steps.map((s, index) => (
+      {steps.map((s) => (
         <div key={s.number} className="flex  items-center">
           <div className="flex flex-col items-center gap-y-2">
             <div
@@ -34,9 +36,6 @@ const Steps = () => {
               {s.title}
             </span>
           </div>
-          {/* {index < steps.length - 1 && (
-              <div className="w-12 h-px bg-gray-300 mx-4" />
-            )} */}
         </div>
       ))}
     </div>

@@ -2,10 +2,7 @@
 
 'use client'
 
-import {
-  VendorRegistrationData,
-  vendorRegistrationSchema,
-} from '@/schemas/vendor.schema'
+import { vendorRegistrationSchema } from '@/schemas/vendor.schema'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -15,14 +12,21 @@ import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import { useVendorStore } from '@/lib/store/vendorStore'
 import { useEffect } from 'react'
 
+const vendorDetailsSchema = vendorRegistrationSchema.pick({
+  companyName: true,
+  email: true,
+  gstNumber: true,
+})
+
+type VendorDetailsData = z.infer<typeof vendorDetailsSchema>
+
 const VendorDetails = () => {
   const { vendorData, setVendorData, nextStep } = useVendorStore()
 
-  const form = useForm<VendorRegistrationData>({
-    resolver: zodResolver(vendorRegistrationSchema),
+  const form = useForm<VendorDetailsData>({
+    resolver: zodResolver(vendorDetailsSchema),
     defaultValues: {
       email: vendorData.email || '',
-      phone: vendorData.phone || '',
       companyName: vendorData.companyName || '',
       gstNumber: vendorData.gstNumber || '',
     },
@@ -31,14 +35,12 @@ const VendorDetails = () => {
   useEffect(() => {
     form.reset({
       email: vendorData.email || '',
-      phone: vendorData.phone || '',
       companyName: vendorData.companyName || '',
       gstNumber: vendorData.gstNumber || '',
     })
   }, [vendorData, form])
 
-  function onSubmit(data: z.infer<typeof vendorRegistrationSchema>) {
-    console.log(data)
+  function onSubmit(data: VendorDetailsData) {
     setVendorData(data)
     nextStep()
   }
@@ -60,13 +62,6 @@ const VendorDetails = () => {
             label="Email"
             placeholder="Email"
             type="email"
-          />
-          <FormInput
-            control={form.control}
-            name="phone"
-            label="Phone"
-            placeholder="Phone"
-            type="tel"
           />
           <FormInput
             control={form.control}

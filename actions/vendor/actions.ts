@@ -7,7 +7,10 @@ import {
   VendorRegistrationData,
 } from '@/schemas/vendor.schema'
 
-export const createNewVendor = async (data: VendorRegistrationData) => {
+export const createNewVendor = async (
+  data: VendorRegistrationData,
+  firebaseUid: string
+) => {
   try {
     const validationResult = vendorRegistrationSchema.safeParse(data)
 
@@ -21,6 +24,7 @@ export const createNewVendor = async (data: VendorRegistrationData) => {
 
     const newVendor = await prisma.vendor.create({
       data: {
+        firebaseUid,
         companyName: validationResult.data.companyName,
         gstNumber: validationResult.data.gstNumber,
         phone: validationResult.data.phone,
@@ -43,11 +47,11 @@ export const createNewVendor = async (data: VendorRegistrationData) => {
   }
 }
 
-export const verifyVendor = async (phone: string) => {
+export const verifyVendor = async (firebaseUid: string) => {
   try {
-    const vendor = await prisma.vendor.findFirst({
+    const vendor = await prisma.vendor.findUnique({
       where: {
-        phone,
+        firebaseUid,
       },
     })
     return { success: true, data: vendor }

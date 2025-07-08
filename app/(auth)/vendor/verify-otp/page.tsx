@@ -26,6 +26,8 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
+import { createNewVendor, verifyVendor } from '@/actions/vendor/actions'
+import { VendorRegistrationData } from '@/schemas/vendor.schema'
 
 const VerifyVendorOtpPage = () => {
   const router = useRouter()
@@ -44,6 +46,33 @@ const VerifyVendorOtpPage = () => {
       }
       const userCredential = await confirmationResult.confirm(data.otp)
       const idToken = await userCredential.user.getIdToken()
+      const firebaseUid = userCredential.user.uid
+
+      const authFlow = sessionStorage.getItem('auth-flow')
+
+      if (authFlow === 'signin') {
+        const result = await verifyVendor(firebaseUid)
+        if (!result.success) {
+          toast.error(result.message)
+          return
+        }
+        if (!result.data) {
+          toast.error('Vendor not found. Please register.')
+          router.push('/vendor/sign-up')
+          return
+        }
+      } else if (authFlow === 'signup') {
+        const vendorDataString = sessionStorage.getItem('vendor-signup-data')
+        if (!vendorDataString) {
+          throw new Error('No vendor data found in session storage.')
+        }
+        const vendorData: VendorRegistrationData = JSON.parse(vendorDataString)
+        const result = await createNewVendor(vendorData, firebaseUid)
+        if (!result.success) {
+          toast.error(result.message)
+          return
+        }
+      }
 
       const response = await fetch('/api/auth/session', {
         method: 'POST',
@@ -65,6 +94,7 @@ const VerifyVendorOtpPage = () => {
     } finally {
       sessionStorage.removeItem('auth-flow')
       sessionStorage.removeItem('user-signin-phone')
+      sessionStorage.removeItem('vendor-signup-data')
     }
   }
 

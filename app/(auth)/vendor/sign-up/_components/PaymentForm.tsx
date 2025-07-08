@@ -45,12 +45,37 @@ const PaymentForm = () => {
       }
 
       await new Promise((resolve) => setTimeout(resolve, 3000))
-      const result = await createNewVendor(validationResult.data)
+      if (!vendorData.firebaseUid) {
+        toast.error('Something went wrong. Please try again.')
+        return
+      }
+      const result = await createNewVendor(
+        validationResult.data,
+        vendorData.firebaseUid
+      )
       if (result.success) {
         toast.success(result.message)
         nextStep()
       } else {
         toast.error(result.message)
+        return
+      }
+
+      if (!vendorData.idToken) {
+        toast.error('Something went wrong. Please try again.')
+        return
+      }
+
+      const response = await fetch('/api/auth/session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idToken: vendorData.idToken }),
+      })
+
+      if (!response.ok) {
+        toast.error('Failed to create session.')
       }
     } catch (error) {
       toast.error('An unexpected error occurred. Please try again.')

@@ -5,9 +5,17 @@ import { VendorRegistrationData } from '@/schemas/vendor.schema'
 
 interface VendorStore {
   step: number
-  vendorData: Partial<VendorRegistrationData>
+  vendorData: Partial<VendorRegistrationData> & {
+    firebaseUid?: string
+    idToken?: string
+  }
   setStep: (step: number) => void
-  setVendorData: (data: Partial<VendorRegistrationData>) => void
+  setVendorData: (
+    data: Partial<VendorRegistrationData> & {
+      firebaseUid?: string
+      idToken?: string
+    }
+  ) => void
   nextStep: () => void
   prevStep: () => void
   reset: () => void

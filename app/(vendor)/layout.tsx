@@ -16,6 +16,7 @@ const VendorLayout = async ({
   children: React.ReactNode
 }>) => {
   const session = await verifySession()
+  console.log('🚀 ~ session:', session)
 
   if (!session) {
     redirect('/vendor/sign-in')
