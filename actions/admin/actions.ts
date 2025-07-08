@@ -48,3 +48,14 @@ export const verifyAdminAndCreateSession = async (idToken: string) => {
     return { success: false, message: getErrorMessage(error) }
   }
 }
+
+export const logout = async () => {
+  try {
+    const cookieStore = await cookies()
+    cookieStore.delete('session')
+    return { success: true }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}

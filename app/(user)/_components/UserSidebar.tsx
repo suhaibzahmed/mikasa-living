@@ -12,14 +12,7 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar'
 import Link from 'next/link'
-import {
-  adminSidebarMenus,
-  adminNavUserItems,
-  vendorSidebarMenus,
-  vendorNavUserItems,
-  userSidebarMenus,
-  userNavUserItems,
-} from '@/constants/sidebarMenus'
+import { userSidebarMenus, userNavUserItems } from '@/constants/sidebarMenus'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,42 +25,17 @@ import {
 import { ChevronsUpDown, HomeIcon, LogOut } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useSidebar } from '@/components/ui/sidebar'
-import { useEffect, useState } from 'react'
-import { getVendorDetails } from '@/actions/vendor/fetch.actions'
-import { logout } from '@/actions/vendor/actions'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Vendor } from '@prisma/client'
+import { logout } from '@/actions/user/actions'
 
-type Role = 'admin' | 'vendor' | 'user'
-
-interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
-  role: Role
-}
-
-const AppSidebar = ({ role, ...props }: AppSidebarProps) => {
+const UserSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
   const { isMobile } = useSidebar()
   const router = useRouter()
-  const [vendor, setVendor] = useState<Partial<Vendor>>({
-    companyName: 'Vendor Name',
-    email: 'vendor@example.com',
-  })
-
-  useEffect(() => {
-    const fetchVendorDetails = async () => {
-      if (role === 'vendor') {
-        const res = await getVendorDetails()
-        if (res.success && res.data) {
-          setVendor(res.data)
-        }
-      }
-    }
-    fetchVendorDetails()
-  }, [role])
 
   const handleLogout = async () => {
     await logout()
-    router.push('/vendor/sign-in')
+    router.push('/user/sign-in')
     toast.success('Logged out successfully')
   }
 
@@ -76,20 +44,6 @@ const AppSidebar = ({ role, ...props }: AppSidebarProps) => {
     email: 'user@example.com',
     image: '/avatars/shadcn.jpg',
   }
-
-  const menuItems =
-    role === 'admin'
-      ? adminSidebarMenus
-      : role === 'vendor'
-      ? vendorSidebarMenus
-      : userSidebarMenus
-
-  const navUserItems =
-    role === 'admin'
-      ? adminNavUserItems
-      : role === 'vendor'
-      ? vendorNavUserItems
-      : userNavUserItems
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -113,7 +67,7 @@ const AppSidebar = ({ role, ...props }: AppSidebarProps) => {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {menuItems.map((menu) => (
+            {userSidebarMenus.map((menu) => (
               <SidebarMenuItem key={menu.id}>
                 <SidebarMenuButton asChild>
                   <Link href={menu.href}>
@@ -142,15 +96,11 @@ const AppSidebar = ({ role, ...props }: AppSidebarProps) => {
                       src="https://github.com/shadcn.png"
                       alt={user.name}
                     />
-                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">US</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">
-                      {role === 'vendor' ? vendor.companyName : user.name}
-                    </span>
-                    <span className="truncate text-xs">
-                      {role === 'vendor' ? vendor.email : user.email}
-                    </span>
+                    <span className="truncate font-medium">{user.name}</span>
+                    <span className="truncate text-xs">{user.email}</span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -168,21 +118,17 @@ const AppSidebar = ({ role, ...props }: AppSidebarProps) => {
                         src="https://github.com/shadcn.png"
                         alt={user.name}
                       />
-                      <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                      <AvatarFallback className="rounded-lg">US</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">
-                        {role === 'vendor' ? vendor.companyName : user.name}
-                      </span>
-                      <span className="truncate text-xs">
-                        {role === 'vendor' ? vendor.email : user.email}
-                      </span>
+                      <span className="truncate font-medium">{user.name}</span>
+                      <span className="truncate text-xs">{user.email}</span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  {navUserItems.map((item) => (
+                  {userNavUserItems.map((item) => (
                     <DropdownMenuItem key={item.id} asChild>
                       <Link href={item.href}>
                         <item.icon className="mr-2 h-4 w-4" />
@@ -205,4 +151,4 @@ const AppSidebar = ({ role, ...props }: AppSidebarProps) => {
     </Sidebar>
   )
 }
-export default AppSidebar
+export default UserSidebar

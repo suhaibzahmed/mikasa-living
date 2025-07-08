@@ -1,51 +1,96 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { getErrorMessage } from '@/lib/error'
-import { VendorRegistrationData } from '@/schemas/vendor.schema'
+import {
+  VendorRegistrationData,
+  vendorSignInSchema,
+} from '@/schemas/vendor.schema'
 import { cookies } from 'next/headers'
+import { authAdmin } from '@/lib/firebase-admin'
+
+export const sendOTP = async (phone: string) => {
+  try {
+    const validatedData = vendorSignInSchema.parse({ phone })
+
+    // TODO: Implement OTP sending using Firebase Admin
+    console.log('Sending OTP to', validatedData.phone)
+
+    return { success: true, message: 'OTP sent successfully' }
+  } catch (error) {
+    console.error('Failed to send OTP', error)
+    return { success: false, message: 'Failed to send OTP. Please try again.' }
+  }
+}
+
+export const verifyVendor = async (phone: string) => {
+  try {
+    const vendor = await prisma.vendor.findFirst({
+      where: {
+        phone,
+      },
+    })
+    if (!vendor) {
+      return { success: false, message: 'Vendor not found. Please sign up.' }
+    }
+    return { success: true, data: vendor }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
+
+export const logout = async () => {
+  try {
+    const cookieStore = await cookies()
+    cookieStore.delete('session')
+    return { success: true }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
+
+export const verifyOtp = async (idToken: string) => {
+  try {
+    const decodedToken = await authAdmin.verifyIdToken(idToken)
+    return { success: true, data: decodedToken }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
 
 export const createNewVendor = async (
   data: VendorRegistrationData & { firebaseUid: string }
 ) => {
   try {
-    if (!data.billingCycle) {
-      throw new Error('Billing cycle is required')
-    }
-    if (!data.planId) {
-      throw new Error('Plan is required')
-    }
     const vendor = await prisma.vendor.create({
-      data: {
-        firebaseUid: data.firebaseUid,
-        companyName: data.companyName,
-        email: data.email,
-        phone: data.phone,
-        gstNumber: data.gstNumber,
-        planId: data.planId,
-        billingCycle: data.billingCycle,
-      },
+      data,
     })
     return { success: true, data: vendor }
   } catch (error) {
-    return { success: false, message: getErrorMessage(error) }
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
   }
 }
 
-export const verifyVendor = async (firebaseUid: string) => {
+export const createSession = async (idToken: string) => {
   try {
-    const vendor = await prisma.vendor.findUnique({
-      where: {
-        firebaseUid,
-      },
+    const sessionCookie = await authAdmin.createSessionCookie(idToken, {
+      expiresIn: 60 * 60 * 24 * 5 * 1000, // 5 days
     })
-    return { success: true, data: vendor }
-  } catch (error) {
-    return { success: false, message: getErrorMessage(error) }
-  }
-}
 
-export const logout = async () => {
-  const cookieStore = await cookies()
-  cookieStore.delete('session')
+    const cookieStore = await cookies()
+    cookieStore.set('session', sessionCookie, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 5, // 5 days
+      path: '/',
+    })
+
+    return { success: true }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
 }
