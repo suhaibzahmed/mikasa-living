@@ -29,9 +29,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChevronsUpDown, HomeIcon } from 'lucide-react'
+import { ChevronsUpDown, HomeIcon, LogOut } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useSidebar } from '@/components/ui/sidebar'
+import { useEffect, useState } from 'react'
+import { getVendorDetails } from '@/actions/vendor/fetch.actions'
+import { logout } from '@/actions/vendor/actions'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
+import { Vendor } from '@prisma/client'
 
 type Role = 'admin' | 'vendor' | 'user'
 
@@ -41,6 +47,30 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
 
 const AppSidebar = ({ role, ...props }: AppSidebarProps) => {
   const { isMobile } = useSidebar()
+  const router = useRouter()
+  const [vendor, setVendor] = useState<Partial<Vendor>>({
+    companyName: 'Vendor Name',
+    email: 'vendor@example.com',
+  })
+
+  useEffect(() => {
+    const fetchVendorDetails = async () => {
+      if (role === 'vendor') {
+        const res = await getVendorDetails()
+        if (res.success && res.data) {
+          setVendor(res.data)
+        }
+      }
+    }
+    fetchVendorDetails()
+  }, [role])
+
+  const handleLogout = async () => {
+    await logout()
+    toast.success('Logged out successfully')
+    router.push('/vendor/sign-in')
+  }
+
   const user = {
     name: 'User Name',
     email: 'user@example.com',
@@ -115,8 +145,12 @@ const AppSidebar = ({ role, ...props }: AppSidebarProps) => {
                     <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.name}</span>
-                    <span className="truncate text-xs">{user.email}</span>
+                    <span className="truncate font-medium">
+                      {role === 'vendor' ? vendor.companyName : user.name}
+                    </span>
+                    <span className="truncate text-xs">
+                      {role === 'vendor' ? vendor.email : user.email}
+                    </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -137,8 +171,12 @@ const AppSidebar = ({ role, ...props }: AppSidebarProps) => {
                       <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">{user.name}</span>
-                      <span className="truncate text-xs">{user.email}</span>
+                      <span className="truncate font-medium">
+                        {role === 'vendor' ? vendor.companyName : user.name}
+                      </span>
+                      <span className="truncate text-xs">
+                        {role === 'vendor' ? vendor.email : user.email}
+                      </span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
@@ -153,6 +191,11 @@ const AppSidebar = ({ role, ...props }: AppSidebarProps) => {
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Log out
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

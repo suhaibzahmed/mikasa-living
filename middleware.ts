@@ -3,17 +3,16 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
   const session = request.cookies.get('session')?.value
 
-  // If the user is trying to access an auth page, let them through.
-  if (
+  const isVendorAuthPage =
     path.startsWith('/vendor/sign-in') ||
     path.startsWith('/vendor/sign-up') ||
     path.startsWith('/vendor/verify-otp')
-  ) {
-    return NextResponse.next()
+
+  if (session && isVendorAuthPage) {
+    return NextResponse.redirect(new URL('/vendor/dashboard', request.url))
   }
 
-  // If there's no session, redirect to the sign-in page.
-  if (!session) {
+  if (!session && !isVendorAuthPage) {
     return NextResponse.redirect(new URL('/vendor/sign-in', request.url))
   }
 

@@ -67,7 +67,7 @@ const VerifyVendorOtpPage = () => {
           throw new Error('No vendor data found in session storage.')
         }
         const vendorData: VendorRegistrationData = JSON.parse(vendorDataString)
-        const result = await createNewVendor(vendorData, firebaseUid)
+        const result = await createNewVendor({ ...vendorData, firebaseUid })
         if (!result.success) {
           toast.error(result.message)
           return
