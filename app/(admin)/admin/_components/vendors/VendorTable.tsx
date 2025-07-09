@@ -2,6 +2,7 @@
 
 import { VENDOR_PAGE_SIZE } from '@/constants/config'
 import { useEffect, useState } from 'react'
+import { useDebounce } from 'use-debounce'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Table,
@@ -44,6 +45,7 @@ const VendorTable = ({
   const searchParams = useSearchParams()
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('vendor') || '')
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 500)
   const [verifiedFilter, setVerifiedFilter] = useState(
     searchParams.get('isVerified') || 'all'
   )
@@ -53,8 +55,8 @@ const VendorTable = ({
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString())
-    if (searchTerm) {
-      params.set('vendor', searchTerm)
+    if (debouncedSearchTerm) {
+      params.set('vendor', debouncedSearchTerm)
     } else {
       params.delete('vendor')
     }
@@ -70,13 +72,20 @@ const VendorTable = ({
     }
     params.set('page', '1') // Reset to first page on filter change
     router.replace(`${pathname}?${params.toString()}`)
-  }, [searchTerm, verifiedFilter, planFilter, router, pathname, searchParams])
+  }, [
+    debouncedSearchTerm,
+    verifiedFilter,
+    planFilter,
+    router,
+    pathname,
+    searchParams,
+  ])
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-x-4">
         <Input
-          placeholder="Search by company name..."
+          placeholder="Search by vendor name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className=""
