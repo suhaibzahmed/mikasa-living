@@ -1,4 +1,4 @@
-import { getVendorById } from '@/actions/vendor/fetch.actions'
+import { getVendorById } from '@/actions/admin/fetch.actions'
 import VendorDetails from '../../_components/vendors/VendorDetails'
 
 const VendorDetailsPage = async ({

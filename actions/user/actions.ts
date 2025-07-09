@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/db'
 import { UserSignUpData } from '@/schemas/user.schema'
 import { cookies } from 'next/headers'
+import { checkUserAuth } from '../checkAuth'
 
 export const createUser = async (data: UserSignUpData) => {
   try {
@@ -43,6 +44,28 @@ export const logout = async () => {
     const cookieStore = await cookies()
     cookieStore.delete('session')
     return { success: true }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
+
+// FOR USER SIDEBAR
+export async function getUserDetails() {
+  try {
+    const session = await checkUserAuth()
+
+    const user = await prisma.user.findUnique({
+      where: {
+        firebaseUid: session.uid,
+      },
+    })
+
+    if (!user) {
+      return { success: false, message: 'User not found' }
+    }
+
+    return { success: true, data: user }
   } catch (error) {
     console.log(error)
     return { success: false, message: 'An unexpected error occurred.' }

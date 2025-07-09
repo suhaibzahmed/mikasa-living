@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { getPendingVendors } from '@/actions/vendor/fetch.actions'
+import { getPendingVendors } from '@/actions/admin/fetch.actions'
 
 const PendingVendors = async () => {
   const pendingVendors = await getPendingVendors()

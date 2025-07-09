@@ -1,5 +1,5 @@
 'use client'
-import { rejectVendor } from '@/actions/vendor/actions'
+import { rejectVendor } from '@/actions/admin/actions'
 import { Button } from '@/components/ui/button'
 import { useTransition } from 'react'
 import { toast } from 'sonner'

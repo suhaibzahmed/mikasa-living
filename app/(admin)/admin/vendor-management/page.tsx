@@ -1,4 +1,4 @@
-import { getVendors } from '@/actions/vendor/fetch.actions'
+import { getVendors } from '@/actions/admin/fetch.actions'
 import VendorTable from '../_components/vendors/VendorTable'
 
 const VendorManagementPage = async ({

@@ -27,11 +27,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useSidebar } from '@/components/ui/sidebar'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { logout } from '@/actions/user/actions'
+import { getUserDetails, logout } from '@/actions/user/actions'
 
 import { User } from '@prisma/client'
 import { useEffect, useState } from 'react'
-import { getUserDetails } from '@/actions/user/fetch.actions'
 
 const UserSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
   const { isMobile } = useSidebar()
