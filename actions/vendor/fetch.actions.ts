@@ -89,3 +89,25 @@ export async function getPendingVendors() {
     }
   }
 }
+
+export async function getVendorById(vendorId: string) {
+  try {
+    await checkAdminAuth()
+
+    const vendor = await prisma.vendor.findUnique({
+      where: { id: vendorId },
+      include: {
+        plan: true,
+      },
+    })
+
+    if (!vendor) {
+      return { success: false, message: 'Vendor not found', data: null }
+    }
+
+    return { success: true, data: vendor }
+  } catch (error) {
+    console.error('Error getting vendor by ID:', error)
+    return { success: false, message: 'Failed to get vendor', data: null }
+  }
+}

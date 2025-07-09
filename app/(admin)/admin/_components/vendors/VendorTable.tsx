@@ -24,6 +24,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Vendor as PrismaVendor, Plan } from '@prisma/client'
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links'
+import Link from 'next/link'
 
 type Vendor = PrismaVendor & {
   plan: Plan
@@ -125,6 +126,7 @@ const VendorTable = ({
             <TableHead>Plan</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>GST Number</TableHead>
+            <TableHead>Details</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -140,12 +142,25 @@ const VendorTable = ({
               </TableCell>
               <TableCell>{vendor.gstNumber}</TableCell>
               <TableCell>
-                <Button variant="outline" size="sm" className="mr-2">
-                  Approve
+                <Button asChild variant="link" size="sm">
+                  <Link href={`/admin/vendor-management/${vendor.id}`}>
+                    View Details
+                  </Link>
                 </Button>
-                <Button variant="destructive" size="sm">
-                  Delete
-                </Button>
+              </TableCell>
+              <TableCell>
+                {vendor.isVerified ? (
+                  <p>-</p>
+                ) : (
+                  <div>
+                    <Button variant="outline" size="sm" className="mr-2">
+                      Approve
+                    </Button>
+                    <Button variant="destructive" size="sm">
+                      Reject
+                    </Button>
+                  </div>
+                )}
               </TableCell>
             </TableRow>
           ))}

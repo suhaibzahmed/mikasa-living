@@ -5,6 +5,7 @@ import { getErrorMessage } from '@/lib/error'
 import { authAdmin } from '@/lib/firebase-admin'
 import { verifySession } from '@/lib/session'
 import { cookies } from 'next/headers'
+import { checkAdminAuth } from '../checkAuth'
 
 export const verifyAdminAndCreateSession = async (idToken: string) => {
   try {
@@ -76,5 +77,23 @@ export const getAdmin = async () => {
   } catch (error) {
     console.error('Failed to get admin', error)
     return null
+  }
+}
+
+export async function getVendorById(id: string) {
+  try {
+    await checkAdminAuth()
+    const vendor = await prisma.vendor.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        plan: true,
+      },
+    })
+    return { success: true, data: vendor }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
   }
 }

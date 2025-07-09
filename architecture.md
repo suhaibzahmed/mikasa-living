@@ -22,6 +22,15 @@ The project is organized into the following key directories:
 │   └── session.ts
 ├── app/
 │   ├── (admin)/
+│   │   ├── admin/
+│   │   │   ├── vendor-management/
+│   │   │   │   ├── [id]/
+│   │   │   │   │   └── page.tsx
+│   │   │   │   └── page.tsx
+│   │   │   └── _components/
+│   │   │       └── vendors/
+│   │   │           ├── VendorTable.tsx
+│   │   │           └── VendorDetails.tsx
 │   ├── (auth)/
 │   │   ├── user/
 │   │   │   ├── sign-in/
@@ -54,7 +63,10 @@ The project is organized into the following key directories:
 │   │   ├── form/
 │   │   └── sidebar/
 │   └── ui/
+│       ├── pagination.tsx
+│       └── pagination-with-links.tsx
 ├── constants/
+│   └── config.ts
 ├── lib/
 │   ├── store/
 │   │   ├── userStore.ts
@@ -71,12 +83,19 @@ This directory contains all the server actions for the application.
 
 - **`actions/user/`**: Contains actions related to users, such as creating, verifying, and fetching user data. The `createUser` action now also stores the `firebaseUid`.
 - **`actions/vendor/`**: Contains actions related to vendors.
+  - **`fetch.actions.ts`**: Includes the `getVendors` function, which now supports server-side filtering and pagination, and the `getVendorById` function to fetch a single vendor's details.
 - **`actions/session.ts`**: Contains the centralized `createSession` action, which is used to create a session cookie for any user role (user, vendor, or admin).
 
 ### 2.2. `app/`
 
 This is the main directory for the application's routes and UI.
 
+- **`app/(admin)/admin/vendor-management/`**: This directory contains the vendor management section.
+  - **`page.tsx`**: The main vendor management page, which now fetches data on the server based on URL search parameters and uses the Promise-based `searchParams` API.
+  - **`[id]/page.tsx`**: A dynamic page to display the details of a single vendor.
+  - **`_components/vendors/`**: Contains the components for the vendor management section.
+    - **`VendorTable.tsx`**: A client component that displays a paginated and filterable list of vendors. It uses the `use-debounce` hook for the search input and the `PaginationWithLinks` component for pagination.
+    - **`VendorDetails.tsx`**: A client component that displays the details of a single vendor in a card layout.
 - **`app/(auth)/user/sign-up/`**: This directory contains the new multi-step user sign-up flow.
   - **`_components/`**: Holds the modular components for each step of the sign-up process: `PhoneNumberInput`, `OtpVerification`, and `UserDetails`. The `RenderSteps` component conditionally renders the current step.
 - **`app/(auth)/user/sign-in/`**: This directory contains the refactored multi-step user sign-in flow.
@@ -91,6 +110,12 @@ This directory contains all the library code and helper functions.
 
 - **`lib/store/`**: Contains the Zustand stores for managing client-side state.
   - **`userStore.ts`**: Manages the state for the multi-step user sign-up flow, including the current step, phone number, `firebaseUid`, and `idToken`.
+
+### 2.4. `constants/`
+
+This directory contains all the application-wide constants.
+
+- **`config.ts`**: Contains configuration constants, such as `VENDOR_PAGE_SIZE`.
 
 ## 3. Application Flow
 
@@ -111,6 +136,18 @@ This directory contains all the library code and helper functions.
 3.  **Dashboard**:
     - The user lands on the homepage, where they can browse vendors.
     - The `UserSidebar` now displays the user's name and email, fetched from the database.
+
+### 3.2. Admin Flow (Vendor Management)
+
+1.  **Vendor List**:
+    - The admin navigates to `/admin/vendor-management`.
+    - The page fetches a paginated list of vendors from the server, based on the URL search parameters.
+    - The admin can filter the list by company name, verification status, and plan. The search input is debounced to improve performance.
+    - The admin can navigate through the pages of vendors using the `PaginationWithLinks` component.
+2.  **Vendor Details**:
+    - The admin can click on a "View" button to navigate to the details page for a specific vendor.
+    - The details page displays the vendor's information in a card layout.
+    - The page includes "Approve" and "Reject" buttons, which are not yet functional.
 
 ## 4. Authentication Flow (User)
 
