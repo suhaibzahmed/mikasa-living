@@ -47,8 +47,8 @@ const VendorTable = ({
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('vendor') || '')
   const [debouncedSearchTerm] = useDebounce(searchTerm, 500)
-  const [verifiedFilter, setVerifiedFilter] = useState(
-    searchParams.get('isVerified') || 'all'
+  const [verificationFilter, setVerificationFilter] = useState(
+    searchParams.get('verificationStatus') || 'all'
   )
   const [planFilter, setPlanFilter] = useState(
     searchParams.get('plan') || 'all'
@@ -61,10 +61,10 @@ const VendorTable = ({
     } else {
       params.delete('vendor')
     }
-    if (verifiedFilter !== 'all') {
-      params.set('isVerified', verifiedFilter)
+    if (verificationFilter !== 'all') {
+      params.set('verificationStatus', verificationFilter)
     } else {
-      params.delete('isVerified')
+      params.delete('verificationStatus')
     }
     if (planFilter !== 'all') {
       params.set('plan', planFilter)
@@ -75,7 +75,7 @@ const VendorTable = ({
     router.replace(`${pathname}?${params.toString()}`)
   }, [
     debouncedSearchTerm,
-    verifiedFilter,
+    verificationFilter,
     planFilter,
     router,
     pathname,
@@ -91,14 +91,18 @@ const VendorTable = ({
           onChange={(e) => setSearchTerm(e.target.value)}
           className=""
         />
-        <Select value={verifiedFilter} onValueChange={setVerifiedFilter}>
+        <Select
+          value={verificationFilter}
+          onValueChange={setVerificationFilter}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Filter by verification" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All</SelectItem>
-            <SelectItem value="verified">Verified</SelectItem>
-            <SelectItem value="unverified">Unverified</SelectItem>
+            <SelectItem value="PENDING">Pending</SelectItem>
+            <SelectItem value="VERIFIED">Verified</SelectItem>
+            <SelectItem value="REJECTED">Rejected</SelectItem>
           </SelectContent>
         </Select>
         <Select value={planFilter} onValueChange={setPlanFilter}>
@@ -124,7 +128,7 @@ const VendorTable = ({
             <TableHead>Phone</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Plan</TableHead>
-            <TableHead>Status</TableHead>
+            <TableHead>Verification Status</TableHead>
             <TableHead>GST Number</TableHead>
             <TableHead>Details</TableHead>
             <TableHead>Actions</TableHead>
@@ -137,9 +141,7 @@ const VendorTable = ({
               <TableCell>{vendor.phone}</TableCell>
               <TableCell>{vendor.email}</TableCell>
               <TableCell>{vendor.plan.type}</TableCell>
-              <TableCell>
-                {vendor.isVerified ? 'Verified' : 'Unverified'}
-              </TableCell>
+              <TableCell>{vendor.verificationStatus}</TableCell>
               <TableCell>{vendor.gstNumber}</TableCell>
               <TableCell>
                 <Button asChild variant="link" size="sm">
@@ -149,8 +151,10 @@ const VendorTable = ({
                 </Button>
               </TableCell>
               <TableCell>
-                {vendor.isVerified ? (
+                {vendor.verificationStatus === 'VERIFIED' ? (
                   <p>-</p>
+                ) : vendor.verificationStatus === 'REJECTED' ? (
+                  <p className="text-bold text-red-500">Rejected</p>
                 ) : (
                   <div>
                     <Button variant="outline" size="sm" className="mr-2">

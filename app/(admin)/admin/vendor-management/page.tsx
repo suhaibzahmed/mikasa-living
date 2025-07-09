@@ -9,14 +9,16 @@ const VendorManagementPage = async ({
   const params = await searchParams
   const page = typeof params.page === 'string' ? Number(params.page) : 1
   const vendor = typeof params.vendor === 'string' ? params.vendor : undefined
-  const isVerified =
-    typeof params.isVerified === 'string' ? params.isVerified : undefined
+  const verificationStatus =
+    typeof params.verificationStatus === 'string'
+      ? params.verificationStatus
+      : undefined
   const plan = typeof params.plan === 'string' ? params.plan : undefined
 
   const vendorsResponse = await getVendors({
     page,
     vendor,
-    isVerified,
+    verificationStatus,
     plan,
   })
 

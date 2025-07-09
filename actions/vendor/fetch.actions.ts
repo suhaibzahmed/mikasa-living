@@ -2,16 +2,16 @@
 
 import { prisma } from '@/lib/db'
 import { VENDOR_PAGE_SIZE } from '@/constants/config'
-import { PlanType, Prisma } from '@prisma/client'
+import { PlanType, Prisma, VerificationStatus } from '@prisma/client'
 import { checkAdminAuth } from '../checkAuth'
 
 export async function getVendors(params: {
   page?: number
   vendor?: string
-  isVerified?: string
+  verificationStatus?: string
   plan?: string
 }) {
-  const { page = 1, vendor, isVerified, plan } = params
+  const { page = 1, vendor, verificationStatus, plan } = params
   const pageSize = VENDOR_PAGE_SIZE
 
   try {
@@ -23,8 +23,8 @@ export async function getVendors(params: {
       where.companyName = { contains: vendor, mode: 'insensitive' }
     }
 
-    if (isVerified && isVerified !== 'all') {
-      where.isVerified = isVerified === 'verified'
+    if (verificationStatus && verificationStatus !== 'all') {
+      where.verificationStatus = verificationStatus as VerificationStatus
     }
 
     if (plan && plan !== 'all') {
@@ -71,7 +71,7 @@ export async function getPendingVendors() {
 
     const pendingVendors = await prisma.vendor.findMany({
       where: {
-        isVerified: false,
+        verificationStatus: 'PENDING',
       },
       take: 5,
       orderBy: {

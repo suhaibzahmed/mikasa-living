@@ -1,5 +1,3 @@
-'use client'
-
 import {
   Card,
   CardContent,
@@ -8,13 +6,14 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Vendor, Plan } from '@prisma/client'
-import { Button } from '@/components/ui/button'
 
 type VendorDetailsProps = {
   vendor: Vendor & { plan: Plan }
 }
 
 import { Badge } from '@/components/ui/badge'
+import RejectVendorButton from './RejectVendorButton'
+import ApproveVendorButton from './ApproveVendorButton'
 
 const VendorDetails = ({ vendor }: VendorDetailsProps) => {
   return (
@@ -22,8 +21,16 @@ const VendorDetails = ({ vendor }: VendorDetailsProps) => {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle>{vendor.companyName}</CardTitle>
-          <Badge variant={vendor.isVerified ? 'default' : 'destructive'}>
-            {vendor.isVerified ? 'Verified' : 'Not Verified'}
+          <Badge
+            variant={
+              vendor.verificationStatus === 'VERIFIED'
+                ? 'default'
+                : vendor.verificationStatus === 'PENDING'
+                ? 'outline'
+                : 'destructive'
+            }
+          >
+            {vendor.verificationStatus}
           </Badge>
         </div>
         <CardDescription>Vendor Details</CardDescription>
@@ -63,8 +70,8 @@ const VendorDetails = ({ vendor }: VendorDetailsProps) => {
           </div>
         </div>
         <div className="flex space-x-4 pt-4">
-          <Button>Approve</Button>
-          <Button variant="destructive">Reject</Button>
+          <ApproveVendorButton vendorId={vendor.id} />
+          <RejectVendorButton vendorId={vendor.id} />
         </div>
       </CardContent>
     </Card>

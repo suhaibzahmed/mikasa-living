@@ -4,7 +4,8 @@ import { prisma } from '@/lib/db'
 import { VendorRegistrationData } from '@/schemas/vendor.schema'
 import { cookies } from 'next/headers'
 import { authAdmin } from '@/lib/firebase-admin'
-import { checkVendorAuth } from '../checkAuth'
+import { checkAdminAuth, checkVendorAuth } from '../checkAuth'
+import { revalidatePath } from 'next/cache'
 
 export const verifyVendor = async (phone: string) => {
   try {
@@ -97,6 +98,66 @@ export async function getVendorDetails() {
     }
 
     return { success: true, data: vendor }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
+
+export const rejectVendor = async (vendorId: string) => {
+  try {
+    await checkAdminAuth()
+    const vendor = await prisma.vendor.findUnique({
+      where: {
+        id: vendorId,
+      },
+    })
+
+    if (!vendor) {
+      return { success: false, message: 'Vendor not found' }
+    }
+
+    await prisma.vendor.update({
+      where: {
+        id: vendor.id,
+      },
+      data: {
+        verificationStatus: 'REJECTED',
+      },
+    })
+
+    revalidatePath('/admin/vendor-management/*')
+    return { success: true, message: 'Vendor rejected successfully' }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
+
+export const approveVendor = async (vendorId: string) => {
+  try {
+    await checkAdminAuth()
+    const vendor = await prisma.vendor.findUnique({
+      where: {
+        id: vendorId,
+      },
+    })
+
+    if (!vendor) {
+      return { success: false, message: 'Vendor not found' }
+    }
+
+    await prisma.vendor.update({
+      where: {
+        id: vendor.id,
+      },
+      data: {
+        verificationStatus: 'VERIFIED',
+      },
+    })
+
+    revalidatePath('/admin/vendor-management/*')
+    return { success: true, message: 'Vendor approved successfully' }
   } catch (error) {
     console.log(error)
     return { success: false, message: 'An unexpected error occurred.' }

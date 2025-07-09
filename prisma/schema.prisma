@@ -29,25 +29,31 @@ model User {
 }
 
 model Vendor {
-  id             String       @id @default(uuid())
-  firebaseUid    String       @unique
-  companyName    String
-  gstNumber      String
-  gstCertificate String?
-  phone          String
-  email          String       @unique
-  description    String?
-  services       String[]
-  plan           Plan         @relation(fields: [planId], references: [id])
-  planId         String
-  billingCycle   BillingCycle
-  isVerified     Boolean      @default(false)
-  profileImage   String?
-  photosUploaded Int          @default(0)
-  videosUploaded Int          @default(0)
-  reviews        Review[]
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
+  id                 String             @id @default(uuid())
+  firebaseUid        String             @unique
+  companyName        String
+  gstNumber          String
+  gstCertificate     String?
+  phone              String
+  email              String             @unique
+  description        String?
+  services           String[]
+  plan               Plan               @relation(fields: [planId], references: [id])
+  planId             String
+  billingCycle       BillingCycle
+  verificationStatus VerificationStatus @default(PENDING)
+  profileImage       String?
+  photosUploaded     Int                @default(0)
+  videosUploaded     Int                @default(0)
+  reviews            Review[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+enum VerificationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
 }
 
 enum BillingCycle {
