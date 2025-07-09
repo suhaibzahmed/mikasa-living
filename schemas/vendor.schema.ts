@@ -45,3 +45,21 @@ export const paymentSchema = z.object({
 })
 
 export type PaymentData = z.infer<typeof paymentSchema>
+
+export const updateVendorDetailsSchema = z.object({
+  companyName: z.string().min(2, {
+    message: 'Company name must be at least 2 characters.',
+  }),
+  gstNumber: z.string().min(1, {
+    message: 'GST number must be at least 1 characters.',
+  }),
+  phone: z.string().min(10, {
+    message: 'Phone number must be at least 10 characters.',
+  }),
+  email: z.string().email({
+    message: 'Invalid email address.',
+  }),
+  description: z.string().optional(),
+})
+
+export type UpdateVendorDetailsData = z.infer<typeof updateVendorDetailsSchema>

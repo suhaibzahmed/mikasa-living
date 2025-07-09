@@ -45,6 +45,7 @@ model Vendor {
   profileImage       String?
   photos             Photo[]
   videos             Video[]
+  threeDimensional   ThreeDimensional[]
   reviews            Review[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
@@ -84,6 +85,15 @@ model Photo {
 }
 
 model Video {
+  id        String   @id @default(uuid())
+  url       String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  vendorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ThreeDimensional {
   id        String   @id @default(uuid())
   url       String
   vendor    Vendor   @relation(fields: [vendorId], references: [id])

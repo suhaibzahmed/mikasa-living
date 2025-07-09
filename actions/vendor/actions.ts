@@ -6,6 +6,9 @@ import { cookies } from 'next/headers'
 import { authAdmin } from '@/lib/firebase-admin'
 import { checkVendorAuth } from '../checkAuth'
 import { createSession } from '../session'
+import { revalidatePath } from 'next/cache'
+import { updateVendorDetailsSchema } from '@/schemas/vendor.schema'
+import { z } from 'zod'
 
 export const verifyVendor = async (phone: string) => {
   try {
@@ -106,5 +109,36 @@ export async function getVendorDetails() {
   } catch (error) {
     console.log(error)
     return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
+
+export async function updateVendorDetails(
+  formData: z.infer<typeof updateVendorDetailsSchema>
+) {
+  try {
+    const auth = await checkVendorAuth()
+    const validatedData = updateVendorDetailsSchema.safeParse(formData)
+
+    if (!validatedData.success) {
+      throw new Error(validatedData.error.errors[0].message)
+    }
+
+    await prisma.vendor.update({
+      where: {
+        firebaseUid: auth.uid,
+      },
+      data: validatedData.data,
+    })
+    revalidatePath('/vendor/profile')
+    return {
+      success: true,
+      message: 'Details updated successfully',
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      success: false,
+      message: 'Something went wrong',
+    }
   }
 }
