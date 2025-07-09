@@ -7,12 +7,19 @@ import { Separator } from '@/components/ui/separator'
 import ThemeToggle from '@/components/ThemeToggle'
 import AdminSidebar from './_components/AdminSidebar'
 import CurrentPageHeader from '@/components/common/sidebar/CurrentPageHeader'
+import { redirect } from 'next/navigation'
+import { checkAdminAuth } from '@/actions/checkAuth'
 
-const AdminLayout = ({
+const AdminLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) => {
+  const admin = await checkAdminAuth()
+  if (!admin) {
+    redirect('/admin/sign-in')
+  }
+
   return (
     <main className="min-h-svh flex">
       <SidebarProvider>

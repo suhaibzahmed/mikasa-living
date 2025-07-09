@@ -27,22 +27,31 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useSidebar } from '@/components/ui/sidebar'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { logout } from '@/actions/admin/actions'
+import { getAdmin, logout } from '@/actions/admin/actions'
+import { Admin } from '@prisma/client'
+import { useEffect, useState } from 'react'
 
 const AdminSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
   const { isMobile } = useSidebar()
   const router = useRouter()
+  const [admin, setAdmin] = useState<Partial<Admin>>({
+    email: 'admin@example.com',
+  })
+
+  useEffect(() => {
+    const fetchAdminDetails = async () => {
+      const res = await getAdmin()
+      if (res) {
+        setAdmin(res)
+      }
+    }
+    fetchAdminDetails()
+  }, [])
 
   const handleLogout = async () => {
     await logout()
     router.push('/admin/sign-in')
     toast.success('Logged out successfully')
-  }
-
-  const user = {
-    name: 'Admin User',
-    email: 'admin@example.com',
-    image: '/avatars/shadcn.jpg',
   }
 
   return (
@@ -94,13 +103,13 @@ const AdminSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
                       src="https://github.com/shadcn.png"
-                      alt={user.name}
+                      alt={admin.email?.charAt(0).toUpperCase()}
                     />
-                    <AvatarFallback className="rounded-lg">AD</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">A</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.name}</span>
-                    <span className="truncate text-xs">{user.email}</span>
+                    <span className="truncate font-medium">Admin</span>
+                    <span className="truncate text-xs">{admin.email}</span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -116,13 +125,13 @@ const AdminSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage
                         src="https://github.com/shadcn.png"
-                        alt={user.name}
+                        alt={admin.email?.charAt(0).toUpperCase()}
                       />
-                      <AvatarFallback className="rounded-lg">AD</AvatarFallback>
+                      <AvatarFallback className="rounded-lg">A</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">{user.name}</span>
-                      <span className="truncate text-xs">{user.email}</span>
+                      <span className="truncate font-medium">Admin</span>
+                      <span className="truncate text-xs">{admin.email}</span>
                     </div>
                   </div>
                 </DropdownMenuLabel>

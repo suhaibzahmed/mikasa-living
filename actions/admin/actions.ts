@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/db'
 import { getErrorMessage } from '@/lib/error'
 import { authAdmin } from '@/lib/firebase-admin'
+import { verifySession } from '@/lib/session'
 import { cookies } from 'next/headers'
 
 export const verifyAdminAndCreateSession = async (idToken: string) => {
@@ -57,5 +58,23 @@ export const logout = async () => {
   } catch (error) {
     console.log(error)
     return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
+
+export const getAdmin = async () => {
+  try {
+    const session = await verifySession()
+    if (!session) {
+      return null
+    }
+
+    const admin = await prisma.admin.findUnique({
+      where: { firebaseUid: session.uid },
+    })
+
+    return admin
+  } catch (error) {
+    console.error('Failed to get admin', error)
+    return null
   }
 }
