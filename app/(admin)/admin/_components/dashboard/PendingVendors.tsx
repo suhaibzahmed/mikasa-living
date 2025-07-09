@@ -2,56 +2,44 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { getPendingVendors } from '@/actions/vendor/fetch.actions'
 
-const pendingVendors = [
-  {
-    id: '1',
-    name: 'Vendor 1',
-    email: 'vendor1@example.com',
-    image: '',
-  },
-  {
-    id: '2',
-    name: 'Vendor 2',
-    email: 'vendor2@example.com',
-    image: '',
-  },
-  {
-    id: '3',
-    name: 'Vendor 3',
-    email: 'vendor3@example.com',
-    image: '',
-  },
-  {
-    id: '4',
-    name: 'Vendor 4',
-    email: 'vendor4@example.com',
-    image: '',
-  },
-  {
-    id: '5',
-    name: 'Vendor 5',
-    email: 'vendor5@example.com',
-    image: '',
-  },
-]
+const PendingVendors = async () => {
+  const pendingVendors = await getPendingVendors()
 
-const PendingVendors = () => {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Pending Vendor Approvals</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-8">
-        {pendingVendors.map((vendor) => (
-          <div key={vendor.id} className="flex items-center gap-4">
-            <Avatar className="hidden h-9 w-9 sm:flex">
-              <AvatarImage src={vendor.image} alt={vendor.name} />
-              <AvatarFallback>{vendor.name[0].toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <div className="grid gap-1">
-              <p className="text-sm font-medium leading-none">{vendor.name}</p>
-              <p className="text-sm text-muted-foreground">{vendor.email}</p>
+        {pendingVendors.data.map((vendor) => (
+          <div key={vendor.id} className="flex items-center justify-between">
+            <div className="flex gap-4">
+              <Avatar className="hidden h-9 w-9 sm:flex">
+                <AvatarImage
+                  src={
+                    vendor.profileImage || 'src="https://github.com/shadcn.png"'
+                  }
+                  alt={vendor.companyName}
+                />
+                <AvatarFallback>
+                  {vendor.companyName[0].toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div className="grid gap-1">
+                <p className="text-sm font-medium leading-none">
+                  {vendor.companyName}
+                </p>
+                <p className="text-sm text-muted-foreground">{vendor.email}</p>
+              </div>
+            </div>
+            <div>
+              <Button asChild variant="outline">
+                <Link href={`/admin/vendor-management/${vendor.id}`}>
+                  Review
+                </Link>
+              </Button>
             </div>
           </div>
         ))}

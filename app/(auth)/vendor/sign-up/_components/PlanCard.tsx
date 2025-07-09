@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Check } from 'lucide-react'
+import { Check, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const planStyles: { [key: string]: { bg: string; ring: string } } = {
@@ -60,15 +60,22 @@ const PlanCard = ({ plan, selectedPlanId, onSelect }: PlanCardProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <ul className="space-y-2">
-          {plan.features.map((feature, i) => (
-            <li
-              key={i}
-              className="flex items-center gap-x-2 dark:text-gray-200"
-            >
+          <li className="flex items-center gap-x-2 dark:text-gray-200">
+            <Check className="h-5 w-5 text-green-500" />
+            {plan.photoLimit < 0 ? 'Unlimited' : plan.photoLimit} photos
+          </li>
+          <li className="flex items-center gap-x-2 dark:text-gray-200">
+            <Check className="h-5 w-5 text-green-500" />
+            {plan.videoLimit < 0 ? 'Unlimited' : plan.videoLimit} videos
+          </li>
+          <li className="flex items-center gap-x-2 dark:text-gray-200">
+            {plan.has360View ? (
               <Check className="h-5 w-5 text-green-500" />
-              <span>{feature}</span>
-            </li>
-          ))}
+            ) : (
+              <X className="h-5 w-5 text-red-500" />
+            )}
+            {plan.has360View} 360 degree
+          </li>
         </ul>
       </CardContent>
     </Card>

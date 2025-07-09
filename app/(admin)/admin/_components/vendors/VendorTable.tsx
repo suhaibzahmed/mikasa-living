@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { VENDOR_PAGE_SIZE } from '@/constants/config'
+import { useEffect, useState } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -19,6 +22,7 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Vendor as PrismaVendor, Plan } from '@prisma/client'
+import { PaginationWithLinks } from '@/components/ui/pagination-with-links'
 
 type Vendor = PrismaVendor & {
   plan: Plan
@@ -26,25 +30,47 @@ type Vendor = PrismaVendor & {
 
 interface VendorTableProps {
   initialVendors: Vendor[]
+  currentPage: number
+  totalCount: number
 }
 
-const VendorTable = ({ initialVendors }: VendorTableProps) => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [verifiedFilter, setVerifiedFilter] = useState('all')
-  const [planFilter, setPlanFilter] = useState('all')
+const VendorTable = ({
+  initialVendors,
+  currentPage,
+  totalCount,
+}: VendorTableProps) => {
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
 
-  const filteredVendors = initialVendors
-    .filter((vendor) =>
-      vendor.companyName.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .filter((vendor) => {
-      if (verifiedFilter === 'all') return true
-      return vendor.isVerified === (verifiedFilter === 'verified')
-    })
-    .filter((vendor) => {
-      if (planFilter === 'all') return true
-      return vendor.plan.type === planFilter
-    })
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('vendor') || '')
+  const [verifiedFilter, setVerifiedFilter] = useState(
+    searchParams.get('isVerified') || 'all'
+  )
+  const [planFilter, setPlanFilter] = useState(
+    searchParams.get('plan') || 'all'
+  )
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (searchTerm) {
+      params.set('vendor', searchTerm)
+    } else {
+      params.delete('vendor')
+    }
+    if (verifiedFilter !== 'all') {
+      params.set('isVerified', verifiedFilter)
+    } else {
+      params.delete('isVerified')
+    }
+    if (planFilter !== 'all') {
+      params.set('plan', planFilter)
+    } else {
+      params.delete('plan')
+    }
+    params.set('page', '1') // Reset to first page on filter change
+    router.replace(`${pathname}?${params.toString()}`)
+  }, [searchTerm, verifiedFilter, planFilter, router, pathname, searchParams])
 
   return (
     <div className="space-y-4">
@@ -60,7 +86,7 @@ const VendorTable = ({ initialVendors }: VendorTableProps) => {
             <SelectValue placeholder="Filter by verification" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Verification</SelectItem>
+            <SelectItem value="all">All</SelectItem>
             <SelectItem value="verified">Verified</SelectItem>
             <SelectItem value="unverified">Unverified</SelectItem>
           </SelectContent>
@@ -79,6 +105,9 @@ const VendorTable = ({ initialVendors }: VendorTableProps) => {
         </Select>
       </div>
       <Table>
+        <TableCaption>
+          Found {totalCount} vendor{totalCount > 1 ? 's' : ''}
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>Company Name</TableHead>
@@ -91,7 +120,7 @@ const VendorTable = ({ initialVendors }: VendorTableProps) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredVendors.map((vendor) => (
+          {initialVendors.map((vendor) => (
             <TableRow key={vendor.id}>
               <TableCell>{vendor.companyName}</TableCell>
               <TableCell>{vendor.phone}</TableCell>
@@ -113,6 +142,11 @@ const VendorTable = ({ initialVendors }: VendorTableProps) => {
           ))}
         </TableBody>
       </Table>
+      <PaginationWithLinks
+        page={currentPage}
+        pageSize={VENDOR_PAGE_SIZE}
+        totalCount={totalCount}
+      />
     </div>
   )
 }

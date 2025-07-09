@@ -60,7 +60,7 @@ export const createNewVendor = async (
 
 export async function getPlans() {
   try {
-    const plans = await prisma.plan.findMany()
+    const plans = await prisma.plan.findMany({ orderBy: { monthly: 'asc' } })
     return { success: true, data: plans }
   } catch (error) {
     console.log(error)
