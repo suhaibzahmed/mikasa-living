@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/card'
 import { Check, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
 
 const planStyles: { [key: string]: { bg: string; ring: string } } = {
   GOLD: {
@@ -40,7 +41,7 @@ const PlanCard = ({ plan, selectedPlanId, onSelect }: PlanCardProps) => {
       key={plan.id}
       onClick={() => onSelect(plan.id)}
       className={cn(
-        'cursor-pointer transition-all border-0',
+        'cursor-pointer transition-all border-0 relative',
         planStyles[plan.type]?.bg || 'bg-gray-100 dark:bg-gray-800/40',
         {
           'ring-2 ring-offset-2': selectedPlanId === plan.id,
@@ -49,6 +50,9 @@ const PlanCard = ({ plan, selectedPlanId, onSelect }: PlanCardProps) => {
         }
       )}
     >
+      {plan.isMostPopular && (
+        <Badge className="absolute top-0 right-0">Most Popular</Badge>
+      )}
       <CardHeader>
         <CardTitle className="dark:text-gray-50">{plan.type}</CardTitle>
         <CardDescription className="dark:text-gray-300">

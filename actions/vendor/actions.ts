@@ -5,6 +5,7 @@ import { VendorRegistrationData } from '@/schemas/vendor.schema'
 import { cookies } from 'next/headers'
 import { authAdmin } from '@/lib/firebase-admin'
 import { checkVendorAuth } from '../checkAuth'
+import { createSession } from '../session'
 
 export const verifyVendor = async (phone: string) => {
   try {
@@ -44,13 +45,17 @@ export const verifyOtp = async (idToken: string) => {
   }
 }
 
-export const createNewVendor = async (
-  data: VendorRegistrationData & { firebaseUid: string }
-) => {
+export const createVendorAndSession = async ({
+  idToken,
+  ...data
+}: VendorRegistrationData & { firebaseUid: string; idToken: string }) => {
   try {
     const vendor = await prisma.vendor.create({
       data,
     })
+
+    await createSession({ idToken, role: 'vendor' })
+
     return { success: true, data: vendor }
   } catch (error) {
     console.log(error)

@@ -43,8 +43,8 @@ model Vendor {
   billingCycle       BillingCycle
   verificationStatus VerificationStatus @default(PENDING)
   profileImage       String?
-  photosUploaded     Int                @default(0)
-  videosUploaded     Int                @default(0)
+  photos             Photo[]
+  videos             Video[]
   reviews            Review[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
@@ -70,6 +70,24 @@ model Review {
   vendorId  String?
   comment   String
   rating    Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Photo {
+  id        String   @id @default(uuid())
+  url       String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  vendorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Video {
+  id        String   @id @default(uuid())
+  url       String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  vendorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

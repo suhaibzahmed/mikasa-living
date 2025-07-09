@@ -6,7 +6,7 @@ import { Form } from '@/components/ui/form'
 import { useVendorStore } from '@/lib/store/vendorStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { createNewVendor } from '@/actions/vendor/actions'
+import { createVendorAndSession } from '@/actions/vendor/actions'
 import { toast } from 'sonner'
 import {
   paymentSchema,
@@ -42,13 +42,14 @@ const PaymentForm = () => {
       }
 
       await new Promise((resolve) => setTimeout(resolve, 3000))
-      if (!vendorData.firebaseUid) {
+      if (!vendorData.firebaseUid || !vendorData.idToken) {
         toast.error('Something went wrong. Please try again.')
         return
       }
-      const result = await createNewVendor({
+      const result = await createVendorAndSession({
         ...validationResult.data,
         firebaseUid: vendorData.firebaseUid,
+        idToken: vendorData.idToken,
       })
       if (result.success) {
         toast.success('Vendor created successfully!')
@@ -56,23 +57,6 @@ const PaymentForm = () => {
       } else {
         toast.error(result.message)
         return
-      }
-
-      if (!vendorData.idToken) {
-        toast.error('Something went wrong. Please try again.')
-        return
-      }
-
-      const response = await fetch('/api/auth/session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ idToken: vendorData.idToken }),
-      })
-
-      if (!response.ok) {
-        toast.error('Failed to create session.')
       }
     } catch (error) {
       toast.error('An unexpected error occurred. Please try again.')
