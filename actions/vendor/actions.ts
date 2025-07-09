@@ -58,27 +58,6 @@ export const createNewVendor = async (
   }
 }
 
-export const createSession = async (idToken: string) => {
-  try {
-    const sessionCookie = await authAdmin.createSessionCookie(idToken, {
-      expiresIn: 60 * 60 * 24 * 5 * 1000, // 5 days
-    })
-
-    const cookieStore = await cookies()
-    cookieStore.set('session', sessionCookie, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 5, // 5 days
-      path: '/',
-    })
-
-    return { success: true }
-  } catch (error) {
-    console.log(error)
-    return { success: false, message: 'An unexpected error occurred.' }
-  }
-}
-
 export async function getPlans() {
   try {
     const plans = await prisma.plan.findMany()

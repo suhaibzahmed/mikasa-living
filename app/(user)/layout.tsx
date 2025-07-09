@@ -6,12 +6,20 @@ import {
 import { Separator } from '@/components/ui/separator'
 import ThemeToggle from '@/components/ThemeToggle'
 import UserSidebar from './_components/UserSidebar'
+import { verifySession } from '@/lib/session'
+import { redirect } from 'next/navigation'
 
-const UserLayout = ({
+const UserLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) => {
+  const session = await verifySession()
+  console.log('🚀 ~ session:', session)
+
+  if (!session) {
+    redirect('/user/sign-in')
+  }
   return (
     <main className="min-h-svh flex">
       <SidebarProvider>

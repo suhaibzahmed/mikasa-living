@@ -6,7 +6,6 @@ import {
   History,
   User,
   Settings,
-  LogOut,
   CreditCard,
 } from 'lucide-react'
 
@@ -34,7 +33,6 @@ export const adminSidebarMenus = [
 export const adminNavUserItems = [
   { id: 1, name: 'Profile', icon: User, href: '/admin/profile' },
   { id: 2, name: 'Settings', icon: Settings, href: '/admin/settings' },
-  { id: 3, name: 'Logout', icon: LogOut, href: '/logout' },
 ]
 
 export const vendorSidebarMenus = [
@@ -73,7 +71,6 @@ export const vendorNavUserItems = [
   },
   { id: 2, name: 'Profile', icon: User, href: '/vendor/profile' },
   { id: 3, name: 'Settings', icon: Settings, href: '/vendor/settings' },
-  { id: 4, name: 'Logout', icon: LogOut, href: '/logout' },
 ]
 
 export const userSidebarMenus = [
@@ -85,5 +82,4 @@ export const userSidebarMenus = [
 export const userNavUserItems = [
   { id: 1, name: 'Profile', icon: User, href: '/profile' },
   { id: 2, name: 'Settings', icon: Settings, href: '/settings' },
-  { id: 3, name: 'Logout', icon: LogOut, href: '/logout' },
 ]

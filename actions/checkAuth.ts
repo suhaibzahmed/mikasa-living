@@ -23,7 +23,7 @@ export const checkVendorAuth = async () => {
 export const checkUserAuth = async () => {
   const session = await verifySession()
   if (!session) {
-    redirect('/user/sign-in')
+    return redirect('/user/sign-in')
     //   throw new AuthError('Not authenticated or session expired')
   }
   return session

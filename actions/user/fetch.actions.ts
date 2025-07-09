@@ -1,43 +1,25 @@
-'server only'
+'use server'
 
 import { prisma } from '@/lib/db'
-import { getErrorMessage } from '@/lib/error'
+import { checkUserAuth } from '../checkAuth'
 
-export async function getUsers(params: {
-  page?: number
-  pageSize?: number
-  sort?: string
-  filter?: string
-}) {
-  const { page = 1, pageSize = 10, sort, filter } = params
-
+export async function getUserDetails() {
   try {
-    const users = await prisma.user.findMany({
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-      where: filter ? { name: { contains: filter, mode: 'insensitive' } } : {},
-      orderBy: sort
-        ? { [sort.split(':')[0]]: sort.split(':')[1] }
-        : { createdAt: 'desc' },
-    })
+    const session = await checkUserAuth()
 
-    const totalUsers = await prisma.user.count({
-      where: filter ? { name: { contains: filter, mode: 'insensitive' } } : {},
-    })
-
-    return {
-      success: true,
-      data: {
-        users,
-        pagination: {
-          page,
-          pageSize,
-          total: totalUsers,
-          totalPages: Math.ceil(totalUsers / pageSize),
-        },
+    const user = await prisma.user.findUnique({
+      where: {
+        firebaseUid: session.uid,
       },
+    })
+
+    if (!user) {
+      return { success: false, message: 'User not found' }
     }
+
+    return { success: true, data: user }
   } catch (error) {
-    return { success: false, message: getErrorMessage(error) }
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
   }
 }

@@ -29,20 +29,32 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { logout } from '@/actions/user/actions'
 
+import { User } from '@prisma/client'
+import { useEffect, useState } from 'react'
+import { getUserDetails } from '@/actions/user/fetch.actions'
+
 const UserSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
   const { isMobile } = useSidebar()
   const router = useRouter()
+  const [user, setUser] = useState<Partial<User>>({
+    name: 'User Name',
+    email: 'vendor@example.com',
+  })
+
+  useEffect(() => {
+    const fetchVendorDetails = async () => {
+      const res = await getUserDetails()
+      if (res.success && res.data) {
+        setUser(res.data)
+      }
+    }
+    fetchVendorDetails()
+  }, [])
 
   const handleLogout = async () => {
     await logout()
     router.push('/user/sign-in')
     toast.success('Logged out successfully')
-  }
-
-  const user = {
-    name: 'User Name',
-    email: 'user@example.com',
-    image: '/avatars/shadcn.jpg',
   }
 
   return (
@@ -96,7 +108,9 @@ const UserSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                       src="https://github.com/shadcn.png"
                       alt={user.name}
                     />
-                    <AvatarFallback className="rounded-lg">US</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">
+                      {user.name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{user.name}</span>
@@ -118,7 +132,9 @@ const UserSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                         src="https://github.com/shadcn.png"
                         alt={user.name}
                       />
-                      <AvatarFallback className="rounded-lg">US</AvatarFallback>
+                      <AvatarFallback className="rounded-lg">
+                        {user.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-medium">{user.name}</span>

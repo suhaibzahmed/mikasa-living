@@ -1,7 +1,6 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { getErrorMessage } from '@/lib/error'
 import { UserSignUpData } from '@/schemas/user.schema'
 import { cookies } from 'next/headers'
 
@@ -12,11 +11,13 @@ export const createUser = async (data: UserSignUpData) => {
         name: data.name,
         phone: data.phone,
         email: data.email,
+        firebaseUid: data.firebaseUid || '',
       },
     })
     return { success: true, data: user }
   } catch (error) {
-    return { success: false, message: getErrorMessage(error) }
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
   }
 }
 
@@ -27,9 +28,13 @@ export const verifyUser = async (phone: string) => {
         phone,
       },
     })
+    if (!user) {
+      return { success: false, message: 'User not found. Please sign up.' }
+    }
     return { success: true, data: user }
   } catch (error) {
-    return { success: false, message: getErrorMessage(error) }
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
   }
 }
 
