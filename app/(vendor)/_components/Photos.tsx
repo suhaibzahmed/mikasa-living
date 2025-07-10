@@ -1,5 +1,6 @@
 import { Photo } from '@prisma/client'
 import Image from 'next/image'
+import { DeletePhotoButton } from './DeletePhotoButton'
 
 const Photos = ({ photos }: { photos: Photo[] }) => {
   return (
@@ -18,6 +19,7 @@ const Photos = ({ photos }: { photos: Photo[] }) => {
               fill
               className="object-cover rounded-md"
             />
+            <DeletePhotoButton photoId={photo.id} />
           </div>
         ))}
       </div>

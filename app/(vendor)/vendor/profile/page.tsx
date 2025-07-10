@@ -19,7 +19,7 @@ const VendorProfilePage = async () => {
           <BusinessDetails vendorDetails={vendorDetails} />
         </TabsContent>
         <TabsContent value="portfolio">
-          <Portfolio />
+          <Portfolio vendor={vendorDetails} />
         </TabsContent>
         <TabsContent value="availability">
           <Availability />

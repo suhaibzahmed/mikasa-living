@@ -1,12 +1,14 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import VendorVideos from './UploadPhoto'
+import VendorVideos from './VendorVideos'
 import UploadPhoto from './UploadPhoto'
 import Photos from './Photos'
-import { getCompleteVendorDetails } from '@/actions/vendor/fetch.actions'
+import { Vendor, Plan, Photo } from '@prisma/client'
 
-const Portfolio = async () => {
-  const vendor = await getCompleteVendorDetails()
+type PortFolioProps = {
+  vendor: (Vendor & { plan: Plan; photos: Photo[] }) | null
+}
 
+const Portfolio = ({ vendor }: PortFolioProps) => {
   return (
     <div>
       <Tabs

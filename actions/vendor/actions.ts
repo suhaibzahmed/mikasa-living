@@ -9,7 +9,7 @@ import { createSession } from '../session'
 import { revalidatePath } from 'next/cache'
 import { updateVendorDetailsSchema } from '@/schemas/vendor.schema'
 import { z } from 'zod'
-import { uploadImageFile } from '@/lib/supabase'
+import { deleteImageFile, uploadImageFile } from '@/lib/supabase'
 import { imageSchema } from '@/schemas/vendor.schema'
 
 export const verifyVendor = async (phone: string) => {
@@ -172,12 +172,26 @@ export async function uploadVendorPhoto(formData: FormData) {
       where: {
         firebaseUid: auth.uid,
       },
+      include: {
+        plan: true,
+        photos: true,
+      },
     })
 
     if (!vendor) {
       return {
         success: false,
         message: 'Vendor not found.',
+      }
+    }
+
+    const photoLimit = vendor.plan.photoLimit
+    const photosUploaded = vendor.photos.length
+
+    if (photosUploaded >= photoLimit) {
+      return {
+        success: false,
+        message: 'You have reached your photo upload limit.',
       }
     }
 
@@ -192,6 +206,54 @@ export async function uploadVendorPhoto(formData: FormData) {
     return {
       success: true,
       message: 'Image uploaded successfully',
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred.',
+    }
+  }
+}
+export async function deleteVendorPhoto(photoId: string) {
+  try {
+    const auth = await checkVendorAuth()
+
+    const photo = await prisma.photo.findUnique({
+      where: {
+        id: photoId,
+        vendor: {
+          firebaseUid: auth.uid,
+        },
+      },
+    })
+
+    if (!photo) {
+      return {
+        success: false,
+        message: 'Photo not found or you do not have permission to delete it.',
+      }
+    }
+
+    const deleted = await deleteImageFile(photo.url)
+
+    if (!deleted) {
+      return {
+        success: false,
+        message: 'Failed to delete image from storage. Please try again.',
+      }
+    }
+
+    await prisma.photo.delete({
+      where: {
+        id: photoId,
+      },
+    })
+
+    revalidatePath('/vendor/profile')
+    return {
+      success: true,
+      message: 'Image deleted successfully',
     }
   } catch (error) {
     console.log(error)

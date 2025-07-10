@@ -12,11 +12,11 @@ import FormInput from '@/components/common/form/FormInput'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import FormTextArea from '@/components/common/form/FormTextArea'
 
-type BusinessDetailsProps = {
+const BusinessDetails = ({
+  vendorDetails,
+}: {
   vendorDetails: Vendor | null
-}
-
-const BusinessDetails = ({ vendorDetails }: BusinessDetailsProps) => {
+}) => {
   const form = useForm<z.infer<typeof updateVendorDetailsSchema>>({
     resolver: zodResolver(updateVendorDetailsSchema),
     defaultValues: {
