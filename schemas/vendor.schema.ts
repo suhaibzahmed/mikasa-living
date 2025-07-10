@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from '@/constants/config'
 
 export const vendorRegistrationSchema = z.object({
   firebaseUid: z.string().optional(),
@@ -63,3 +64,15 @@ export const updateVendorDetailsSchema = z.object({
 })
 
 export type UpdateVendorDetailsData = z.infer<typeof updateVendorDetailsSchema>
+
+export const imageSchema = z.object({
+  image: z
+    .instanceof(File)
+    .refine((file) => file?.size <= MAX_FILE_SIZE, `Max image size is 5MB.`)
+    .refine(
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+      'Only .jpg, .jpeg, .png and .webp formats are supported.'
+    ),
+})
+
+export type ImageData = z.infer<typeof imageSchema>

@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 
 export const checkVendorAuth = async () => {
   const session = await verifySession()
-  console.log('🚀 ~ checkVendorAuth ~ session:', session)
+  // console.log('🚀 ~ checkVendorAuth ~ session:', session)
   if (!session) {
     redirect('/vendor/sign-in')
   }
@@ -14,7 +14,7 @@ export const checkVendorAuth = async () => {
 
 export const checkUserAuth = async () => {
   const session = await verifySession()
-  console.log('🚀 ~ checkUserAuth ~ session:', session)
+  // console.log('🚀 ~ checkUserAuth ~ session:', session)
   if (!session) {
     return redirect('/user/sign-in')
   }
@@ -23,7 +23,7 @@ export const checkUserAuth = async () => {
 
 export const checkAdminAuth = async () => {
   const session = await verifySession()
-  console.log('🚀 ~ checkAdminAuth ~ session:', session)
+  // console.log('🚀 ~ checkAdminAuth ~ session:', session)
   if (!session) {
     redirect('/admin/sign-in')
   }

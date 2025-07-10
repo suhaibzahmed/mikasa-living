@@ -9,6 +9,8 @@ import { createSession } from '../session'
 import { revalidatePath } from 'next/cache'
 import { updateVendorDetailsSchema } from '@/schemas/vendor.schema'
 import { z } from 'zod'
+import { uploadImageFile } from '@/lib/supabase'
+import { imageSchema } from '@/schemas/vendor.schema'
 
 export const verifyVendor = async (phone: string) => {
   try {
@@ -139,6 +141,63 @@ export async function updateVendorDetails(
     return {
       success: false,
       message: 'Something went wrong',
+    }
+  }
+}
+
+export async function uploadVendorPhoto(formData: FormData) {
+  try {
+    const auth = await checkVendorAuth()
+    const image = formData.get('image') as File
+
+    const validatedData = imageSchema.safeParse({ image })
+
+    if (!validatedData.success) {
+      return {
+        success: false,
+        message: validatedData.error.errors[0].message,
+      }
+    }
+
+    const imageUrl = await uploadImageFile(validatedData.data.image)
+
+    if (!imageUrl) {
+      return {
+        success: false,
+        message: 'Failed to upload image. Please try again.',
+      }
+    }
+
+    const vendor = await prisma.vendor.findUnique({
+      where: {
+        firebaseUid: auth.uid,
+      },
+    })
+
+    if (!vendor) {
+      return {
+        success: false,
+        message: 'Vendor not found.',
+      }
+    }
+
+    await prisma.photo.create({
+      data: {
+        url: imageUrl,
+        vendorId: vendor.id,
+      },
+    })
+
+    revalidatePath('/vendor/profile')
+    return {
+      success: true,
+      message: 'Image uploaded successfully',
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred.',
     }
   }
 }
