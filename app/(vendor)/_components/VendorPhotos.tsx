@@ -1,9 +1,7 @@
-import { getVendorById } from '@/actions/vendor/fetch.actions'
 import VerificationPending from './VerificationPending'
+import { Vendor } from '@prisma/client'
 
-const VendorPhotos = async () => {
-  const vendor = await getVendorById()
-
+const VendorPhotos = async ({ vendor }: { vendor: Vendor | null }) => {
   if (vendor?.verificationStatus !== 'VERIFIED') {
     return <VerificationPending />
   }

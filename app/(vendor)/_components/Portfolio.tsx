@@ -1,13 +1,11 @@
-import { Photo } from '@prisma/client'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import VendorPhotos from './VendorPhotos'
 import VendorVideos from './VendorVideos'
-
-type PortfolioProps = {
-  vendorPhotos: { photos: Photo[] } | null
-}
+import { getVendorById } from '@/actions/vendor/fetch.actions'
 
 const Portfolio = async () => {
+  const vendor = await getVendorById()
+
   return (
     <div>
       <Tabs
@@ -20,10 +18,10 @@ const Portfolio = async () => {
           <TabsTrigger value="videos">Videos</TabsTrigger>
         </TabsList>
         <TabsContent value="photos">
-          <VendorPhotos />
+          <VendorPhotos vendor={vendor} />
         </TabsContent>
         <TabsContent value="videos">
-          <VendorVideos />
+          <VendorVideos vendor={vendor} />
         </TabsContent>
       </Tabs>
     </div>
