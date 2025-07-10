@@ -2,10 +2,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import BusinessDetails from '../../_components/BusinessDetails'
 import Portfolio from '../../_components/Portfolio'
 import Availability from '../../_components/Availability'
-import { getVendorById } from '@/actions/vendor/fetch.actions'
+import { getCompleteVendorDetails } from '@/actions/vendor/fetch.actions'
 
 const VendorProfilePage = async () => {
-  const vendorDetails = await getVendorById()
+  const vendorDetails = await getCompleteVendorDetails()
 
   return (
     <div>
