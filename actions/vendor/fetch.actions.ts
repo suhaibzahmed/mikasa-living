@@ -13,6 +13,7 @@ export async function getCompleteVendorDetails() {
       include: {
         plan: true,
         photos: true,
+        videos: true,
       },
     })
     return vendor

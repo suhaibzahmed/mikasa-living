@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { VendorRegistrationData } from '@/schemas/vendor.schema'
+import { VendorRegistrationData, videoSchema } from '@/schemas/vendor.schema'
 import { cookies } from 'next/headers'
 import { authAdmin } from '@/lib/firebase-admin'
 import { checkVendorAuth } from '../checkAuth'
@@ -9,7 +9,12 @@ import { createSession } from '../session'
 import { revalidatePath } from 'next/cache'
 import { updateVendorDetailsSchema } from '@/schemas/vendor.schema'
 import { z } from 'zod'
-import { deleteImageFile, uploadImageFile } from '@/lib/supabase'
+import {
+  deleteImageFile,
+  deleteVideoFile,
+  uploadImageFile,
+  uploadVideoFile,
+} from '@/lib/supabase'
 import { imageSchema } from '@/schemas/vendor.schema'
 
 export const verifyVendor = async (phone: string) => {
@@ -254,6 +259,126 @@ export async function deleteVendorPhoto(photoId: string) {
     return {
       success: true,
       message: 'Image deleted successfully',
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred.',
+    }
+  }
+}
+
+export async function uploadVendorVideo(formData: FormData) {
+  try {
+    const auth = await checkVendorAuth()
+    const video = formData.get('video') as File
+
+    const validatedData = videoSchema.safeParse({ video })
+
+    if (!validatedData.success) {
+      return {
+        success: false,
+        message: validatedData.error.errors[0].message,
+      }
+    }
+
+    const vendor = await prisma.vendor.findUnique({
+      where: {
+        firebaseUid: auth.uid,
+      },
+      include: {
+        plan: true,
+        videos: true,
+      },
+    })
+
+    if (!vendor) {
+      return {
+        success: false,
+        message: 'Vendor not found.',
+      }
+    }
+
+    const videoLimit = vendor.plan.videoLimit
+    const videosUploaded = vendor.videos.length
+
+    if (videosUploaded >= videoLimit) {
+      return {
+        success: false,
+        message: 'You have reached your video upload limit.',
+      }
+    }
+
+    const videoUrl = await uploadVideoFile(validatedData.data.video)
+
+    if (!videoUrl) {
+      return {
+        success: false,
+        message: 'Failed to upload video. Please try again.',
+      }
+    }
+
+    await prisma.video.create({
+      data: {
+        url: videoUrl,
+        vendorId: vendor.id,
+      },
+    })
+
+    revalidatePath('/vendor/profile')
+    return {
+      success: true,
+      message: 'Video uploaded successfully',
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred.',
+    }
+  }
+}
+
+export async function deleteVendorVideo(videoId: string) {
+  try {
+    const auth = await checkVendorAuth()
+
+    const video = await prisma.video.findUnique({
+      where: {
+        id: videoId,
+        vendor: {
+          firebaseUid: auth.uid,
+        },
+      },
+    })
+
+    if (!video) {
+      return {
+        success: false,
+        message: 'Video not found or you do not have permission to delete it.',
+      }
+    }
+
+    const deleted = await deleteVideoFile(video.url)
+
+    if (!deleted) {
+      return {
+        success: false,
+        message: 'Failed to delete video from storage. Please try again.',
+      }
+    }
+
+    await prisma.video.delete({
+      where: {
+        id: videoId,
+      },
+    })
+
+    revalidatePath('/vendor/profile')
+    return {
+      success: true,
+      message: 'Video deleted successfully',
     }
   } catch (error) {
     console.log(error)

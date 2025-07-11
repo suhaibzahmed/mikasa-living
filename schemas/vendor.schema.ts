@@ -1,5 +1,10 @@
 import { z } from 'zod'
-import { MAX_FILE_SIZE, ACCEPTED_IMAGE_TYPES } from '@/constants/config'
+import {
+  MAX_FILE_SIZE,
+  ACCEPTED_IMAGE_TYPES,
+  MAX_VIDEO_SIZE,
+  ACCEPTED_VIDEO_TYPES,
+} from '@/constants/config'
 
 export const vendorRegistrationSchema = z.object({
   firebaseUid: z.string().optional(),
@@ -76,3 +81,15 @@ export const imageSchema = z.object({
 })
 
 export type ImageData = z.infer<typeof imageSchema>
+
+export const videoSchema = z.object({
+  video: z
+    .instanceof(File)
+    .refine((file) => file?.size <= MAX_VIDEO_SIZE, `Max video size is 10MB.`)
+    .refine(
+      (file) => ACCEPTED_VIDEO_TYPES.includes(file?.type),
+      'Only .mp4, .webm, and .ogg formats are supported.'
+    ),
+})
+
+export type VideoData = z.infer<typeof videoSchema>

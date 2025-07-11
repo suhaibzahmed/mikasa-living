@@ -56,3 +56,47 @@ export const deleteImageFile = async (filePath: string) => {
 
   return true
 }
+
+export const uploadVideoFile = async (file: File) => {
+  const fileName = `${Date.now()}-${file.name}`
+  const { error } = await supabase.storage
+    .from(videoBucket)
+    .upload(fileName, file, {
+      contentType: file.type,
+      cacheControl: '3600',
+      upsert: false,
+    })
+
+  if (error) {
+    console.error('Error uploading file:', error)
+    return null
+  }
+
+  const { data: publicUrlData } = supabase.storage
+    .from(videoBucket)
+    .getPublicUrl(fileName)
+
+  return publicUrlData.publicUrl
+}
+
+export const deleteVideoFile = async (filePath: string) => {
+  const fileName = filePath.split('/').pop()
+  if (!fileName) {
+    return false
+  }
+
+  const decodedFileName = decodeURIComponent(fileName)
+
+  if (!filePath) return true
+
+  const { error } = await supabase.storage
+    .from(videoBucket)
+    .remove([decodedFileName])
+
+  if (error) {
+    console.error('Failed to delete video:', error.message)
+    throw new Error(`Failed to delete video: ${error.message}`)
+  }
+
+  return true
+}

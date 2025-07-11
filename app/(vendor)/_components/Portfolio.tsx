@@ -1,11 +1,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import VendorVideos from './VendorVideos'
 import UploadPhoto from './UploadPhoto'
 import Photos from './Photos'
-import { Vendor, Plan, Photo } from '@prisma/client'
+import { Vendor, Plan, Photo, Video } from '@prisma/client'
+import VerificationPending from './VerificationPending'
+import Videos from './Videos'
+import UploadVideo from './UploadVideo'
 
 type PortFolioProps = {
-  vendor: (Vendor & { plan: Plan; photos: Photo[] }) | null
+  vendor: (Vendor & { plan: Plan; photos: Photo[]; videos: Video[] }) | null
 }
 
 const Portfolio = ({ vendor }: PortFolioProps) => {
@@ -21,11 +23,24 @@ const Portfolio = ({ vendor }: PortFolioProps) => {
           <TabsTrigger value="videos">Videos</TabsTrigger>
         </TabsList>
         <TabsContent value="photos">
-          <Photos photos={vendor?.photos || []} />
-          <UploadPhoto vendor={vendor} />
+          {vendor?.verificationStatus !== 'VERIFIED' ? (
+            <VerificationPending />
+          ) : (
+            <>
+              <Photos photos={vendor?.photos || []} />
+              <UploadPhoto vendor={vendor} />
+            </>
+          )}
         </TabsContent>
         <TabsContent value="videos">
-          <VendorVideos vendor={vendor} />
+          {vendor?.verificationStatus !== 'VERIFIED' ? (
+            <VerificationPending />
+          ) : (
+            <>
+              <Videos videos={vendor?.videos || []} />
+              <UploadVideo vendor={vendor} />
+            </>
+          )}
         </TabsContent>
       </Tabs>
     </div>
