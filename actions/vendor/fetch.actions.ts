@@ -14,6 +14,7 @@ export async function getCompleteVendorDetails() {
         plan: true,
         photos: true,
         videos: true,
+        availability: true,
       },
     })
     return vendor

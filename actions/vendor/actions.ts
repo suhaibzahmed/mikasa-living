@@ -1,7 +1,12 @@
 'use server'
 
 import { prisma } from '@/lib/db'
-import { VendorRegistrationData, videoSchema } from '@/schemas/vendor.schema'
+import {
+  AvailabilityData,
+  AvailabilitySchema,
+  VendorRegistrationData,
+  videoSchema,
+} from '@/schemas/vendor.schema'
 import { cookies } from 'next/headers'
 import { authAdmin } from '@/lib/firebase-admin'
 import { checkVendorAuth } from '../checkAuth'
@@ -379,6 +384,61 @@ export async function deleteVendorVideo(videoId: string) {
     return {
       success: true,
       message: 'Video deleted successfully',
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      success: false,
+      message: 'An unexpected error occurred.',
+    }
+  }
+}
+
+export async function updateVendorAvailability(data: AvailabilityData) {
+  try {
+    const auth = await checkVendorAuth()
+    const vendor = await prisma.vendor.findUnique({
+      where: {
+        firebaseUid: auth.uid,
+      },
+      select: { id: true },
+    })
+
+    if (!vendor) {
+      return {
+        success: false,
+        message: 'Vendor not found.',
+      }
+    }
+
+    const validatedData = AvailabilitySchema.safeParse(data)
+
+    if (!validatedData.success) {
+      return {
+        success: false,
+        message: validatedData.error.errors[0].message,
+      }
+    }
+
+    await prisma.availability.upsert({
+      where: {
+        vendorId: vendor.id,
+      },
+      update: {
+        startTime: validatedData.data.startTime,
+        endTime: validatedData.data.endTime,
+      },
+      create: {
+        vendorId: vendor.id,
+        startTime: validatedData.data.startTime,
+        endTime: validatedData.data.endTime,
+      },
+    })
+
+    revalidatePath('/vendor/profile')
+    return {
+      success: true,
+      message: 'Availability updated successfully',
     }
   } catch (error) {
     console.log(error)

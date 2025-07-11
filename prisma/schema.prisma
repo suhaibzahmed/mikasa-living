@@ -47,6 +47,7 @@ model Vendor {
   videos             Video[]
   threeDimensional   ThreeDimensional[]
   reviews            Review[]
+  availability       Availability?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 }
@@ -122,4 +123,14 @@ enum PlanType {
   SILVER
   GOLD
   PLATINUM
+}
+
+model Availability {
+  id        String   @id @default(uuid())
+  startTime String
+  endTime   String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  vendorId  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import BusinessDetails from '../../_components/BusinessDetails'
 import Portfolio from '../../_components/Portfolio'
-import Availability from '../../_components/Availability'
+import AvailabilityComponent from '../../_components/Availability'
 import { getCompleteVendorDetails } from '@/actions/vendor/fetch.actions'
 
 const VendorProfilePage = async () => {
@@ -9,7 +9,7 @@ const VendorProfilePage = async () => {
 
   return (
     <div>
-      <Tabs defaultValue="details" className="w-[400px]">
+      <Tabs defaultValue="details" className="">
         <TabsList>
           <TabsTrigger value="details">Business Details</TabsTrigger>
           <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
@@ -22,7 +22,9 @@ const VendorProfilePage = async () => {
           <Portfolio vendor={vendorDetails} />
         </TabsContent>
         <TabsContent value="availability">
-          <Availability />
+          <AvailabilityComponent
+            vendorAvailability={vendorDetails?.availability || null}
+          />
         </TabsContent>
       </Tabs>
     </div>
