@@ -95,8 +95,12 @@ export const videoSchema = z.object({
 export type VideoData = z.infer<typeof videoSchema>
 
 export const AvailabilitySchema = z.object({
-  startTime: z.string({ required_error: 'Start time is required' }),
-  endTime: z.string({ required_error: 'End time is required' }),
+  startTime: z
+    .string({ required_error: 'Start time is required' })
+    .min(1, 'Start time is required'),
+  endTime: z
+    .string({ required_error: 'End time is required' })
+    .min(1, 'End time is required'),
 })
 
 export type AvailabilityData = z.infer<typeof AvailabilitySchema>

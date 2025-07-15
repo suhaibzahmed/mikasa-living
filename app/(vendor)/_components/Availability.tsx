@@ -1,6 +1,6 @@
 'use client'
 
-import { Availability } from '@prisma/client'
+import { Availability, Vendor } from '@prisma/client'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { AvailabilityData, AvailabilitySchema } from '@/schemas/vendor.schema'
@@ -12,12 +12,12 @@ import { format, parse } from 'date-fns'
 import FormInput from '@/components/common/form/FormInput'
 
 type AvailabilityProps = {
-  vendorAvailability: Availability | null
+  vendor: (Vendor & { availability: Availability | null }) | null
 }
 
-const AvailabilityComponent = ({ vendorAvailability }: AvailabilityProps) => {
-  const defaultStartTime = vendorAvailability?.startTime || '09:00'
-  const defaultEndTime = vendorAvailability?.endTime || '17:00'
+const AvailabilityComponent = ({ vendor }: AvailabilityProps) => {
+  const defaultStartTime = vendor?.availability?.startTime || ''
+  const defaultEndTime = vendor?.availability?.endTime || ''
 
   const form = useForm<AvailabilityData>({
     resolver: zodResolver(AvailabilitySchema),
@@ -29,13 +29,9 @@ const AvailabilityComponent = ({ vendorAvailability }: AvailabilityProps) => {
 
   const formatTimeForDisplay = (time: string) => {
     if (!time) return ''
-    try {
-      const date = parse(time, 'HH:mm', new Date())
-      return format(date, 'hh:mm a')
-    } catch (error) {
-      console.log('🚀 ~ formatTimeForDisplay ~ error:', error)
-      return 'Invalid time'
-    }
+
+    const date = parse(time, 'HH:mm', new Date())
+    return format(date, 'hh:mm a')
   }
 
   const onSubmit = async (data: AvailabilityData) => {
@@ -51,7 +47,7 @@ const AvailabilityComponent = ({ vendorAvailability }: AvailabilityProps) => {
     <div className="rounded-lg border p-6">
       <h5 className="mb-4 font-semibold">Set your daily availability time</h5>
       <div className="mb-6 flex items-center gap-6 text-sm">
-        {!vendorAvailability?.startTime && !vendorAvailability?.endTime ? (
+        {!vendor?.availability?.startTime && !vendor?.availability?.endTime ? (
           <p>You have not set your availability time yet.</p>
         ) : (
           <div>

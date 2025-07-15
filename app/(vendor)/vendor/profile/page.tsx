@@ -3,6 +3,7 @@ import BusinessDetails from '../../_components/BusinessDetails'
 import Portfolio from '../../_components/Portfolio'
 import AvailabilityComponent from '../../_components/Availability'
 import { getCompleteVendorDetails } from '@/actions/vendor/fetch.actions'
+import VerificationPending from '../../_components/VerificationPending'
 
 const VendorProfilePage = async () => {
   const vendorDetails = await getCompleteVendorDetails()
@@ -19,12 +20,18 @@ const VendorProfilePage = async () => {
           <BusinessDetails vendorDetails={vendorDetails} />
         </TabsContent>
         <TabsContent value="portfolio">
-          <Portfolio vendor={vendorDetails} />
+          {vendorDetails?.verificationStatus === 'PENDING' ? (
+            <VerificationPending />
+          ) : (
+            <Portfolio vendor={vendorDetails} />
+          )}
         </TabsContent>
         <TabsContent value="availability">
-          <AvailabilityComponent
-            vendorAvailability={vendorDetails?.availability || null}
-          />
+          {vendorDetails?.verificationStatus === 'PENDING' ? (
+            <VerificationPending />
+          ) : (
+            <AvailabilityComponent vendor={vendorDetails} />
+          )}
         </TabsContent>
       </Tabs>
     </div>
