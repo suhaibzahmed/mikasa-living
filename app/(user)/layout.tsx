@@ -4,10 +4,11 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
-import ThemeToggle from '@/components/ThemeToggle'
 import UserSidebar from './_components/UserSidebar'
 import { redirect } from 'next/navigation'
 import { checkUserAuth } from '@/actions/checkAuth'
+import CurrentPageHeader from '@/components/common/sidebar/CurrentPageHeader'
+import Navbar from './_components/navbar/Navbar'
 
 const UserLayout = async ({
   children,
@@ -20,10 +21,11 @@ const UserLayout = async ({
   }
 
   return (
-    <main className="min-h-svh flex">
+    <main className="flex">
       <SidebarProvider>
         <UserSidebar />
         <SidebarInset>
+          <Navbar />
           <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 ">
             <div className="flex flex-1 items-center gap-2 px-4">
               <SidebarTrigger className="-ml-1" />
@@ -31,12 +33,11 @@ const UserLayout = async ({
                 orientation="vertical"
                 className="mr-2 data-[orientation=vertical]:h-4"
               />
-            </div>
-            <div className="mr-4">
-              <ThemeToggle />
+              <CurrentPageHeader />
             </div>
           </header>
-          <div className="flex flex-1 p-4 pt-0">{children}</div>
+
+          <div className=" p-4 pt-0 ">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </main>

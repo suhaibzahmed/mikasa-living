@@ -1,7 +1,14 @@
+import FeaturedVendors from './_components/FeaturedVendors'
+import Services from './_components/Services'
+
 const UserLandingPage = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-2xl font-bold mb-4">Welcome</h1>
+    <div>
+      <h4>Our Services</h4>
+      <Services />
+
+      <h4>Our Top-Rated Partners</h4>
+      <FeaturedVendors />
     </div>
   )
 }

@@ -4,23 +4,32 @@ import Logo from './Logo'
 import SearchVendors from './SearchVendors'
 import { Button, buttonVariants } from '@/components/ui/button'
 import Link from 'next/link'
+import { checkUserAuth } from '@/actions/checkAuth'
 
-const Navbar = () => {
+const Navbar = async () => {
+  const user = await checkUserAuth()
   return (
     <nav className="sticky top-0 z-50 py-4 border-b bg-background">
       <div className="container sm:px-6 lg:px-8 mx-auto flex items-center justify-between gap-x-8">
         <Logo />
         <CitySelect />
         <SearchVendors />
-        <Link
-          href="/vendor/sign-in"
-          className={buttonVariants({ variant: 'outline' })}
-        >
-          For Vendors
-        </Link>
-        <Button asChild>
-          <Link href="/user/sign-in">Login / Register</Link>
-        </Button>
+        {user ? (
+          <Button>Logout</Button>
+        ) : (
+          <div>
+            <Link
+              href="/vendor/sign-in"
+              className={buttonVariants({ variant: 'outline' })}
+            >
+              For Vendors
+            </Link>
+            <Button asChild>
+              <Link href="/user/sign-in">Login / Register</Link>
+            </Button>
+          </div>
+        )}
+
         <ThemeToggle />
       </div>
     </nav>

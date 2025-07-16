@@ -41,12 +41,12 @@ const RecentUsers = async () => {
                   </Link>
                 </Button>
               </div>
-              <Button asChild className="mt-4 w-full">
-                <Link href="/admin/user-management">View All</Link>
-              </Button>
             </div>
           ))
         )}
+        <Button asChild className="mt-4 w-full">
+          <Link href="/admin/user-management">View All</Link>
+        </Button>
       </CardContent>
     </Card>
   )

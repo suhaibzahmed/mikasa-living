@@ -42,6 +42,7 @@ model Vendor {
   planId             String
   billingCycle       BillingCycle
   verificationStatus VerificationStatus @default(PENDING)
+  isFeatured         Boolean            @default(false)
   profileImage       String?
   photos             Photo[]
   videos             Video[]
