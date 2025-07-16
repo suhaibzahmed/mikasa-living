@@ -17,7 +17,7 @@ const ApproveVendorButton = ({ vendorId }: { vendorId: string }) => {
   }
 
   return (
-    <Button onClick={handleApprove} disabled={isPending}>
+    <Button onClick={handleApprove} disabled={isPending} size="sm">
       {isPending ? 'Approving' : 'Approve'}
     </Button>
   )

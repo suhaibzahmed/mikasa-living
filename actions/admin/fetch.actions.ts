@@ -172,3 +172,36 @@ export async function getUserById(id: string) {
     return { success: false, message: 'An unexpected error occurred.' }
   }
 }
+
+export async function getGoldPlatinumVendors() {
+  try {
+    await checkAdminAuth()
+    const featuredVendors = await prisma.vendor.findMany({
+      where: {
+        verificationStatus: 'VERIFIED',
+        plan: {
+          OR: [
+            {
+              type: 'GOLD',
+            },
+            {
+              type: 'PLATINUM',
+            },
+          ],
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+      include: {
+        plan: true,
+        reviews: true,
+      },
+    })
+
+    return { success: true, data: featuredVendors }
+  } catch (error) {
+    console.log('🚀 ~ getGoldPlatinumVendors ~ error:', error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}

@@ -42,13 +42,13 @@ model Vendor {
   planId             String
   billingCycle       BillingCycle
   verificationStatus VerificationStatus @default(PENDING)
-  isFeatured         Boolean            @default(false)
   profileImage       String?
   photos             Photo[]
   videos             Video[]
   threeDimensional   ThreeDimensional[]
   reviews            Review[]
   availability       Availability?
+  featured           Featured?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 }
@@ -130,6 +130,14 @@ model Availability {
   id        String   @id @default(uuid())
   startTime String
   endTime   String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  vendorId  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Featured {
+  id        String   @id @default(uuid())
   vendor    Vendor   @relation(fields: [vendorId], references: [id])
   vendorId  String   @unique
   createdAt DateTime @default(now())

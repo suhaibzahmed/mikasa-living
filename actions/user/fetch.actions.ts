@@ -9,24 +9,21 @@ export async function getVendors() {
   }
 }
 
-export async function getFeaturedVendors() {
+export async function getVendorById(id: string) {
   try {
-    const featuredVendors = await prisma.vendor.findMany({
+    const vendor = await prisma.vendor.findUnique({
       where: {
-        AND: [{ isFeatured: true }, { verificationStatus: 'VERIFIED' }],
-      },
-      take: 5,
-      orderBy: {
-        updatedAt: 'desc',
+        id,
       },
       include: {
         plan: true,
         reviews: true,
       },
     })
-    return { success: true, data: featuredVendors }
+
+    return vendor
   } catch (error) {
-    console.log('🚀 ~ getFeaturedVendors ~ error:', error)
-    return { success: false, message: 'An unexpected error occurred.' }
+    console.log(error)
+    return null
   }
 }

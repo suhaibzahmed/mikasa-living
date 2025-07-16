@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button'
 import { Vendor as PrismaVendor, Plan } from '@prisma/client'
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links'
 import Link from 'next/link'
+import ApproveVendorButton from './ApproveVendorButton'
 
 type Vendor = PrismaVendor & {
   plan: Plan
@@ -71,7 +72,7 @@ const VendorTable = ({
     } else {
       params.delete('plan')
     }
-    params.set('page', '1') // Reset to first page on filter change
+    // params.set('page', '1') // Reset to first page on filter change
     router.replace(`${pathname}?${params.toString()}`)
   }, [
     debouncedSearchTerm,
@@ -157,9 +158,7 @@ const VendorTable = ({
                   <p className="text-bold text-red-500">Rejected</p>
                 ) : (
                   <div>
-                    <Button variant="outline" size="sm" className="mr-2">
-                      Approve
-                    </Button>
+                    <ApproveVendorButton vendorId={vendor.id} />
                     <Button variant="destructive" size="sm">
                       Reject
                     </Button>

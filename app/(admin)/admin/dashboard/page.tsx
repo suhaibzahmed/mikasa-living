@@ -34,7 +34,7 @@ const AdminDashboardPage = () => {
         />
         <ManagementCard
           title="Ad Management"
-          href="/admin/ads"
+          href="/admin/ad-management"
           icon={Megaphone}
         />
       </div>

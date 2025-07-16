@@ -140,3 +140,20 @@ export const approveVendor = async (vendorId: string) => {
     return { success: false, message: 'An unexpected error occurred.' }
   }
 }
+
+export async function createFeaturedVendors(vendorId: string[]) {
+  try {
+    await checkAdminAuth()
+
+    await prisma.featured.createMany({
+      data: vendorId.map((id) => ({
+        vendorId: id,
+      })),
+    })
+
+    return { success: true, message: 'Featured vendors created successfully' }
+  } catch (error) {
+    console.log('🚀 ~ createFeaturedVendors ~ error:', error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}
