@@ -28,6 +28,11 @@ const SingleVendorPage = async ({
 
   const vendorDetails = await getVendorProfileDetails(id)
 
+  const portfolio = {
+    images: vendorDetails?.photos || [],
+    videos: vendorDetails?.videos || [],
+  }
+  const services = vendorDetails?.services || []
   const reviews = vendorDetails?.reviews || []
 
   const userAuth = await checkUserAuth()
@@ -39,7 +44,12 @@ const SingleVendorPage = async ({
   const hasReviewed = reviews.some((review) => review.userId === user?.id)
   const totalReviews = reviews.length || 0
   const averageRating =
-    reviews.reduce((total, review) => total + review.rating, 0) / totalReviews
+    totalReviews > 0
+      ? (
+          reviews.reduce((total, review) => total + review.rating, 0) /
+          totalReviews
+        ).toFixed(1)
+      : 0
 
   return (
     <div className="flex-1">
@@ -83,13 +93,13 @@ const SingleVendorPage = async ({
           <TabsTrigger value="reviews">Reviews</TabsTrigger>
         </TabsList>
         <TabsContent value="about">
-          <AboutVendor vendorId={id} />
+          <AboutVendor description={vendorDetails?.description || ''} />
         </TabsContent>
         <TabsContent value="portfolio">
-          <ViewVendorPortfolio vendorId={id} />
+          <ViewVendorPortfolio portfolio={portfolio} />
         </TabsContent>
         <TabsContent value="services">
-          <VendorServices vendorId={id} />
+          <VendorServices services={services} />
         </TabsContent>
         <TabsContent value="reviews">
           <VendorReviews

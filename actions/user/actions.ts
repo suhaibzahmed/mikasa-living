@@ -4,6 +4,7 @@ import { prisma } from '@/lib/db'
 import { UserSignUpData } from '@/schemas/user.schema'
 import { cookies } from 'next/headers'
 import { checkUserAuth } from '../checkAuth'
+import { revalidatePath } from 'next/cache'
 
 export const createUser = async (data: UserSignUpData) => {
   try {
@@ -103,6 +104,8 @@ export async function postReview(
         rating: values.rating,
       },
     })
+
+    revalidatePath('/vendor/:id')
     return {
       success: true,
       message: 'Review posted successfully',

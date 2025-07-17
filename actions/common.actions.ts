@@ -181,3 +181,23 @@ export async function getVendorServices(id: string) {
     return null
   }
 }
+
+export async function getVendorReviews(id: string) {
+  try {
+    const vendorReviews = await prisma.review.findMany({
+      where: {
+        vendorId: id,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      include: {
+        user: true,
+      },
+    })
+    return vendorReviews
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}

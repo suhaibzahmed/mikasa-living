@@ -23,7 +23,18 @@ export const verifyOTPSchema = z.object({
   otp: z.string().min(6, { message: 'OTP must be 6 characters long' }),
 })
 
+export const postReviewSchema = z.object({
+  comment: z.string().min(1, {
+    message: 'Please provide comment.',
+  }),
+  rating: z.coerce
+    .number()
+    .min(1, { message: 'Rating must be at least 1' })
+    .max(5, { message: 'Rating must be at most 5' }),
+})
+
 export type UserPhoneNumber = z.infer<typeof userPhoneNumberSchema>
 export type UserSignUpData = z.infer<typeof userSignUpSchema>
 export type UserSignInData = z.infer<typeof userSignInSchema>
 export type VerifyOTPData = z.infer<typeof verifyOTPSchema>
+export type PostReviewData = z.infer<typeof postReviewSchema>
