@@ -17,15 +17,16 @@ model Admin {
 }
 
 model User {
-  id          String   @id @default(uuid())
-  firebaseUid String   @unique
+  id          String    @id @default(uuid())
+  firebaseUid String    @unique
   name        String
-  email       String?  @unique
+  email       String?   @unique
   phone       String
   address     String?
   reviews     Review[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  booking     Booking[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Vendor {
@@ -49,8 +50,29 @@ model Vendor {
   reviews            Review[]
   availability       Availability?
   featured           Featured?
+  booking            Booking[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
+}
+
+model Booking {
+  id          String        @id @default(uuid())
+  vendor      Vendor        @relation(fields: [vendorId], references: [id])
+  vendorId    String
+  user        User          @relation(fields: [userId], references: [id])
+  userId      String
+  status      BookingStatus @default(PENDING)
+  message     String
+  requestDate DateTime
+  requestTime String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
 }
 
 enum VerificationStatus {

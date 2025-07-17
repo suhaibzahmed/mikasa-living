@@ -9,12 +9,16 @@ import FormInput from '@/components/common/form/FormInput'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import FormTextArea from '@/components/common/form/FormTextArea'
 import { PostReviewData, postReviewSchema } from '@/schemas/user.schema'
+import RedirectToLoginButton from '@/components/common/RedirectToLoginButton'
+import { DecodedIdToken } from 'firebase-admin/auth'
+import { redirect } from 'next/navigation'
 
 type PostReviewFormProps = {
   vendorId: string
+  userAuth: DecodedIdToken | null
 }
 
-export function PostReviewForm({ vendorId }: PostReviewFormProps) {
+export function PostReviewForm({ vendorId, userAuth }: PostReviewFormProps) {
   const form = useForm<PostReviewData>({
     resolver: zodResolver(postReviewSchema),
     defaultValues: {
@@ -24,6 +28,9 @@ export function PostReviewForm({ vendorId }: PostReviewFormProps) {
   })
 
   async function onSubmit(values: PostReviewData) {
+    if (!userAuth) {
+      return redirect('/user/sign-in')
+    }
     const res = await postReview(vendorId, values)
     if (res.success) {
       toast.success('Review posted successfully')
@@ -47,11 +54,19 @@ export function PostReviewForm({ vendorId }: PostReviewFormProps) {
           label="Comment"
           placeholder="Tell us about your experience"
         />
-        <FormSubmitButton
-          title="Submit Review"
-          pendingText="Submitting..."
-          isPending={form.formState.isSubmitting}
-        />
+
+        {userAuth ? (
+          <FormSubmitButton
+            title="Submit Review"
+            pendingText="Submitting..."
+            isPending={form.formState.isSubmitting}
+          />
+        ) : (
+          <RedirectToLoginButton
+            toastMessage="You must be logged in to post a review"
+            btnText="Post Review"
+          />
+        )}
       </form>
     </Form>
   )

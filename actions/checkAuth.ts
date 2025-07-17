@@ -14,10 +14,6 @@ export const checkVendorAuth = async () => {
 
 export const checkUserAuth = async () => {
   const session = await verifySession()
-  // console.log('🚀 ~ checkUserAuth ~ session:', session)
-  if (!session) {
-    return redirect('/user/sign-in')
-  }
   return session
 }
 

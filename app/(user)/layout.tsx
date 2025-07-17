@@ -5,8 +5,6 @@ import {
 } from '@/components/ui/sidebar'
 import { Separator } from '@/components/ui/separator'
 import UserSidebar from './_components/UserSidebar'
-import { redirect } from 'next/navigation'
-import { checkUserAuth } from '@/actions/checkAuth'
 import CurrentPageHeader from '@/components/common/sidebar/CurrentPageHeader'
 import Navbar from './_components/navbar/Navbar'
 
@@ -15,11 +13,6 @@ const UserLayout = async ({
 }: Readonly<{
   children: React.ReactNode
 }>) => {
-  const user = await checkUserAuth()
-  if (!user) {
-    redirect('/user/sign-in')
-  }
-
   return (
     <main className="flex">
       <SidebarProvider>

@@ -37,14 +37,14 @@ const UserSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
   const router = useRouter()
   const [user, setUser] = useState<Partial<User>>({
     name: 'User Name',
-    email: 'vendor@example.com',
+    email: 'user@example.com',
   })
 
   useEffect(() => {
     const fetchVendorDetails = async () => {
       const res = await getUserDetails()
-      if (res.success && res.data) {
-        setUser(res.data)
+      if (res) {
+        setUser(res)
       }
     }
     fetchVendorDetails()

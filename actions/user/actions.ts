@@ -5,6 +5,7 @@ import { UserSignUpData } from '@/schemas/user.schema'
 import { cookies } from 'next/headers'
 import { checkUserAuth } from '../checkAuth'
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 
 export const createUser = async (data: UserSignUpData) => {
   try {
@@ -56,6 +57,10 @@ export async function getUserDetails() {
   try {
     const session = await checkUserAuth()
 
+    if (!session) {
+      return null
+    }
+
     const user = await prisma.user.findUnique({
       where: {
         firebaseUid: session.uid,
@@ -63,13 +68,13 @@ export async function getUserDetails() {
     })
 
     if (!user) {
-      return { success: false, message: 'User not found' }
+      return null
     }
 
-    return { success: true, data: user }
+    return user
   } catch (error) {
     console.log(error)
-    return { success: false, message: 'An unexpected error occurred.' }
+    return null
   }
 }
 
@@ -80,10 +85,7 @@ export async function postReview(
   try {
     const session = await checkUserAuth()
     if (!session) {
-      return {
-        success: false,
-        message: 'You must be logged in to post a review.',
-      }
+      return redirect('/user/sign-in')
     }
 
     const user = await prisma.user.findUnique({

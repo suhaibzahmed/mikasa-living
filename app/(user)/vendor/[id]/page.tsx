@@ -11,13 +11,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import Link from 'next/link'
 import AboutVendor from '@/app/(user)/_components/AboutVendor'
 import ViewVendorPortfolio from '@/app/(user)/_components/ViewVendorPortfolio'
 import VendorServices from '@/app/(user)/_components/VendorServices'
 import VendorReviews from '@/app/(user)/_components/VendorReviews'
 import { prisma } from '@/lib/db'
 import { Star } from 'lucide-react'
+import VendorBookingForm from '../../_components/VendorBookingForm'
+import RedirectToLoginButton from '@/components/common/RedirectToLoginButton'
 
 const SingleVendorPage = async ({
   params,
@@ -36,12 +37,17 @@ const SingleVendorPage = async ({
   const reviews = vendorDetails?.reviews || []
 
   const userAuth = await checkUserAuth()
-  const user = await prisma.user.findUnique({
-    where: {
-      firebaseUid: userAuth?.uid,
-    },
-  })
-  const hasReviewed = reviews.some((review) => review.userId === user?.id)
+  let hasReviewed = false
+  if (userAuth) {
+    const user = await prisma.user.findUnique({
+      where: {
+        firebaseUid: userAuth?.uid,
+      },
+    })
+
+    hasReviewed = reviews.some((review) => review.userId === user?.id)
+  }
+
   const totalReviews = reviews.length || 0
   const averageRating =
     totalReviews > 0
@@ -71,18 +77,20 @@ const SingleVendorPage = async ({
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Are you absolutely sure?</DialogTitle>
+                <DialogTitle>
+                  Request a Callback from {vendorDetails?.companyName}
+                </DialogTitle>
                 <DialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
+                  <VendorBookingForm />
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
           </Dialog>
         ) : (
-          <Button asChild>
-            <Link href="/user/sign-in">Request Callback</Link>
-          </Button>
+          <RedirectToLoginButton
+            toastMessage="You must be logged in to book a callback"
+            btnText="Request Callback"
+          />
         )}
       </div>
       <Tabs defaultValue="about">
@@ -106,6 +114,7 @@ const SingleVendorPage = async ({
             reviews={reviews}
             hasReviewed={hasReviewed}
             vendorId={id}
+            userAuth={userAuth}
           />
         </TabsContent>
       </Tabs>

@@ -3,6 +3,23 @@ export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
   const session = request.cookies.get('session')?.value
 
+  if (path === '/') {
+    return NextResponse.next()
+  }
+
+  const isUserAuthPage =
+    path.startsWith('/user/sign-in') ||
+    path.startsWith('/user/sign-up') ||
+    path.startsWith('/user/verify-otp')
+
+  if (session && isUserAuthPage) {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
+
+  if (!session && !isUserAuthPage) {
+    return NextResponse.redirect(new URL('/user/sign-in', request.url))
+  }
+
   const isAdminPath = path.startsWith('/admin')
   const isVendorPath = path.startsWith('/vendor')
 
@@ -33,22 +50,17 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  const isUserAuthPage =
-    path.startsWith('/user/sign-in') ||
-    path.startsWith('/user/sign-up') ||
-    path.startsWith('/user/verify-otp')
-
-  if (session && isUserAuthPage) {
-    return NextResponse.redirect(new URL('/', request.url))
-  }
-
   return NextResponse.next()
 }
 
 export const config = {
   matcher: [
+    // '/',
     '/admin/:path*',
-    '/vendor/:path*',
+    '/vendor/dashboard/:path*',
+    '/vendor/sign-in',
+    '/vendor/sign-up',
+    '/vendor/verify-otp',
     '/user/sign-in',
     '/user/sign-up',
     '/user/verify-otp',
