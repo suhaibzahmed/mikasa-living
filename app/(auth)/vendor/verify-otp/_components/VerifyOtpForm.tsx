@@ -14,9 +14,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Form } from '@/components/ui/form'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
-import { createNewVendor, verifyOtp } from '@/actions/vendor/actions'
 import { createSession } from '@/actions/session'
-import { VendorRegistrationData } from '@/schemas/vendor.schema'
 import FormOtpInput from '@/components/common/form/FormOtpInput'
 
 const VerifyOtpForm = () => {
@@ -36,30 +34,6 @@ const VerifyOtpForm = () => {
       }
       const userCredential = await confirmationResult.confirm(data.otp)
       const idToken = await userCredential.user.getIdToken()
-
-      const otpResult = await verifyOtp(idToken)
-      if (!otpResult.success || !otpResult.data) {
-        toast.error(otpResult.message || 'Failed to verify OTP.')
-        return
-      }
-
-      const authFlow = sessionStorage.getItem('auth-flow')
-
-      if (authFlow === 'signup') {
-        const vendorDataString = sessionStorage.getItem('vendor-signup-data')
-        if (!vendorDataString) {
-          throw new Error('No vendor data found in session storage.')
-        }
-        const vendorData: VendorRegistrationData = JSON.parse(vendorDataString)
-        const newVendorResult = await createNewVendor({
-          ...vendorData,
-          firebaseUid: otpResult.data.uid,
-        })
-        if (!newVendorResult.success) {
-          toast.error(newVendorResult.message)
-          return
-        }
-      }
 
       const sessionResult = await createSession({ idToken, role: 'vendor' })
       if (sessionResult.success) {

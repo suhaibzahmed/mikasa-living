@@ -32,7 +32,7 @@ const SingleVendorCard = async ({
 
       <div className="flex justify-center w-full">
         <Button asChild>
-          <Link href={`/vendor/${id}`}>View Details</Link>
+          <Link href={`/vendor/${id}`}>View Profile</Link>
         </Button>
       </div>
     </Card>

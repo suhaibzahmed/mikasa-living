@@ -108,3 +108,24 @@ export async function getAllVendors({
     }
   }
 }
+
+export async function getVendorProfileDetails(id: string) {
+  try {
+    const vendor = await prisma.vendor.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        plan: true,
+        photos: true,
+        videos: true,
+        availability: true,
+        reviews: true,
+      },
+    })
+    return vendor
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
