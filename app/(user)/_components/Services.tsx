@@ -14,15 +14,23 @@ const Services = () => {
     <div>
       <div className="grid w-full grid-cols-3 gap-4">
         {vendorServices.map((service) => (
-          <Card key={service.slug} className="min-w-0">
-            <CardHeader>
-              <CardTitle>{service.title}</CardTitle>
-              <CardDescription>{service.description}</CardDescription>
-              <CardAction>
-                <service.icon />
-              </CardAction>
-            </CardHeader>
-          </Card>
+          <Link
+            href={{
+              pathname: '/vendors',
+              query: { service: service.slug },
+            }}
+            key={service.slug}
+          >
+            <Card className="min-w-0">
+              <CardHeader>
+                <CardTitle>{service.title}</CardTitle>
+                <CardDescription>{service.description}</CardDescription>
+                <CardAction>
+                  <service.icon />
+                </CardAction>
+              </CardHeader>
+            </Card>
+          </Link>
         ))}
       </div>
       <div className="w-full flex justify-center">

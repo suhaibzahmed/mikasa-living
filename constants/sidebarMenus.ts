@@ -7,6 +7,7 @@ import {
   User,
   Settings,
   CreditCard,
+  Megaphone,
 } from 'lucide-react'
 
 export const adminSidebarMenus = [
@@ -27,6 +28,12 @@ export const adminSidebarMenus = [
     name: 'Users',
     icon: Users,
     href: '/admin/user-management',
+  },
+  {
+    id: 4,
+    name: 'Ads',
+    icon: Megaphone,
+    href: '/admin/ad-management',
   },
 ]
 

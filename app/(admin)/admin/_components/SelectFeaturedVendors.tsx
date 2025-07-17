@@ -77,7 +77,7 @@ const SelectFeaturedVendors = ({
                   <CardTitle>{vendor.companyName}</CardTitle>
                   <CardDescription>
                     <p>{vendor.email}</p>
-                    <Badge>{vendor.plan.type}</Badge>
+                    <Badge variant="outline">{vendor.plan.type}</Badge>
                   </CardDescription>
                   <CardAction>
                     <Checkbox

@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
-import VendorFilters from '../_components/VendorFilters'
 import VendorList from '../_components/VendorList'
-import { getVendors } from '@/actions/user/fetch.actions'
+import { getAllVendors } from '@/actions/common.actions'
+import SortVendors from '../_components/SortVendors'
 
 const VendorsPage = async ({
   searchParams,
@@ -9,15 +9,26 @@ const VendorsPage = async ({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) => {
   const params = await searchParams
-  //   const sort = params.sort || undefined
-  //   const category = params.category || undefined
-  //   const page = typeof params.page === 'string' ? Number(params.page) : undefined
+  const sort = typeof params.sort === 'string' ? params.sort : 'all'
+  const service = typeof params.service === 'string' ? params.service : 'all'
+  const page = typeof params.page === 'string' ? Number(params.page) : 1
+
+  const vendors = await getAllVendors({
+    page,
+    sort,
+    service,
+  })
 
   return (
-    <div className="flex">
-      <VendorFilters />
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-end">
+        <SortVendors />
+      </div>
       <Suspense fallback={<div>Loading...</div>}>
-        {/* <VendorList vendors={vendors} /> */}
+        <VendorList
+          vendors={vendors.data.vendors}
+          totalPages={vendors.data.totalPages}
+        />
       </Suspense>
     </div>
   )

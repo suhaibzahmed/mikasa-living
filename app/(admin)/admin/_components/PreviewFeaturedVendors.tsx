@@ -1,5 +1,5 @@
 import { getFeaturedVendors } from '@/actions/common.actions'
-import SingleFeaturedVendor from '@/app/(user)/_components/SingleFeaturedVendor'
+import SingleVendorCard from '@/components/SingleVendorCard'
 
 const PreviewFeaturedVendors = async () => {
   const featuredVendors = await getFeaturedVendors()
@@ -15,10 +15,7 @@ const PreviewFeaturedVendors = async () => {
       ) : (
         <div className="grid w-full grid-cols-4 gap-4 ">
           {featuredVendors.data?.map((vendor) => (
-            <SingleFeaturedVendor
-              key={vendor.id}
-              vendorDetails={vendor.vendor}
-            />
+            <SingleVendorCard key={vendor.id} vendorDetails={vendor.vendor} />
           ))}
         </div>
       )}

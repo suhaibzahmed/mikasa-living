@@ -6,8 +6,10 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Plan, Review, Vendor } from '@prisma/client'
+import { Button } from './ui/button'
+import Link from 'next/link'
 
-const SingleFeaturedVendor = async ({
+const SingleVendorCard = async ({
   vendorDetails,
 }: {
   vendorDetails: Vendor & { plan: Plan; reviews: Review[] }
@@ -27,7 +29,13 @@ const SingleFeaturedVendor = async ({
           <p>{plan.type}</p>
         </CardDescription>
       </CardHeader>
+
+      <div className="flex justify-center w-full">
+        <Button asChild>
+          <Link href={`/vendor/${id}`}>View Details</Link>
+        </Button>
+      </div>
     </Card>
   )
 }
-export default SingleFeaturedVendor
+export default SingleVendorCard

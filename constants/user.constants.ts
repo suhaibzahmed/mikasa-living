@@ -2,37 +2,37 @@ import { Home } from 'lucide-react'
 
 export const vendorServices = [
   {
-    title: 'Home design',
+    title: 'Home Design',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     icon: Home,
     slug: 'home-design',
   },
   {
-    title: 'Kitchen renovation',
+    title: 'Kitchen Renovation',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     icon: Home,
     slug: 'kitchen-renovation',
   },
   {
-    title: 'Living room decor',
+    title: 'Living Room Decor',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     icon: Home,
     slug: 'living-room-decor',
   },
   {
-    title: 'Office spaces',
+    title: 'Office Spaces',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     icon: Home,
     slug: 'office-spaces',
   },
   {
-    title: 'Color consultation',
+    title: 'Color Consultation',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     icon: Home,
     slug: 'color-consultation',
   },
   {
-    title: 'Lighting design',
+    title: 'Lighting Design',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     icon: Home,
     slug: 'lighting-design',
