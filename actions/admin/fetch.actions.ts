@@ -196,6 +196,7 @@ export async function getGoldPlatinumVendors() {
       include: {
         plan: true,
         reviews: true,
+        featured: true,
       },
     })
 

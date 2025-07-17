@@ -1,6 +1,6 @@
 'use client'
 
-import { Plan, Review, Vendor } from '@prisma/client'
+import { Featured, Plan, Review, Vendor } from '@prisma/client'
 import {
   Card,
   CardAction,
@@ -11,18 +11,30 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { toast } from 'sonner'
-import { createFeaturedVendors } from '@/actions/admin/actions'
+import { updateFeaturedVendors } from '@/actions/admin/actions'
 
 type SelectFeaturedVendorsProps = {
-  goldPlatinumVendors: (Vendor & { plan: Plan; reviews: Review[] })[]
+  goldPlatinumVendors: (Vendor & {
+    plan: Plan
+    reviews: Review[]
+    featured: Featured | null
+  })[]
 }
 
 const SelectFeaturedVendors = ({
   goldPlatinumVendors,
 }: SelectFeaturedVendorsProps) => {
   const [selectedVendors, setSelectedVendors] = useState<string[]>([])
+  const [pending, startTransition] = useTransition()
+
+  useEffect(() => {
+    const featuredVendorIds = goldPlatinumVendors
+      .filter((vendor) => vendor.featured)
+      .map((vendor) => vendor.id)
+    setSelectedVendors(featuredVendorIds)
+  }, [goldPlatinumVendors])
 
   const handleCheckChange = (vendorId: string) => {
     if (selectedVendors.includes(vendorId)) {
@@ -32,18 +44,19 @@ const SelectFeaturedVendors = ({
     }
   }
 
-  const handleSave = async () => {
-    console.log('selectedVendors', selectedVendors)
-    try {
-      const result = await createFeaturedVendors(selectedVendors)
-      if (result.success) {
-        toast.success(result.message)
-      } else {
-        toast.error(result.message)
+  const handleSave = () => {
+    startTransition(async () => {
+      try {
+        const result = await updateFeaturedVendors(selectedVendors)
+        if (result.success) {
+          toast.success(result.message)
+        } else {
+          toast.error(result.message)
+        }
+      } catch (error) {
+        console.log(error)
       }
-    } catch (error) {
-      console.log(error)
-    }
+    })
   }
 
   return (
@@ -56,7 +69,7 @@ const SelectFeaturedVendors = ({
       {goldPlatinumVendors.length < 1 ? (
         <p>No vendor with Gold/Platinum plan found</p>
       ) : (
-        <div className="flex flex-col gap-y-4">
+        <div className="space-y-4">
           <div className="grid grid-cols-4 gap-4">
             {goldPlatinumVendors.map((vendor) => (
               <Card key={vendor.id}>
@@ -68,6 +81,7 @@ const SelectFeaturedVendors = ({
                   </CardDescription>
                   <CardAction>
                     <Checkbox
+                      checked={selectedVendors.includes(vendor.id)}
                       onCheckedChange={() => handleCheckChange(vendor.id)}
                     />
                   </CardAction>
@@ -75,7 +89,12 @@ const SelectFeaturedVendors = ({
               </Card>
             ))}
           </div>
-          <Button onClick={handleSave}>Save Changes</Button>
+          <Button
+            onClick={handleSave}
+            disabled={pending || selectedVendors.length > 4}
+          >
+            {pending ? 'Saving...' : 'Save Changes'}
+          </Button>
         </div>
       )}
     </div>

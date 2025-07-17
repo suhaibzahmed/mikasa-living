@@ -141,19 +141,26 @@ export const approveVendor = async (vendorId: string) => {
   }
 }
 
-export async function createFeaturedVendors(vendorId: string[]) {
+export async function updateFeaturedVendors(vendorIds: string[]) {
   try {
     await checkAdminAuth()
 
-    await prisma.featured.createMany({
-      data: vendorId.map((id) => ({
-        vendorId: id,
-      })),
-    })
+    // First, delete all existing featured vendors
+    await prisma.featured.deleteMany({})
 
-    return { success: true, message: 'Featured vendors created successfully' }
+    // Then, create new featured vendors from the provided list
+    if (vendorIds.length > 0) {
+      await prisma.featured.createMany({
+        data: vendorIds.map((id) => ({
+          vendorId: id,
+        })),
+      })
+    }
+
+    revalidatePath('/admin/ad-management/*')
+    return { success: true, message: 'Featured vendors updated successfully' }
   } catch (error) {
-    console.log('🚀 ~ createFeaturedVendors ~ error:', error)
+    console.log('🚀 ~ updateFeaturedVendors ~ error:', error)
     return { success: false, message: 'An unexpected error occurred.' }
   }
 }
