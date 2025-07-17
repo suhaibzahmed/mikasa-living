@@ -27,3 +27,18 @@ export async function getVendorById(id: string) {
     return null
   }
 }
+
+export async function getUserByReviewId(id: string) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    })
+
+    return user
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}

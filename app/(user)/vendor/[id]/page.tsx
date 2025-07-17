@@ -16,6 +16,8 @@ import AboutVendor from '@/app/(user)/_components/AboutVendor'
 import ViewVendorPortfolio from '@/app/(user)/_components/ViewVendorPortfolio'
 import VendorServices from '@/app/(user)/_components/VendorServices'
 import VendorReviews from '@/app/(user)/_components/VendorReviews'
+import { prisma } from '@/lib/db'
+import { Star } from 'lucide-react'
 
 const SingleVendorPage = async ({
   params,
@@ -25,20 +27,32 @@ const SingleVendorPage = async ({
   const { id } = await params
 
   const vendorDetails = await getVendorProfileDetails(id)
-  const portfolio = {
-    images: vendorDetails?.photos || [],
-    videos: vendorDetails?.videos || [],
-  }
-  const services = vendorDetails?.services || []
+
   const reviews = vendorDetails?.reviews || []
 
   const userAuth = await checkUserAuth()
+  const user = await prisma.user.findUnique({
+    where: {
+      firebaseUid: userAuth?.uid,
+    },
+  })
+  const hasReviewed = reviews.some((review) => review.userId === user?.id)
+  const totalReviews = reviews.length || 0
+  const averageRating =
+    reviews.reduce((total, review) => total + review.rating, 0) / totalReviews
 
   return (
     <div className="flex-1">
       <div>
         <h5>{vendorDetails?.companyName}</h5>
         <Badge variant="outline">{vendorDetails?.plan.type}</Badge>
+        <div className="flex gap-x-2">
+          <Star fill="yellow" />
+          <p>{averageRating}/5</p>
+          <p>
+            ({totalReviews} review{totalReviews > 1 ? 's' : ''})
+          </p>
+        </div>
 
         {userAuth ? (
           <Dialog>
@@ -69,16 +83,20 @@ const SingleVendorPage = async ({
           <TabsTrigger value="reviews">Reviews</TabsTrigger>
         </TabsList>
         <TabsContent value="about">
-          <AboutVendor description={vendorDetails?.description || ''} />
+          <AboutVendor vendorId={id} />
         </TabsContent>
         <TabsContent value="portfolio">
-          <ViewVendorPortfolio portfolio={portfolio} />
+          <ViewVendorPortfolio vendorId={id} />
         </TabsContent>
         <TabsContent value="services">
-          <VendorServices services={services} />
+          <VendorServices vendorId={id} />
         </TabsContent>
         <TabsContent value="reviews">
-          <VendorReviews reviews={reviews} />
+          <VendorReviews
+            reviews={reviews}
+            hasReviewed={hasReviewed}
+            vendorId={id}
+          />
         </TabsContent>
       </Tabs>
     </div>

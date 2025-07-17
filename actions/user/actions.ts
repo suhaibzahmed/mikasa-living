@@ -71,3 +71,45 @@ export async function getUserDetails() {
     return { success: false, message: 'An unexpected error occurred.' }
   }
 }
+
+export async function postReview(
+  vendorId: string,
+  values: { comment: string; rating: number }
+) {
+  try {
+    const session = await checkUserAuth()
+    if (!session) {
+      return {
+        success: false,
+        message: 'You must be logged in to post a review.',
+      }
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        firebaseUid: session.uid,
+      },
+    })
+
+    if (!user) {
+      return { success: false, message: 'User not found.' }
+    }
+
+    const review = await prisma.review.create({
+      data: {
+        vendorId,
+        userId: user.id,
+        comment: values.comment,
+        rating: values.rating,
+      },
+    })
+    return {
+      success: true,
+      message: 'Review posted successfully',
+      data: review,
+    }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}

@@ -1,21 +1,16 @@
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { getVendorServices } from '@/actions/common.actions'
+import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 
-const VendorServices = ({ services }: { services: string[] }) => {
+const VendorServices = async ({ vendorId }: { vendorId: string }) => {
+  const vendor = await getVendorServices(vendorId)
   return (
     <div>
-      {services.length < 1 ? (
+      <h5>Services Provided</h5>
+      {vendor?.services && vendor.services.length < 1 ? (
         <p>No services found</p>
       ) : (
         <div className="grid w-full grid-cols-3 gap-4">
-          {services.map((service) => (
+          {vendor?.services.map((service) => (
             <Card key={service} className="min-w-0">
               <CardHeader>
                 <CardTitle>{service}</CardTitle>

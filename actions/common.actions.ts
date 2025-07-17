@@ -120,10 +120,62 @@ export async function getVendorProfileDetails(id: string) {
         photos: true,
         videos: true,
         availability: true,
-        reviews: true,
+        reviews: { include: { user: true }, orderBy: { createdAt: 'desc' } },
       },
     })
     return vendor
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+export async function getVendorAbout(id: string) {
+  try {
+    const vendorAbout = await prisma.vendor.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        description: true,
+      },
+    })
+    return vendorAbout
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+export async function getVendorPortfolio(id: string) {
+  try {
+    const vendorPortfolio = await prisma.vendor.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        photos: true,
+        videos: true,
+      },
+    })
+    return vendorPortfolio
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+
+export async function getVendorServices(id: string) {
+  try {
+    const vendorServices = await prisma.vendor.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        services: true,
+      },
+    })
+    return vendorServices
   } catch (error) {
     console.log(error)
     return null
