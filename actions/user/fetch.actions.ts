@@ -1,6 +1,8 @@
 'server only'
 
 import { prisma } from '@/lib/db'
+import { checkUserAuth } from '../checkAuth'
+import { BookingStatus } from '@prisma/client'
 
 export async function getVendors() {
   try {
@@ -40,5 +42,73 @@ export async function getUserByReviewId(id: string) {
   } catch (error) {
     console.log(error)
     return null
+  }
+}
+
+export async function getUserBookings() {
+  try {
+    const session = await checkUserAuth()
+    if (!session) {
+      throw new Error('User not authenticated')
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        firebaseUid: session.uid,
+      },
+    })
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
+    const bookings = await prisma.booking.findMany({
+      where: {
+        userId: user.id,
+        status: { notIn: [BookingStatus.REJECTED, BookingStatus.COMPLETED] },
+      },
+      include: {
+        vendor: true,
+      },
+    })
+
+    return bookings
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
+export async function getUserBookingHistory() {
+  try {
+    const session = await checkUserAuth()
+    if (!session) {
+      throw new Error('User not authenticated')
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        firebaseUid: session.uid,
+      },
+    })
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
+    const bookings = await prisma.booking.findMany({
+      where: {
+        userId: user.id,
+        status: { in: [BookingStatus.COMPLETED, BookingStatus.REJECTED] },
+      },
+      include: {
+        vendor: true,
+      },
+    })
+
+    return bookings
+  } catch (error) {
+    console.log(error)
+    throw error
   }
 }

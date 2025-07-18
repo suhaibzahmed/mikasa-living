@@ -82,7 +82,7 @@ export const vendorNavUserItems = [
 
 export const userSidebarMenus = [
   { id: 1, name: 'Vendors', icon: Store, href: '/vendors' },
-  { id: 2, name: 'My Bookings', icon: Briefcase, href: '/my-bookings' },
+  { id: 2, name: 'My Bookings', icon: Briefcase, href: '/bookings' },
   { id: 3, name: 'Booking History', icon: History, href: '/booking-history' },
 ]
 

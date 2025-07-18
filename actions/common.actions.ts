@@ -88,7 +88,7 @@ export async function getAllVendors({
         reviews: true,
       },
     })
-    console.log('🚀 ~ vendors:', vendors)
+    // console.log('🚀 ~ vendors:', vendors)
 
     const totalVendors = await prisma.vendor.count({ where })
 

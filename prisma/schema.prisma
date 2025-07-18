@@ -72,7 +72,8 @@ model Booking {
 enum BookingStatus {
   PENDING
   CONFIRMED
-  CANCELLED
+  REJECTED
+  COMPLETED
 }
 
 enum VerificationStatus {

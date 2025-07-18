@@ -448,3 +448,52 @@ export async function updateVendorAvailability(data: AvailabilityData) {
     }
   }
 }
+
+export async function updateBookingRequest(bookingId: string, action: string) {
+  try {
+    const session = await checkVendorAuth()
+    if (!session) {
+      throw new Error('Vendor not authenticated')
+    }
+
+    const vendor = await prisma.vendor.findUnique({
+      where: {
+        firebaseUid: session.uid,
+      },
+    })
+
+    if (!vendor) {
+      throw new Error('Vendor not found')
+    }
+
+    const booking = await prisma.booking.findUnique({
+      where: {
+        id: bookingId,
+        vendorId: vendor.id,
+      },
+    })
+    if (!booking) {
+      throw new Error('Booking not found')
+    }
+
+    await prisma.booking.update({
+      where: {
+        id: bookingId,
+      },
+      data: {
+        status: action === 'accept' ? 'CONFIRMED' : 'REJECTED',
+      },
+    })
+
+    return {
+      success: true,
+      message: 'Booking request accepted successfully',
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      success: true,
+      message: 'Failed to accept booking request',
+    }
+  }
+}
