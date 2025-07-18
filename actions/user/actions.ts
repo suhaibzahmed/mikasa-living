@@ -118,3 +118,49 @@ export async function postReview(
     return { success: false, message: 'An unexpected error occurred.' }
   }
 }
+
+export async function bookVendor(
+  vendorId: string | undefined,
+  data: { bookingDate: Date; bookingTime: string; message: string }
+) {
+  try {
+    const session = await checkUserAuth()
+    if (!session) {
+      return redirect('/user/sign-in')
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        firebaseUid: session.uid,
+      },
+    })
+
+    if (!user) {
+      return { success: false, message: 'User not found.' }
+    }
+
+    if (!vendorId) {
+      return { success: false, message: 'Vendor not found.' }
+    }
+
+    const booking = await prisma.booking.create({
+      data: {
+        vendorId,
+        userId: user.id,
+        bookingDate: data.bookingDate,
+        bookingTime: data.bookingTime,
+        message: data.message,
+      },
+    })
+    console.log('🚀 ~ booking:', booking)
+
+    revalidatePath('/vendor/:id')
+    return {
+      success: true,
+      message: 'Booking request sent successfully',
+    }
+  } catch (error) {
+    console.log(error)
+    return { success: false, message: 'An unexpected error occurred.' }
+  }
+}

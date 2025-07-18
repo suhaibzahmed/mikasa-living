@@ -17,8 +17,8 @@ import VendorServices from '@/app/(user)/_components/VendorServices'
 import VendorReviews from '@/app/(user)/_components/VendorReviews'
 import { prisma } from '@/lib/db'
 import { Star } from 'lucide-react'
-import VendorBookingForm from '../../_components/VendorBookingForm'
 import RedirectToLoginButton from '@/components/common/RedirectToLoginButton'
+import VendorBookingForm from '../../_components/VendorBookingForm'
 
 const SingleVendorPage = async ({
   params,
@@ -81,7 +81,10 @@ const SingleVendorPage = async ({
                   Request a Callback from {vendorDetails?.companyName}
                 </DialogTitle>
                 <DialogDescription>
-                  <VendorBookingForm />
+                  <VendorBookingForm
+                    vendorId={vendorDetails?.id}
+                    availability={vendorDetails?.availability}
+                  />
                 </DialogDescription>
               </DialogHeader>
             </DialogContent>
