@@ -487,7 +487,10 @@ export async function updateBookingRequest(bookingId: string, action: string) {
 
     return {
       success: true,
-      message: 'Booking request accepted successfully',
+      message:
+        action === 'accept'
+          ? 'Booking request accepted successfully'
+          : 'Booking request rejected successfully',
     }
   } catch (error) {
     console.log(error)

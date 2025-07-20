@@ -13,7 +13,6 @@ import { formatTime } from '@/utils/formatTime'
 
 const UserBookingHistoryPage = async () => {
   const bookings = await getUserBookingHistory()
-  console.log('🚀 ~ UserBookingHistoryPage ~ bookings:', bookings)
 
   if (!bookings || bookings.length === 0) {
     return <div>No bookings found</div>
