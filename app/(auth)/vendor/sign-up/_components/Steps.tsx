@@ -7,12 +7,11 @@ const Steps = () => {
 
   const steps = [
     { number: 1, title: 'Phone Number' },
-    { number: 2, title: 'Verify OTP' },
-    { number: 3, title: 'Vendor Details' },
-    { number: 4, title: 'Select Plan' },
-    { number: 5, title: 'Billing Cycle' },
-    { number: 6, title: 'Payment' },
-    { number: 7, title: 'Confirmation' },
+    { number: 2, title: 'Vendor Details' },
+    { number: 3, title: 'Select Plan' },
+    { number: 4, title: 'Billing Cycle' },
+    { number: 5, title: 'Payment' },
+    { number: 6, title: 'Confirmation' },
   ]
   return (
     <div className="flex items-center justify-between ">

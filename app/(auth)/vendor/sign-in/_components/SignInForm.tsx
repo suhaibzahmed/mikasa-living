@@ -1,118 +1,175 @@
 'use client'
 
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from '@/components/ui/input-otp'
+import { auth } from '@/lib/firebase/client'
+import {
+  ConfirmationResult,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+} from 'firebase/auth'
 import { useRouter } from 'next/navigation'
-import { VendorSignInData, vendorSignInSchema } from '@/schemas/vendor.schema'
-import { Form } from '@/components/ui/form'
-import FormSubmitButton from '@/components/common/form/FormSubmitButton'
-import Link from 'next/link'
-import FormPhoneInput from '@/components/common/form/FormPhoneInput'
-import { useEffect, useState } from 'react'
-import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
+import { useEffect, useState, useTransition } from 'react'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
-import { verifyVendor } from '@/actions/vendor/actions'
 
-const SignInForm = () => {
-  const [countryCode, setCountryCode] = useState('+91')
-
+const VendorSignIn = () => {
   const router = useRouter()
-  const form = useForm<VendorSignInData>({
-    resolver: zodResolver(vendorSignInSchema),
-    defaultValues: {
-      phone: '',
-    },
-  })
+
+  const [phone, setPhone] = useState('')
+  const [otp, setOtp] = useState('')
+  const [resendCountdown, setResendCountdown] = useState(0)
+  const [isPending, startTransition] = useTransition()
+  const [error, setError] = useState('')
+
+  const [recaptchaVerifier, setRecaptchaVerifier] =
+    useState<RecaptchaVerifier | null>(null)
+  const [confirmationResult, setConfirmationResult] =
+    useState<ConfirmationResult | null>(null)
 
   useEffect(() => {
-    window.recaptchaVerifier = new RecaptchaVerifier(
+    let timer: NodeJS.Timeout
+    if (resendCountdown > 0) {
+      timer = setTimeout(() => {
+        setResendCountdown(resendCountdown - 1)
+      }, 1000)
+    }
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [resendCountdown])
+
+  useEffect(() => {
+    const recaptchaVerifier = new RecaptchaVerifier(
       auth,
       'recaptcha-container',
       {
         size: 'invisible',
-        callback: () => {},
       }
     )
-  }, [])
+    setRecaptchaVerifier(recaptchaVerifier)
 
-  const onSubmit = async (data: VendorSignInData) => {
-    try {
-      const result = await verifyVendor(data.phone)
-      if (!result.success) {
-        toast.error(result.message)
+    return () => {
+      recaptchaVerifier.clear()
+    }
+  }, [auth])
 
-        router.push('/vendor/sign-up')
+  useEffect(() => {
+    const hasEnteredOtp = otp.length === 6
+    if (hasEnteredOtp) {
+      verifyOtp()
+    }
+  }, [otp])
+
+  const requestOtp = (e?: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault()
+    setResendCountdown(60)
+
+    startTransition(async () => {
+      setError('')
+      if (!recaptchaVerifier) {
+        setError('recaptchaVerifier is not initialized')
         return
       }
 
-      const verifier = window.recaptchaVerifier
-      const fullPhoneNumber = `${countryCode}${data.phone}`
-      window.confirmationResult = await signInWithPhoneNumber(
-        auth,
-        fullPhoneNumber,
-        verifier
-      )
-      sessionStorage.setItem('auth-flow', 'signin')
-      router.push('/vendor/verify-otp')
-    } catch (error) {
-      console.error('Failed to send OTP', error)
-      toast.error('Failed to send OTP. Please try again.')
-    }
+      try {
+        const confirmationResult = await signInWithPhoneNumber(
+          auth,
+          phone,
+          recaptchaVerifier
+        )
+        setConfirmationResult(confirmationResult)
+      } catch (error: any) {
+        console.log(error)
+        setResendCountdown(0)
+
+        if (error.code === 'auth/invalid-phone-number') {
+          setError('Invalid phone number')
+        } else if (error.code === 'auth/too-many-requests') {
+          setError('Too many requests')
+        } else {
+          router.push('/vendor/sign-up')
+          toast.error('Phone number does not exist. Please sign up.')
+        }
+      }
+    })
+  }
+
+  const verifyOtp = async () => {
+    startTransition(async () => {
+      setError('')
+      if (!confirmationResult) {
+        setError('Please request otp first')
+        return
+      }
+
+      try {
+        const userCredential = await confirmationResult.confirm(otp)
+        const idToken = await userCredential.user.getIdToken()
+
+        await fetch('/api/login', {
+          headers: {
+            Authorization: `Bearer ${idToken}`,
+          },
+        })
+
+        router.push('/vendor/dashboard')
+      } catch (error: any) {
+        console.log(error)
+        setError('Failed to verify otp')
+      }
+    })
   }
 
   return (
-    <div className={cn('flex flex-col gap-6')}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
-            Enter your mobile number to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-y-4"
-            >
-              <FormPhoneInput
-                control={form.control}
-                name="phone"
-                label="Phone Number"
-                countryCode={countryCode}
-                setCountryCode={setCountryCode}
-              />
+    <div>
+      {!confirmationResult && (
+        <form onSubmit={requestOtp}>
+          <Input
+            type="tel"
+            placeholder="Phone Number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+        </form>
+      )}
 
-              <FormSubmitButton
-                title="Send OTP"
-                pendingText="Sending OTP"
-                isPending={form.formState.isSubmitting}
-              />
-              <div id="recaptcha-container"></div>
-              <div className=" text-center text-sm">
-                Don&apos;t have an account?{' '}
-                <Link
-                  href="/vendor/sign-up"
-                  className=" underline underline-offset-4 "
-                >
-                  Sign up
-                </Link>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+      {confirmationResult && (
+        <InputOTP maxLength={6} value={otp} onChange={(value) => setOtp(value)}>
+          <InputOTPGroup>
+            <InputOTPSlot index={0} />
+            <InputOTPSlot index={1} />
+            <InputOTPSlot index={2} />
+          </InputOTPGroup>
+          <InputOTPSeparator />
+          <InputOTPGroup>
+            <InputOTPSlot index={3} />
+            <InputOTPSlot index={4} />
+            <InputOTPSlot index={5} />
+          </InputOTPGroup>
+        </InputOTP>
+      )}
+
+      <Button
+        disabled={!phone || isPending || resendCountdown > 0}
+        onClick={() => requestOtp()}
+      >
+        {resendCountdown > 0
+          ? `Resend OTP in ${resendCountdown}`
+          : isPending
+          ? 'Sending OTP...'
+          : 'Send OTP'}
+      </Button>
+
+      <p className="text-red-500">{error}</p>
+
+      <div id="recaptcha-container" />
     </div>
   )
 }
-
-export default SignInForm
+export default VendorSignIn

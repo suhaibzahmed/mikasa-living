@@ -7,7 +7,6 @@ import {
 } from '@/constants/config'
 
 export const vendorRegistrationSchema = z.object({
-  firebaseUid: z.string().optional(),
   email: z.string().email(),
   phone: z.string().min(10).max(15),
   companyName: z.string().min(3).max(50),
@@ -28,7 +27,12 @@ export const vendorPhoneSchema = z.object({
   phone: z.string().min(10, { message: 'Phone number is required' }),
 })
 
+export const vendorOtpSchema = z.object({
+  otp: z.string().min(6, 'Your one-time password must be 6 characters.'),
+})
+
 export type VendorPhoneData = z.infer<typeof vendorPhoneSchema>
+export type VendorOtpData = z.infer<typeof vendorOtpSchema>
 
 export const vendorVerifyOTPSchema = z.object({
   otp: z.string().min(6, { message: 'OTP must be 6 characters long' }),

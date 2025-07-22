@@ -8,15 +8,16 @@ import ThemeToggle from '@/components/ThemeToggle'
 import AdminSidebar from './_components/AdminSidebar'
 import CurrentPageHeader from '@/components/common/sidebar/CurrentPageHeader'
 import { redirect } from 'next/navigation'
-import { checkAdminAuth } from '@/actions/checkAuth'
+import { getAuthenticatedUser } from '@/actions/checkAuth'
 
 const AdminLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) => {
-  const admin = await checkAdminAuth()
-  if (!admin) {
+  const checkAdmin = await getAuthenticatedUser()
+
+  if (!checkAdmin) {
     redirect('/admin/sign-in')
   }
 

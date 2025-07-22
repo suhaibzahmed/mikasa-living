@@ -1,27 +1,20 @@
 'use server'
+import { clientConfig, serverConfig } from '@/lib/firebase/config'
+import { getTokens } from 'next-firebase-auth-edge'
+import { cookies } from 'next/headers'
 
-import { verifySession } from '@/lib/session'
-import { redirect } from 'next/navigation'
+export async function getAuthenticatedUser() {
+  const tokens = await getTokens(await cookies(), {
+    apiKey: clientConfig.apiKey,
+    cookieName: serverConfig.cookieName,
+    cookieSignatureKeys: serverConfig.cookieSignatureKeys,
+    serviceAccount: serverConfig.serviceAccount,
+  })
+  console.log('🚀 ~ tokens ~ tokens:', tokens?.decodedToken)
 
-export const checkVendorAuth = async () => {
-  const session = await verifySession()
-  // console.log('🚀 ~ checkVendorAuth ~ session:', session)
-  if (!session) {
-    redirect('/vendor/sign-in')
+  if (!tokens) {
+    throw new Error('Not authenticated')
   }
-  return session
-}
 
-export const checkUserAuth = async () => {
-  const session = await verifySession()
-  return session
-}
-
-export const checkAdminAuth = async () => {
-  const session = await verifySession()
-  // console.log('🚀 ~ checkAdminAuth ~ session:', session)
-  if (!session) {
-    redirect('/admin/sign-in')
-  }
-  return session
+  return tokens?.decodedToken
 }

@@ -3,11 +3,11 @@
 import { prisma } from '@/lib/db'
 import { USER_PAGE_SIZE, VENDOR_PAGE_SIZE } from '@/constants/config'
 import { PlanType, Prisma, VerificationStatus } from '@prisma/client'
-import { checkAdminAuth } from '../checkAuth'
+import { getAuthenticatedUser } from '../checkAuth'
 
 export async function getVendorById(id: string) {
   try {
-    await checkAdminAuth()
+    await getAuthenticatedUser()
     const vendor = await prisma.vendor.findUnique({
       where: {
         id,
@@ -28,7 +28,7 @@ export async function getVendorById(id: string) {
 
 export async function getPendingVendors() {
   try {
-    await checkAdminAuth()
+    await getAuthenticatedUser()
 
     const pendingVendors = await prisma.vendor.findMany({
       where: {
@@ -40,7 +40,7 @@ export async function getPendingVendors() {
       },
     })
 
-    return { succes: true, data: pendingVendors }
+    return { success: true, data: pendingVendors }
   } catch (error) {
     console.log('🚀 ~ getPendingVendors ~ error:', error)
     return {
@@ -61,7 +61,7 @@ export async function getVendors(params: {
   const pageSize = VENDOR_PAGE_SIZE
 
   try {
-    await checkAdminAuth()
+    await getAuthenticatedUser()
 
     const where: Prisma.VendorWhereInput = {}
 
@@ -115,7 +115,7 @@ export async function getUsers(params: { page?: number; user?: string }) {
   const { page = 1, user } = params
   const pageSize = USER_PAGE_SIZE
   try {
-    await checkAdminAuth()
+    await getAuthenticatedUser()
 
     const where: Prisma.UserWhereInput = {}
 
@@ -135,7 +135,6 @@ export async function getUsers(params: { page?: number; user?: string }) {
     const totalUsers = await prisma.user.count({ where })
 
     return {
-      success: true,
       data: {
         users,
         totalPages: Math.ceil(totalUsers / pageSize),
@@ -145,8 +144,6 @@ export async function getUsers(params: { page?: number; user?: string }) {
   } catch (error) {
     console.log('🚀 ~ getPendingVendors ~ error:', error)
     return {
-      success: false,
-      message: 'Failed to get users',
       data: { users: [], totalPages: 0 },
     }
   }
@@ -154,7 +151,7 @@ export async function getUsers(params: { page?: number; user?: string }) {
 
 export async function getUserById(id: string) {
   try {
-    await checkAdminAuth()
+    await getAuthenticatedUser()
 
     const user = await prisma.user.findUnique({
       where: {
@@ -175,7 +172,7 @@ export async function getUserById(id: string) {
 
 export async function getGoldPlatinumVendors() {
   try {
-    await checkAdminAuth()
+    await getAuthenticatedUser()
     const featuredVendors = await prisma.vendor.findMany({
       where: {
         verificationStatus: 'VERIFIED',

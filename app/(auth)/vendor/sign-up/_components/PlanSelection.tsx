@@ -12,18 +12,14 @@ const PlanSelection = () => {
   const { vendorData, setVendorData, prevStep, nextStep, step } =
     useVendorStore()
   const [selectedPlanId, setSelectedPlanId] = useState<string>(
-    vendorData.planId || ''
+    vendorData?.planId || ''
   )
 
   useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        const result = await getPlans()
-        if (result.success && result.data) {
-          setPlans(result.data)
-        }
-      } catch (error) {
-        console.log(error)
+    async function fetchPlans() {
+      const res = await getPlans()
+      if (res.data) {
+        setPlans(res.data)
       }
     }
     fetchPlans()

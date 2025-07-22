@@ -1,8 +1,8 @@
 'server only'
 
 import { prisma } from '@/lib/db'
-import { checkUserAuth } from '../checkAuth'
 import { BookingStatus } from '@prisma/client'
+import { getAuthenticatedUser } from '../checkAuth'
 
 export async function getVendors() {
   try {
@@ -47,14 +47,11 @@ export async function getUserByReviewId(id: string) {
 
 export async function getUserBookings() {
   try {
-    const session = await checkUserAuth()
-    if (!session) {
-      throw new Error('User not authenticated')
-    }
+    const checkAuth = await getAuthenticatedUser()
 
     const user = await prisma.user.findUnique({
       where: {
-        firebaseUid: session.uid,
+        firebaseUid: checkAuth.uid,
       },
     })
 
@@ -81,14 +78,11 @@ export async function getUserBookings() {
 
 export async function getUserBookingHistory() {
   try {
-    const session = await checkUserAuth()
-    if (!session) {
-      throw new Error('User not authenticated')
-    }
+    const checkAuth = await getAuthenticatedUser()
 
     const user = await prisma.user.findUnique({
       where: {
-        firebaseUid: session.uid,
+        firebaseUid: checkAuth.uid,
       },
     })
 

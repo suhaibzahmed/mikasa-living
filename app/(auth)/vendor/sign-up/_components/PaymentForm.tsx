@@ -6,14 +6,10 @@ import { Form } from '@/components/ui/form'
 import { useVendorStore } from '@/lib/store/vendorStore'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { createVendorAndSession } from '@/actions/vendor/actions'
 import { toast } from 'sonner'
-import {
-  paymentSchema,
-  PaymentData,
-  vendorRegistrationSchema,
-} from '@/schemas/vendor.schema'
+import { paymentSchema, PaymentData } from '@/schemas/vendor.schema'
 import { Button } from '@/components/ui/button'
+import { createVendor } from '@/actions/vendor/actions'
 
 const PaymentForm = () => {
   const { vendorData, nextStep, prevStep } = useVendorStore()
@@ -31,26 +27,9 @@ const PaymentForm = () => {
     try {
       console.log('Payment details (not stored):', data)
 
-      const validationResult = vendorRegistrationSchema.safeParse(vendorData)
-
-      if (!validationResult.success) {
-        toast.error(
-          'Incomplete vendor details. Please go back and complete the form.'
-        )
-        console.error(validationResult.error.flatten().fieldErrors)
-        return
-      }
-
       await new Promise((resolve) => setTimeout(resolve, 3000))
-      if (!vendorData.firebaseUid || !vendorData.idToken) {
-        toast.error('Something went wrong. Please try again.')
-        return
-      }
-      const result = await createVendorAndSession({
-        ...validationResult.data,
-        firebaseUid: vendorData.firebaseUid,
-        idToken: vendorData.idToken,
-      })
+
+      const result = await createVendor(vendorData)
       if (result.success) {
         toast.success('Vendor created successfully!')
         nextStep()

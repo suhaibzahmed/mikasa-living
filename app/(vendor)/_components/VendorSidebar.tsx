@@ -25,38 +25,31 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChevronsUpDown, HomeIcon, LogOut } from 'lucide-react'
+import { ChevronsUpDown, HomeIcon } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useSidebar } from '@/components/ui/sidebar'
 import { useEffect, useState } from 'react'
-import { getVendorDetails, logout } from '@/actions/vendor/actions'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import { Vendor } from '@prisma/client'
+import { LogoutButton } from '@/components/common/LogoutButton'
+import { useAuth } from '@/components/AuthProvider'
+import { getVendorSidebarDetails } from '@/actions/vendor/actions'
 
 const VendorSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
   const { isMobile } = useSidebar()
-  const router = useRouter()
-  const [vendor, setVendor] = useState<Partial<Vendor>>({
-    companyName: 'Vendor Name',
-    email: 'vendor@example.com',
-  })
+  const { isLoading } = useAuth()
+
+  const [vendor, setVendor] = useState<{
+    companyName: string
+    email: string
+  } | null>(null)
 
   useEffect(() => {
-    const fetchVendorDetails = async () => {
-      const res = await getVendorDetails()
-      if (res.success && res.data) {
-        setVendor(res.data)
-      }
+    async function vendorDetails() {
+      const res = await getVendorSidebarDetails()
+      setVendor(res)
     }
-    fetchVendorDetails()
-  }, [])
 
-  const handleLogout = async () => {
-    await logout()
-    router.push('/vendor/sign-in')
-    toast.success('Logged out successfully')
-  }
+    vendorDetails()
+  }, [])
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -107,17 +100,19 @@ const VendorSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
                       src="https://github.com/shadcn.png"
-                      alt={vendor.companyName || ''}
+                      alt={vendor?.companyName || ''}
                     />
                     <AvatarFallback className="rounded-lg">
-                      {vendor.companyName?.charAt(0).toUpperCase()}
+                      {vendor?.companyName?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">
-                      {vendor.companyName}
+                      {isLoading ? 'loading...' : vendor?.companyName}
                     </span>
-                    <span className="truncate text-xs">{vendor.email}</span>
+                    <span className="truncate text-xs">
+                      {isLoading ? 'loading...' : vendor?.email}
+                    </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -133,17 +128,19 @@ const VendorSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage
                         src="https://github.com/shadcn.png"
-                        alt={vendor.companyName || ''}
+                        alt={vendor?.companyName || ''}
                       />
                       <AvatarFallback className="rounded-lg">
-                        {vendor.companyName?.charAt(0).toUpperCase()}
+                        {vendor?.companyName?.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-medium">
-                        {vendor.companyName}
+                        {isLoading ? 'loading...' : vendor?.companyName}
                       </span>
-                      <span className="truncate text-xs">{vendor.email}</span>
+                      <span className="truncate text-xs">
+                        {isLoading ? 'loading...' : vendor?.email}
+                      </span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
@@ -159,10 +156,7 @@ const VendorSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                   ))}
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log out
-                </DropdownMenuItem>
+                <LogoutButton />
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

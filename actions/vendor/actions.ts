@@ -5,12 +5,9 @@ import {
   AvailabilityData,
   AvailabilitySchema,
   VendorRegistrationData,
+  vendorRegistrationSchema,
   videoSchema,
 } from '@/schemas/vendor.schema'
-import { cookies } from 'next/headers'
-import { authAdmin } from '@/lib/firebase-admin'
-import { checkVendorAuth } from '../checkAuth'
-import { createSession } from '../session'
 import { revalidatePath } from 'next/cache'
 import { updateVendorDetailsSchema } from '@/schemas/vendor.schema'
 import { z } from 'zod'
@@ -21,6 +18,8 @@ import {
   uploadVideoFile,
 } from '@/lib/supabase'
 import { imageSchema } from '@/schemas/vendor.schema'
+import { getAuthenticatedUser } from '../checkAuth'
+import { setCustomClaims } from '@/lib/auth'
 
 export const verifyVendor = async (phone: string) => {
   try {
@@ -39,37 +38,42 @@ export const verifyVendor = async (phone: string) => {
   }
 }
 
-export const logout = async () => {
+export const createVendor = async (
+  vendorData: Partial<VendorRegistrationData>
+) => {
   try {
-    const cookieStore = await cookies()
-    cookieStore.delete('session')
-    return { success: true }
-  } catch (error) {
-    console.log(error)
-    return { success: false, message: 'An unexpected error occurred.' }
-  }
-}
+    const validatedData = vendorRegistrationSchema.safeParse(vendorData)
 
-export const verifyOtp = async (idToken: string) => {
-  try {
-    const decodedToken = await authAdmin.verifyIdToken(idToken)
-    return { success: true, data: decodedToken }
-  } catch (error) {
-    console.log(error)
-    return { success: false, message: 'An unexpected error occurred.' }
-  }
-}
+    if (!validatedData.success) {
+      return {
+        success: false,
+        message: 'Invalid data provided.',
+        errors: validatedData.error.flatten().fieldErrors,
+      }
+    }
 
-export const createVendorAndSession = async ({
-  idToken,
-  ...data
-}: VendorRegistrationData & { firebaseUid: string; idToken: string }) => {
-  try {
-    const vendor = await prisma.vendor.create({
-      data,
+    const checkVendor = await getAuthenticatedUser()
+
+    const existingVendor = await prisma.vendor.findUnique({
+      where: {
+        firebaseUid: checkVendor.uid,
+      },
     })
 
-    await createSession({ idToken, role: 'vendor' })
+    if (existingVendor) {
+      await setCustomClaims(existingVendor.firebaseUid, 'VENDOR')
+      return {
+        success: false,
+        message: 'Vendor already exists.',
+      }
+    }
+
+    const vendor = await prisma.vendor.create({
+      data: {
+        firebaseUid: checkVendor.uid,
+        ...validatedData.data,
+      },
+    })
 
     return { success: true, data: vendor }
   } catch (error) {
@@ -83,7 +87,7 @@ export async function getPlans() {
     const plans = await prisma.plan.findMany({ orderBy: { monthly: 'asc' } })
     return { success: true, data: plans }
   } catch (error) {
-    console.log(error)
+    console.error('Error fetching plans:', error)
     return { success: false, message: 'An unexpected error occurred.' }
   }
 }
@@ -103,24 +107,23 @@ export const getPlanById = async (id: string) => {
 }
 
 // FOR VENDOR SIDEBAR
-export async function getVendorDetails() {
+export async function getVendorSidebarDetails() {
   try {
-    const session = await checkVendorAuth()
-
+    const checkAuth = await getAuthenticatedUser()
     const vendor = await prisma.vendor.findUnique({
       where: {
-        firebaseUid: session.uid,
+        firebaseUid: checkAuth.uid,
+      },
+      select: {
+        companyName: true,
+        email: true,
       },
     })
 
-    if (!vendor) {
-      return { success: false, message: 'Vendor not found' }
-    }
-
-    return { success: true, data: vendor }
+    return vendor
   } catch (error) {
     console.log(error)
-    return { success: false, message: 'An unexpected error occurred.' }
+    return null
   }
 }
 
@@ -128,7 +131,7 @@ export async function updateVendorDetails(
   formData: z.infer<typeof updateVendorDetailsSchema>
 ) {
   try {
-    const auth = await checkVendorAuth()
+    const auth = await getAuthenticatedUser()
     const validatedData = updateVendorDetailsSchema.safeParse(formData)
 
     if (!validatedData.success) {
@@ -157,7 +160,7 @@ export async function updateVendorDetails(
 
 export async function uploadVendorPhoto(formData: FormData) {
   try {
-    const auth = await checkVendorAuth()
+    const auth = await getAuthenticatedUser()
     const image = formData.get('image') as File
 
     const validatedData = imageSchema.safeParse({ image })
@@ -227,7 +230,7 @@ export async function uploadVendorPhoto(formData: FormData) {
 }
 export async function deleteVendorPhoto(photoId: string) {
   try {
-    const auth = await checkVendorAuth()
+    const auth = await getAuthenticatedUser()
 
     const photo = await prisma.photo.findUnique({
       where: {
@@ -276,7 +279,7 @@ export async function deleteVendorPhoto(photoId: string) {
 
 export async function uploadVendorVideo(formData: FormData) {
   try {
-    const auth = await checkVendorAuth()
+    const auth = await getAuthenticatedUser()
     const video = formData.get('video') as File
 
     const validatedData = videoSchema.safeParse({ video })
@@ -347,7 +350,7 @@ export async function uploadVendorVideo(formData: FormData) {
 
 export async function deleteVendorVideo(videoId: string) {
   try {
-    const auth = await checkVendorAuth()
+    const auth = await getAuthenticatedUser()
 
     const video = await prisma.video.findUnique({
       where: {
@@ -396,7 +399,7 @@ export async function deleteVendorVideo(videoId: string) {
 
 export async function updateVendorAvailability(data: AvailabilityData) {
   try {
-    const auth = await checkVendorAuth()
+    const auth = await getAuthenticatedUser()
     const vendor = await prisma.vendor.findUnique({
       where: {
         firebaseUid: auth.uid,
@@ -451,7 +454,7 @@ export async function updateVendorAvailability(data: AvailabilityData) {
 
 export async function updateBookingRequest(bookingId: string, action: string) {
   try {
-    const session = await checkVendorAuth()
+    const session = await getAuthenticatedUser()
     if (!session) {
       throw new Error('Vendor not authenticated')
     }

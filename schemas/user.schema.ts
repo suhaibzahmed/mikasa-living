@@ -15,8 +15,6 @@ export const userSignUpSchema = z.object({
     .email({ message: 'Invalid email' })
     .optional()
     .or(z.literal('')),
-  phone: z.string().min(10, { message: 'Phone number is required' }),
-  firebaseUid: z.string().optional(),
 })
 
 export const verifyOTPSchema = z.object({

@@ -1,15 +1,15 @@
 'server only'
 
 import { prisma } from '@/lib/db'
-import { checkVendorAuth } from '../checkAuth'
 import { BookingStatus } from '@prisma/client'
+import { getAuthenticatedUser } from '../checkAuth'
 
 export async function getCompleteVendorDetails() {
   try {
-    const auth = await checkVendorAuth()
+    const checkAuth = await getAuthenticatedUser()
     const vendor = await prisma.vendor.findUnique({
       where: {
-        firebaseUid: auth.uid,
+        firebaseUid: checkAuth.uid,
       },
       include: {
         plan: true,
@@ -27,14 +27,11 @@ export async function getCompleteVendorDetails() {
 
 export async function getVendorBookingRequests() {
   try {
-    const session = await checkVendorAuth()
-    if (!session) {
-      throw new Error('Vendor not authenticated')
-    }
+    const checkAuth = await getAuthenticatedUser()
 
     const vendor = await prisma.vendor.findUnique({
       where: {
-        firebaseUid: session.uid,
+        firebaseUid: checkAuth.uid,
       },
     })
 
@@ -61,14 +58,11 @@ export async function getVendorBookingRequests() {
 
 export async function getConfirmedBookings() {
   try {
-    const session = await checkVendorAuth()
-    if (!session) {
-      throw new Error('Vendor not authenticated')
-    }
+    const checkAuth = await getAuthenticatedUser()
 
     const vendor = await prisma.vendor.findUnique({
       where: {
-        firebaseUid: session.uid,
+        firebaseUid: checkAuth.uid,
       },
     })
 
@@ -98,14 +92,11 @@ export async function getConfirmedBookings() {
 
 export async function getServiceHistory() {
   try {
-    const session = await checkVendorAuth()
-    if (!session) {
-      throw new Error('Vendor not authenticated')
-    }
+    const checkAuth = await getAuthenticatedUser()
 
     const vendor = await prisma.vendor.findUnique({
       where: {
-        firebaseUid: session.uid,
+        firebaseUid: checkAuth.uid,
       },
     })
 

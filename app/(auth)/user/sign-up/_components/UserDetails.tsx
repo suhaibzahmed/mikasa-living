@@ -6,38 +6,39 @@ import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { UserSignUpData, userSignUpSchema } from '@/schemas/user.schema'
-import { useUserStore } from '@/lib/store/userStore'
 import FormInput from '@/components/common/form/FormInput'
 import { createUser } from '@/actions/user/actions'
 import { useRouter } from 'next/navigation'
-import { createSession } from '@/actions/session'
+import { useAuth } from '@/components/AuthProvider'
+import { setCustomClaims } from '@/lib/auth'
 
 const UserDetails = () => {
-  const { phone, firebaseUid, idToken } = useUserStore()
   const router = useRouter()
+  const { user } = useAuth()
+
   const form = useForm<UserSignUpData>({
     resolver: zodResolver(userSignUpSchema),
     defaultValues: {
       name: '',
       email: '',
-      phone: phone,
     },
   })
 
   const onSubmit = async (data: UserSignUpData) => {
     try {
-      const res = await createUser({ ...data, firebaseUid })
+      const res = await createUser(data)
       if (res.success) {
-        const sessionRes = await createSession({ idToken, role: 'user' })
-        if (sessionRes.success) {
-          toast.success('Account created successfully')
-          router.refresh()
-          router.push('/')
-        } else {
-          toast.error(sessionRes.message)
-        }
-      } else {
-        toast.error(res.message)
+        await setCustomClaims(user?.uid, 'USER')
+        const newIdToken = await user?.getIdToken(true)
+        await fetch('/api/login', {
+          headers: {
+            Authorization: `Bearer ${newIdToken}`,
+          },
+        })
+
+        toast.success(res.message)
+        router.push('/')
+        router.refresh()
       }
     } catch (error) {
       toast.error('Something went wrong')

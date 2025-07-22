@@ -8,16 +8,16 @@ import ThemeToggle from '@/components/ThemeToggle'
 import VendorSidebar from './_components/VendorSidebar'
 import { redirect } from 'next/navigation'
 import CurrentPageHeader from '@/components/common/sidebar/CurrentPageHeader'
-import { checkVendorAuth } from '@/actions/checkAuth'
+import { getAuthenticatedUser } from '@/actions/checkAuth'
 
 const VendorLayout = async ({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) => {
-  const vendor = await checkVendorAuth()
+  const checkVendor = await getAuthenticatedUser()
 
-  if (!vendor) {
+  if (!checkVendor) {
     redirect('/vendor/sign-in')
   }
 

@@ -103,7 +103,7 @@ model Review {
 model Photo {
   id        String   @id @default(uuid())
   url       String
-  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   vendorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -112,7 +112,7 @@ model Photo {
 model Video {
   id        String   @id @default(uuid())
   url       String
-  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   vendorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -121,7 +121,7 @@ model Video {
 model ThreeDimensional {
   id        String   @id @default(uuid())
   url       String
-  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   vendorId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -153,7 +153,7 @@ model Availability {
   id        String   @id @default(uuid())
   startTime String
   endTime   String
-  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   vendorId  String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -161,7 +161,7 @@ model Availability {
 
 model Featured {
   id        String   @id @default(uuid())
-  vendor    Vendor   @relation(fields: [vendorId], references: [id])
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   vendorId  String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

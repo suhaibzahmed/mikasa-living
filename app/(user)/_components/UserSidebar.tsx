@@ -22,39 +22,29 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChevronsUpDown, HomeIcon, LogOut } from 'lucide-react'
+import { ChevronsUpDown, HomeIcon } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useSidebar } from '@/components/ui/sidebar'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import { getUserDetails, logout } from '@/actions/user/actions'
-
-import { User } from '@prisma/client'
+import { getUserSidebarDetails } from '@/actions/user/actions'
 import { useEffect, useState } from 'react'
+import { useAuth } from '@/components/AuthProvider'
+import { LogoutButton } from '@/components/common/LogoutButton'
 
 const UserSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
   const { isMobile } = useSidebar()
-  const router = useRouter()
-  const [user, setUser] = useState<Partial<User>>({
-    name: 'User Name',
-    email: 'user@example.com',
-  })
+  const { isLoading } = useAuth()
+  const [user, setUser] = useState<{
+    name: string
+    email: string | null
+  } | null>(null)
 
   useEffect(() => {
-    const fetchVendorDetails = async () => {
-      const res = await getUserDetails()
-      if (res) {
-        setUser(res)
-      }
+    async function userDetails() {
+      const res = await getUserSidebarDetails()
+      setUser(res)
     }
-    fetchVendorDetails()
+    userDetails()
   }, [])
-
-  const handleLogout = async () => {
-    await logout()
-    router.push('/user/sign-in')
-    toast.success('Logged out successfully')
-  }
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -105,15 +95,19 @@ const UserSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
                       src="https://github.com/shadcn.png"
-                      alt={user.name}
+                      alt={user?.name}
                     />
                     <AvatarFallback className="rounded-lg">
-                      {user.name?.charAt(0).toUpperCase()}
+                      {user?.name?.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-medium">{user.name}</span>
-                    <span className="truncate text-xs">{user.email}</span>
+                    <span className="truncate font-medium">
+                      {isLoading ? 'loading...' : user?.name}
+                    </span>
+                    <span className="truncate text-xs">
+                      {isLoading ? 'loading...' : user?.email}
+                    </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -129,15 +123,19 @@ const UserSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage
                         src="https://github.com/shadcn.png"
-                        alt={user.name}
+                        alt={user?.name}
                       />
                       <AvatarFallback className="rounded-lg">
-                        {user.name?.charAt(0).toUpperCase()}
+                        {user?.name?.charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">{user.name}</span>
-                      <span className="truncate text-xs">{user.email}</span>
+                      <span className="truncate font-medium">
+                        {isLoading ? 'loading...' : user?.name}
+                      </span>
+                      <span className="truncate text-xs">
+                        {isLoading ? 'loading...' : user?.email}
+                      </span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
@@ -153,10 +151,7 @@ const UserSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                   ))}
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log out
-                </DropdownMenuItem>
+                <LogoutButton />
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

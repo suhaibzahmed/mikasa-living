@@ -6,7 +6,6 @@ import PaymentForm from '@/app/(auth)/vendor/sign-up/_components/PaymentForm'
 import Confirmation from '@/app/(auth)/vendor/sign-up/_components/Confirmation'
 import { useVendorStore } from '@/lib/store/vendorStore'
 import PhoneNumberInput from './PhoneNumberInput'
-import OtpVerification from './OtpVerification'
 
 const RenderSteps = () => {
   const { step } = useVendorStore()
@@ -15,16 +14,14 @@ const RenderSteps = () => {
     case 1:
       return <PhoneNumberInput />
     case 2:
-      return <OtpVerification />
-    case 3:
       return <VendorDetails />
-    case 4:
+    case 3:
       return <PlanSelection />
-    case 5:
+    case 4:
       return <BillingCycle />
-    case 6:
+    case 5:
       return <PaymentForm />
-    case 7:
+    case 6:
       return <Confirmation />
     default:
       return <PhoneNumberInput />

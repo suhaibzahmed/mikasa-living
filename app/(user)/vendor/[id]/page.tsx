@@ -1,4 +1,3 @@
-import { checkUserAuth } from '@/actions/checkAuth'
 import { getVendorProfileDetails } from '@/actions/common.actions'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -19,6 +18,7 @@ import { prisma } from '@/lib/db'
 import { Star } from 'lucide-react'
 import RedirectToLoginButton from '@/components/common/RedirectToLoginButton'
 import VendorBookingForm from '../../_components/VendorBookingForm'
+import { checkAuth } from '@/actions/checkAuth'
 
 const SingleVendorPage = async ({
   params,
@@ -36,7 +36,7 @@ const SingleVendorPage = async ({
   const services = vendorDetails?.services || []
   const reviews = vendorDetails?.reviews || []
 
-  const userAuth = await checkUserAuth()
+  const userAuth = await checkAuth('user')
   let hasReviewed = false
   if (userAuth) {
     const user = await prisma.user.findUnique({

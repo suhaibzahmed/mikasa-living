@@ -1,68 +1,109 @@
+// middleware.ts
 import { NextRequest, NextResponse } from 'next/server'
-export function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname
-  const session = request.cookies.get('session')?.value
+import { authMiddleware, redirectToLogin } from 'next-firebase-auth-edge'
+import { clientConfig, serverConfig } from './lib/firebase/config'
 
-  if (path === '/') {
-    return NextResponse.next()
-  }
+const AUTH_ROUTES = [
+  '/admin/sign-in',
+  '/admin/sign-up',
+  '/vendor/sign-in',
+  '/vendor/sign-up',
+  '/user/sign-in',
+  '/user/sign-up',
+]
 
-  const isUserAuthPage =
-    path.startsWith('/user/sign-in') ||
-    path.startsWith('/user/sign-up') ||
-    path.startsWith('/user/verify-otp')
+export async function middleware(request: NextRequest) {
+  return authMiddleware(request, {
+    loginPath: '/api/login',
+    logoutPath: '/api/logout',
+    apiKey: clientConfig.apiKey,
+    cookieName: serverConfig.cookieName,
+    cookieSignatureKeys: serverConfig.cookieSignatureKeys,
+    cookieSerializeOptions: serverConfig.cookieSerializeOptions,
+    serviceAccount: serverConfig.serviceAccount,
 
-  if (session && isUserAuthPage) {
-    return NextResponse.redirect(new URL('/', request.url))
-  }
+    handleValidToken: async ({ token, decodedToken }, headers) => {
+      // console.log('DECODED TOKEN MIDDLEWARE:', decodedToken)
+      const { role } = decodedToken
+      const { pathname } = request.nextUrl
 
-  if (!session && !isUserAuthPage) {
-    return NextResponse.redirect(new URL('/user/sign-in', request.url))
-  }
+      if (AUTH_ROUTES.includes(pathname)) {
+        if (role === 'ADMIN') {
+          return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+        }
 
-  const isAdminPath = path.startsWith('/admin')
-  const isVendorPath = path.startsWith('/vendor')
+        if (role === 'VENDOR') {
+          return NextResponse.redirect(
+            new URL('/vendor/dashboard', request.url)
+          )
+        }
 
-  // Handle Admin routes
-  if (isAdminPath) {
-    const isAdminAuthPage = path.startsWith('/admin/sign-in')
-    if (session && isAdminAuthPage) {
-      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
-    }
-    if (!session && !isAdminAuthPage) {
-      return NextResponse.redirect(new URL('/admin/sign-in', request.url))
-    }
-  }
+        if (role === 'USER') {
+          return NextResponse.redirect(new URL('/', request.url))
+        }
+      }
 
-  // Handle Vendor routes
-  if (isVendorPath) {
-    const isVendorAuthPage =
-      path.startsWith('/vendor/sign-in') ||
-      path.startsWith('/vendor/sign-up') ||
-      path.startsWith('/vendor/verify-otp')
+      if (role === 'ADMIN' && pathname.startsWith('/vendor')) {
+        return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+      }
 
-    if (session && isVendorAuthPage) {
-      return NextResponse.redirect(new URL('/vendor/dashboard', request.url))
-    }
+      if (role === 'VENDOR' && pathname.startsWith('/admin')) {
+        return NextResponse.redirect(new URL('/vendor/dashboard', request.url))
+      }
 
-    if (!session && !isVendorAuthPage) {
-      return NextResponse.redirect(new URL('/vendor/sign-in', request.url))
-    }
-  }
+      if (
+        role === 'USER' &&
+        (pathname.startsWith('/admin') || pathname.startsWith('/vendor'))
+      ) {
+        return NextResponse.redirect(new URL('/', request.url))
+      }
 
-  return NextResponse.next()
+      return NextResponse.next({
+        request: {
+          headers,
+        },
+      })
+    },
+
+    handleInvalidToken: async () => {
+      const { pathname } = request.nextUrl
+      console.log('pathname', pathname)
+
+      if (AUTH_ROUTES.includes(pathname)) {
+        return NextResponse.next()
+      }
+
+      if (pathname.startsWith('/admin')) {
+        return redirectToLogin(request, {
+          path: '/admin/sign-in',
+          publicPaths: AUTH_ROUTES,
+        })
+      } else {
+        return redirectToLogin(request, {
+          path: '/vendor/sign-in',
+          publicPaths: AUTH_ROUTES,
+        })
+      }
+    },
+    handleError: async (error) => {
+      const { pathname } = request.nextUrl
+      console.error('Unhandled authentication error:', { error })
+
+      if (pathname.startsWith('/admin')) {
+        return redirectToLogin(request, {
+          path: '/admin/sign-in',
+          publicPaths: AUTH_ROUTES,
+        })
+      } else {
+        return redirectToLogin(request, {
+          path: '/vendor/sign-in',
+          publicPaths: AUTH_ROUTES,
+        })
+      }
+    },
+  })
 }
 
 export const config = {
-  matcher: [
-    // '/',
-    '/admin/:path*',
-    '/vendor/dashboard/:path*',
-    '/vendor/sign-in',
-    '/vendor/sign-up',
-    '/vendor/verify-otp',
-    '/user/sign-in',
-    '/user/sign-up',
-    '/user/verify-otp',
-  ],
+  matcher: ['/', '/((?!_next|api|.*\\..*).*)', '/api/login', '/api/logout'],
 }

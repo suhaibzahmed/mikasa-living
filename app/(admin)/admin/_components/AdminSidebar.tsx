@@ -22,37 +22,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChevronsUpDown, HomeIcon, LogOut } from 'lucide-react'
+import { ChevronsUpDown, HomeIcon } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useSidebar } from '@/components/ui/sidebar'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import { getAdmin, logout } from '@/actions/admin/actions'
-import { Admin } from '@prisma/client'
-import { useEffect, useState } from 'react'
+import { useAuth } from '@/components/AuthProvider'
+import { LogoutButton } from '@/components/common/LogoutButton'
 
 const AdminSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
+  const { user, isLoading } = useAuth()
   const { isMobile } = useSidebar()
-  const router = useRouter()
-  const [admin, setAdmin] = useState<Partial<Admin>>({
-    email: 'admin@example.com',
-  })
-
-  useEffect(() => {
-    const fetchAdminDetails = async () => {
-      const res = await getAdmin()
-      if (res) {
-        setAdmin(res)
-      }
-    }
-    fetchAdminDetails()
-  }, [])
-
-  const handleLogout = async () => {
-    await logout()
-    router.push('/admin/sign-in')
-    toast.success('Logged out successfully')
-  }
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -103,13 +81,15 @@ const AdminSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
                       src="https://github.com/shadcn.png"
-                      alt={admin.email?.charAt(0).toUpperCase()}
+                      alt={user?.email?.charAt(0).toUpperCase()}
                     />
                     <AvatarFallback className="rounded-lg">A</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">Admin</span>
-                    <span className="truncate text-xs">{admin.email}</span>
+                    <span className="truncate text-xs">
+                      {isLoading ? 'Loading...' : user?.email}
+                    </span>
                   </div>
                   <ChevronsUpDown className="ml-auto size-4" />
                 </SidebarMenuButton>
@@ -125,13 +105,15 @@ const AdminSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                     <Avatar className="h-8 w-8 rounded-lg">
                       <AvatarImage
                         src="https://github.com/shadcn.png"
-                        alt={admin.email?.charAt(0).toUpperCase()}
+                        alt={user?.email?.charAt(0).toUpperCase()}
                       />
                       <AvatarFallback className="rounded-lg">A</AvatarFallback>
                     </Avatar>
                     <div className="grid flex-1 text-left text-sm leading-tight">
                       <span className="truncate font-medium">Admin</span>
-                      <span className="truncate text-xs">{admin.email}</span>
+                      <span className="truncate text-xs">
+                        {isLoading ? 'loading...' : user?.email}
+                      </span>
                     </div>
                   </div>
                 </DropdownMenuLabel>
@@ -147,10 +129,7 @@ const AdminSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                   ))}
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Log out
-                </DropdownMenuItem>
+                <LogoutButton />
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>

@@ -8,6 +8,8 @@ import { Plan } from '@prisma/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CheckCircle2 } from 'lucide-react'
 import { getPlanById } from '@/actions/vendor/actions'
+import { useAuth } from '@/components/AuthProvider'
+import { setCustomClaims } from '@/lib/auth'
 
 const DetailItem = ({ label, value }: { label: string; value?: string }) => (
   <div>
@@ -18,6 +20,7 @@ const DetailItem = ({ label, value }: { label: string; value?: string }) => (
 
 const Confirmation = () => {
   const { vendorData } = useVendorStore()
+  const { user } = useAuth()
   const router = useRouter()
   const [plan, setPlan] = useState<Plan | null>(null)
 
@@ -36,6 +39,18 @@ const Confirmation = () => {
     }
     fetchPlan()
   }, [vendorData.planId])
+
+  async function handleCompleteOnboarding() {
+    await setCustomClaims(user?.uid, 'VENDOR')
+    const newIdToken = await user?.getIdToken(true)
+    await fetch('/api/login', {
+      headers: {
+        Authorization: `Bearer ${newIdToken}`,
+      },
+    })
+    router.push('/vendor/dashboard')
+    router.refresh()
+  }
 
   return (
     <div className="mx-auto p-4 sm:p-6 lg:p-8 space-y-8 ">
@@ -97,9 +112,7 @@ const Confirmation = () => {
       </Card>
 
       <div className="w-full flex justify-center pt-4">
-        <Button onClick={() => router.push('/vendor/dashboard')}>
-          Go to Your Dashboard
-        </Button>
+        <Button onClick={handleCompleteOnboarding}>Go to Your Dashboard</Button>
       </div>
     </div>
   )
