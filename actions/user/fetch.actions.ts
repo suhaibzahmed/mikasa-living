@@ -106,3 +106,77 @@ export async function getUserBookingHistory() {
     throw error
   }
 }
+
+export async function getAllServices() {
+  try {
+    const services = await prisma.service.findMany({})
+    return services
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
+export async function getNonFeaturedVendors() {
+  try {
+    const vendors = await prisma.vendor.findMany({
+      where: {
+        verificationStatus: 'VERIFIED',
+      },
+      include: {
+        plan: true,
+        reviews: true,
+      },
+    })
+
+    return vendors
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
+export async function getServicesWithVendors() {
+  try {
+    const services = await prisma.service.findMany({
+      include: {
+        vendors: {
+          include: {
+            vendor: {
+              include: {
+                plan: true,
+                reviews: true,
+                featured: true,
+              },
+            },
+          },
+        },
+      },
+    })
+
+    const servicesWithVendors = services.map((service) => {
+      const verifiedVendors = service.vendors
+        .map((v) => v.vendor)
+        .filter((vendor) => vendor.verificationStatus === 'VERIFIED')
+
+      const featuredVendors = verifiedVendors
+        .filter((vendor) => vendor.featured)
+        .slice(0, 3)
+
+      const nonFeaturedVendors = verifiedVendors
+        .filter((vendor) => !vendor.featured)
+        .slice(0, 3)
+
+      return {
+        ...service,
+        featuredVendors,
+        nonFeaturedVendors,
+      }
+    })
+
+    return servicesWithVendors
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}

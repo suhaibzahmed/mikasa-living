@@ -11,7 +11,7 @@ const UserLandingPage = () => {
 
       <MaxWidthWrapper>
         <AboutUs />
-        <h4>Our Services</h4>
+
         <Services />
 
         <h4>Our Top-Rated Partners</h4>

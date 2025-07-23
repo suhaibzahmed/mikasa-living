@@ -18,14 +18,14 @@ export async function getFeaturedVendors() {
         vendor: { plan: { monthly: 'desc' } },
       },
       include: {
-        vendor: { include: { plan: true, reviews: true } },
+        vendor: { include: { plan: true, reviews: true, services: true } },
       },
     })
 
-    return { success: true, data: featuredVendors }
+    return featuredVendors
   } catch (error) {
     console.log('🚀 ~ getFeaturedVendors ~ error:', error)
-    return { success: false, message: 'An unexpected error occurred.' }
+    throw error
   }
 }
 

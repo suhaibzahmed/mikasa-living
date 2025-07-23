@@ -20,10 +20,10 @@ export const vendorServices = [
     slug: 'living-room-decor',
   },
   {
-    title: 'Office Spaces',
+    title: 'Office Space',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     icon: Home,
-    slug: 'office-spaces',
+    slug: 'office-space',
   },
   {
     title: 'Color Consultation',
@@ -36,60 +36,5 @@ export const vendorServices = [
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
     icon: Home,
     slug: 'lighting-design',
-  },
-]
-
-export const navlinks = [
-  { name: 'Home', href: '#' },
-  { name: 'About', href: '/#about' },
-  { name: 'Services', href: '/#services' },
-  { name: 'Vendors', href: '/#vendors' },
-]
-
-export const aboutUsStats = [
-  {
-    title: 'Projects Done',
-    value: '1K+',
-  },
-  {
-    title: 'Pro Vendors',
-    value: '50+',
-  },
-  {
-    title: 'Total Clients',
-    value: '300+',
-  },
-]
-
-export const navbarCities = [
-  {
-    id: 1,
-    name: 'New Delhi',
-    country: 'India',
-  },
-  {
-    id: 2,
-    name: 'Mumbai',
-    country: 'India',
-  },
-  {
-    id: 3,
-    name: 'Bangalore',
-    country: 'India',
-  },
-  {
-    id: 4,
-    name: 'Hyderabad',
-    country: 'India',
-  },
-  {
-    id: 5,
-    name: 'Pune',
-    country: 'India',
-  },
-  {
-    id: 6,
-    name: 'Chennai',
-    country: 'India',
   },
 ]
