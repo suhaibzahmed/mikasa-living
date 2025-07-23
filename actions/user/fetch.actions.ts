@@ -107,16 +107,6 @@ export async function getUserBookingHistory() {
   }
 }
 
-export async function getAllServices() {
-  try {
-    const services = await prisma.service.findMany({})
-    return services
-  } catch (error) {
-    console.log(error)
-    throw error
-  }
-}
-
 export async function getNonFeaturedVendors() {
   try {
     const vendors = await prisma.vendor.findMany({
@@ -173,6 +163,10 @@ export async function getServicesWithVendors() {
         nonFeaturedVendors,
       }
     })
+    console.log(
+      '🚀 ~ servicesWithVendors ~ servicesWithVendors:',
+      servicesWithVendors
+    )
 
     return servicesWithVendors
   } catch (error) {

@@ -68,12 +68,24 @@ export const createVendor = async (
       }
     }
 
+    const { services, ...vendorDetails } = validatedData.data
+
     const vendor = await prisma.vendor.create({
       data: {
         firebaseUid: checkVendor.uid,
-        ...validatedData.data,
+        ...vendorDetails,
       },
     })
+
+    if (services && services.length > 0) {
+      await prisma.vendorsOnServices.createMany({
+        data: services.map((serviceId) => ({
+          vendorId: vendor.id,
+          serviceId,
+          assignedBy: 'VENDOR',
+        })),
+      })
+    }
 
     return { success: true, data: vendor }
   } catch (error) {

@@ -1,52 +1,62 @@
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
 import SectionTitle from './SectionTitle'
 import { getServicesWithVendors } from '@/actions/user/fetch.actions'
-import SingleVendorCard from '@/components/SingleVendorCard'
+import { Separator } from '@/components/ui/separator'
+import { Star } from 'lucide-react'
+import { Suspense } from 'react'
+import FeaturedVendorsList from './FeaturedVendorsList'
+import AllVendorsList from './AllVendorsList'
 
 const Services = async () => {
   const services = await getServicesWithVendors()
 
   return (
-    <div id="services">
+    <div id="services" className="my-40">
       <SectionTitle title="Our Services" />
 
-      <section className="flex flex-col gap-y-12">
+      <section>
         <h2 className="text-white font-medium">
           We Offer a Wide Range of Services to Meet Your Needs
         </h2>
-        {services.map((service) => (
-          <div key={service.id} className="flex flex-col gap-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-semibold">{service.name}</h2>
-              <Button asChild>
-                <Link href={`/services/${service.slug}`}>View All</Link>
-              </Button>
+
+        <div className="my-16 flex flex-col gap-y-12 ">
+          {services.map((service, index) => (
+            <div key={service.id} className="flex flex-col gap-y-12">
+              <h2>
+                0{index + 1} {service.name}
+              </h2>
+
+              <div>
+                <div className="flex justify-between items-center gap-x-8">
+                  <Separator className="h-[2px] flex-1 bg-muted-foreground/30 rounded" />
+                  <p className="flex items-center gap-x-2 text-muted-foreground">
+                    <Star className="text-primary" fill="#f3c018" />
+                    Featured Vendors
+                  </p>
+                  <Separator className="h-[2px] flex-1 bg-muted-foreground/30 rounded"></Separator>
+                </div>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <FeaturedVendorsList
+                    featuredVendors={service.featuredVendors}
+                  />
+                </Suspense>
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center gap-x-4">
+                  <Separator className="h-[2px] flex-1 bg-muted-foreground/30 rounded" />
+                  <p className="flex items-center gap-x-2 text-muted-foreground">
+                    All Vendors
+                  </p>
+                  <Separator className="h-[2px] flex-1 bg-muted-foreground/30 rounded"></Separator>
+                </div>
+
+                <Suspense fallback={<div>Loading...</div>}>
+                  <AllVendorsList vendors={service.nonFeaturedVendors} />
+                </Suspense>
+              </div>
             </div>
-
-            {service.featuredVendors.length > 0 && (
-              <div>
-                <h3 className="text-xl font-medium">Featured Vendors</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                  {service.featuredVendors.map((vendor) => (
-                    <SingleVendorCard key={vendor.id} vendorDetails={vendor} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {service.nonFeaturedVendors.length > 0 && (
-              <div>
-                <h3 className="text-xl font-medium">Other Vendors</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                  {service.nonFeaturedVendors.map((vendor) => (
-                    <SingleVendorCard key={vendor.id} vendorDetails={vendor} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
     </div>
   )

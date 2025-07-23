@@ -3,13 +3,32 @@
 import { vendorDetailsSchema, VendorDetailsData } from '@/schemas/vendor.schema'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form } from '@/components/ui/form'
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from '@/components/ui/form'
 import FormInput from '@/components/common/form/FormInput'
 import FormSubmitButton from '@/components/common/form/FormSubmitButton'
 import { useVendorStore } from '@/lib/store/vendorStore'
+import { useEffect, useState } from 'react'
+import { Service } from '@prisma/client'
+import { Checkbox } from '@/components/ui/checkbox'
+import { getAllServices } from '@/actions/user/actions'
 
 const VendorDetails = () => {
   const { vendorData, setVendorData, nextStep } = useVendorStore()
+  const [services, setServices] = useState<Service[]>([])
+
+  useEffect(() => {
+    async function fetchServices() {
+      const allServices = await getAllServices()
+      setServices(allServices)
+    }
+    fetchServices()
+  }, [])
 
   const form = useForm<VendorDetailsData>({
     resolver: zodResolver(vendorDetailsSchema),
@@ -17,6 +36,7 @@ const VendorDetails = () => {
       email: vendorData.email || '',
       companyName: vendorData.companyName || '',
       gstNumber: vendorData.gstNumber || '',
+      services: vendorData.services || [],
     },
   })
 
@@ -49,6 +69,55 @@ const VendorDetails = () => {
             label="GST Number"
             placeholder="GST Number"
             type="text"
+          />
+          <FormField
+            control={form.control}
+            name="services"
+            render={() => (
+              <FormItem>
+                <div className="mb-4">
+                  <FormLabel className="text-base">Services</FormLabel>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  {services.map((service) => (
+                    <FormField
+                      key={service.id}
+                      control={form.control}
+                      name="services"
+                      render={({ field }) => {
+                        return (
+                          <FormItem
+                            key={service.id}
+                            className="flex flex-row items-start space-x-3 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value?.includes(service.id)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([
+                                        ...(field.value || []),
+                                        service.id,
+                                      ])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== service.id
+                                        )
+                                      )
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              {service.name}
+                            </FormLabel>
+                          </FormItem>
+                        )
+                      }}
+                    />
+                  ))}
+                </div>
+              </FormItem>
+            )}
           />
           <div className="w-full flex justify-end">
             <FormSubmitButton

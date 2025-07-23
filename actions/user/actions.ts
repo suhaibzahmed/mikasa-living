@@ -154,3 +154,13 @@ export async function bookVendor(
     return { success: false, message: 'An unexpected error occurred.' }
   }
 }
+
+export async function getAllServices() {
+  try {
+    const services = await prisma.service.findMany({})
+    return services
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}

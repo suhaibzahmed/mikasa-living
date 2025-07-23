@@ -13,6 +13,7 @@ export const vendorRegistrationSchema = z.object({
   gstNumber: z.string().min(3).max(50),
   planId: z.string(),
   billingCycle: z.enum(['MONTHLY', 'QUARTERLY', 'YEARLY']),
+  services: z.array(z.string()),
 })
 
 export type VendorRegistrationData = z.infer<typeof vendorRegistrationSchema>
@@ -44,6 +45,7 @@ export const vendorDetailsSchema = vendorRegistrationSchema.pick({
   companyName: true,
   email: true,
   gstNumber: true,
+  services: true,
 })
 
 export type VendorDetailsData = z.infer<typeof vendorDetailsSchema>
