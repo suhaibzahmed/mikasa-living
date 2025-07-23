@@ -40,8 +40,23 @@ export const vendorServices = [
 ]
 
 export const navlinks = [
-  { name: 'Home', href: '/' },
-  { name: 'About', href: '/about' },
-  { name: 'Services', href: '/services' },
-  { name: 'Vendors', href: '/vendors' },
+  { name: 'Home', href: '#' },
+  { name: 'About', href: '/#about' },
+  { name: 'Services', href: '/#services' },
+  { name: 'Vendors', href: '/#vendors' },
+]
+
+export const aboutUsStats = [
+  {
+    title: 'Projects Done',
+    value: '1K+',
+  },
+  {
+    title: 'Pro Vendors',
+    value: '50+',
+  },
+  {
+    title: 'Total Clients',
+    value: '300+',
+  },
 ]
