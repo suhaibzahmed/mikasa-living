@@ -14,6 +14,7 @@ export async function getAuthenticatedUser() {
 
   if (!tokens) {
     throw new Error('Not authenticated')
+    // return null
   }
 
   return tokens?.decodedToken
