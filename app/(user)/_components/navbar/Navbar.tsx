@@ -1,31 +1,55 @@
+'use client'
+
 import ThemeToggle from '@/components/ThemeToggle'
 import CitySelect from './CitySelect'
 import Logo from './Logo'
-import SearchVendors from './SearchVendors'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
+import NavLinks from './NavLinks'
 
-const Navbar = async () => {
+const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   return (
-    <nav className="sticky top-0 z-50 py-4 border-b bg-background">
+    <nav
+      className={cn(
+        'fixed top-0 left-0 right-0 z-50 py-4 transition-all duration-300',
+        {
+          'border-b bg-background': isScrolled,
+          'bg-transparent': !isScrolled,
+        }
+      )}
+    >
       <div className="container sm:px-6 lg:px-8 mx-auto flex items-center justify-between gap-x-8">
         <Logo />
-        <CitySelect />
-        <SearchVendors />
 
         <div>
-          <Link
-            href="/vendor/sign-in"
-            className={buttonVariants({ variant: 'outline' })}
-          >
-            For Vendors
-          </Link>
+          <NavLinks />
+        </div>
+
+        <div className="flex items-center gap-x-4">
+          <CitySelect />
+          <Button asChild variant="outline">
+            <Link href="/vendor/sign-in">For Vendors</Link>
+          </Button>
           <Button asChild>
             <Link href="/user/sign-in">Login / Register</Link>
           </Button>
+          <ThemeToggle />
         </div>
-
-        <ThemeToggle />
       </div>
     </nav>
   )

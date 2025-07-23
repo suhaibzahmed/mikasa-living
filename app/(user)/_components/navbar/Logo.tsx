@@ -1,13 +1,12 @@
+import { House } from 'lucide-react'
 import Link from 'next/link'
 
 const Logo = () => {
   return (
     <div>
       <Link href="/" className="flex items-center gap-x-2">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center border">
-          <h5>M</h5>
-        </div>
-        <h4>Mikasa Living</h4>
+        <House className="size-5" />
+        <h5>Mikasa Living</h5>
       </Link>
     </div>
   )
