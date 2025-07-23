@@ -1,20 +1,14 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
+import { navlinks } from '@/constants/user.constants'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
-const navlinks = [
-  { name: 'Home', href: '/' },
-  { name: 'About', href: '/about' },
-  { name: 'Services', href: '/services' },
-  { name: 'Vendors', href: '/vendors' },
-]
 
 const NavLinks = () => {
   const pathname = usePathname()
   return (
-    <div className="flex items-center gap-x-6">
+    <div className="hidden md:flex gap-x-2">
       {navlinks.map((link) => (
         <Button
           key={link.name}

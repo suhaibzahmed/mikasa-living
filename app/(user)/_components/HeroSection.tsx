@@ -2,6 +2,7 @@ import Image from 'next/image'
 import HeroImg from '@/public/images/hero.jpeg'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import SearchVendors from './navbar/SearchVendors'
 
 const HeroSection = () => {
   return (
@@ -13,8 +14,13 @@ const HeroSection = () => {
       </div>
 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-20 flex flex-col gap-y-4">
-        <h1 className="text-white">We design your dream home</h1>
-        <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit</p>
+        <h1 className="text-white text-pretty">We design your dream home</h1>
+        <p className=" text-pretty">
+          Lorem ipsum dolor sit, amet consectetur adipisicing elit ipsum dolor
+          sit
+        </p>
+
+        <SearchVendors />
 
         <div className="flex justify-center gap-x-4 w-full">
           <Button variant="outline">
