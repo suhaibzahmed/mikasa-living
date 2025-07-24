@@ -1,18 +1,15 @@
 import { Plan, Review, Vendor } from '@prisma/client'
 import { Button } from './ui/button'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Star } from 'lucide-react'
 import { Badge } from './ui/badge'
-import HeroImg from '@/public/images/hero.jpeg'
 
 const SingleVendorCard = async ({
   vendorDetails,
 }: {
   vendorDetails: Vendor & { plan: Plan; reviews: Review[] }
 }) => {
-  const { companyName, description, plan, id, reviews, profileImage } =
-    vendorDetails
+  const { companyName, description, plan, id, reviews } = vendorDetails
 
   const totalReviews = reviews.length
   const averageRating =
