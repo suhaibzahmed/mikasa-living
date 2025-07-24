@@ -1,13 +1,18 @@
-import { Plan, Review, Vendor } from '@prisma/client'
+import { Availability, Plan, Review, Vendor } from '@prisma/client'
 import { Button } from './ui/button'
 import Link from 'next/link'
 import { Star } from 'lucide-react'
 import { Badge } from './ui/badge'
+import BookConsultationButton from '@/app/(user)/_components/BookConsultationButton'
 
 const SingleVendorCard = async ({
   vendorDetails,
 }: {
-  vendorDetails: Vendor & { plan: Plan; reviews: Review[] }
+  vendorDetails: Vendor & {
+    plan: Plan
+    reviews: Review[]
+    availability: Availability | null
+  }
 }) => {
   const { companyName, description, plan, id, reviews } = vendorDetails
 
@@ -51,9 +56,7 @@ const SingleVendorCard = async ({
             <Link href={`/vendor/${id}`}>View Profile</Link>
           </Button>
 
-          <Button asChild className="w-full">
-            <Link href={`/vendor/${id}`}>Book Consultation</Link>
-          </Button>
+          <BookConsultationButton vendorDetails={vendorDetails} />
         </div>
       </div>
     </div>

@@ -8,7 +8,7 @@ type VendorListProps = {
   totalPages: number
 }
 
-const VendorList = async ({ vendors, totalPages }: VendorListProps) => {
+const VendorList = ({ vendors, totalPages }: VendorListProps) => {
   return (
     <div className="flex-1">
       {vendors.length === 0 ? (

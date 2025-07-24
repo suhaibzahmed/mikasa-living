@@ -67,21 +67,24 @@ const VendorBookingForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormPopoverDate
-          name="bookingDate"
-          control={form.control}
-          label="Booking Date"
-          placeholder="Pick a date"
-        />
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-2 gap-4 ">
+          <FormPopoverDate
+            name="bookingDate"
+            control={form.control}
+            label="Booking Date"
+            placeholder="Pick a date"
+          />
+          <FormSelect
+            name="bookingTime"
+            control={form.control}
+            label="Booking Time"
+            items={generateTimeSlots()}
+            placeholder="Select a time"
+            className="w-full"
+          />
+        </div>
 
-        <FormSelect
-          name="bookingTime"
-          control={form.control}
-          label="Booking Time"
-          items={generateTimeSlots()}
-          placeholder="Select a time"
-        />
         <FormTextArea
           control={form.control}
           name="message"
@@ -92,6 +95,7 @@ const VendorBookingForm = ({
           title="Send Booking Request"
           pendingText="Sending..."
           isPending={form.formState.isSubmitting}
+          className="w-full"
         />
       </form>
     </Form>

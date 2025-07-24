@@ -13,10 +13,16 @@ const RedirectToLoginButton = ({
   btnText,
 }: RedirectToLoginButtonProps) => {
   const router = useRouter()
+
   const handleRedirect = () => {
     toast.error(toastMessage)
     return router.push('/user/sign-in')
   }
-  return <Button onClick={handleRedirect}>{btnText}</Button>
+
+  return (
+    <Button className="w-full" onClick={handleRedirect}>
+      {btnText}
+    </Button>
+  )
 }
 export default RedirectToLoginButton

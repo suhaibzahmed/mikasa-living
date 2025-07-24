@@ -18,7 +18,6 @@ import { prisma } from '@/lib/db'
 import { Star } from 'lucide-react'
 import RedirectToLoginButton from '@/components/common/RedirectToLoginButton'
 import VendorBookingForm from '../../_components/VendorBookingForm'
-import { checkAuth } from '@/actions/checkAuth'
 
 const SingleVendorPage = async ({
   params,

@@ -20,6 +20,7 @@ type CustomSelectProps<T extends FieldValues> = {
   placeholder?: string
   label: string
   items: string[]
+  className?: string
 }
 
 const FormSelect = <T extends FieldValues>({
@@ -28,6 +29,7 @@ const FormSelect = <T extends FieldValues>({
   placeholder,
   label,
   items,
+  className,
 }: CustomSelectProps<T>) => {
   return (
     <FormField
@@ -39,7 +41,7 @@ const FormSelect = <T extends FieldValues>({
           <FormControl>
             <Select onValueChange={field.onChange} defaultValue={field.value}>
               <FormControl>
-                <SelectTrigger>
+                <SelectTrigger className={className}>
                   <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
               </FormControl>

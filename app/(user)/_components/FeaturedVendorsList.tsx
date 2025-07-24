@@ -1,11 +1,12 @@
 import SingleVendorCard from '@/components/SingleVendorCard'
-import { Plan, Review, Vendor, Featured } from '@prisma/client'
+import { Plan, Review, Vendor, Featured, Availability } from '@prisma/client'
 
 type FeaturedVendorsListProps = {
   featuredVendors: (Vendor & {
     plan: Plan
     reviews: Review[]
     featured: Featured | null
+    availability: Availability | null
   })[]
 }
 

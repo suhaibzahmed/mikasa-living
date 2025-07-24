@@ -137,6 +137,7 @@ export async function getServicesWithVendors() {
                 plan: true,
                 reviews: true,
                 featured: true,
+                availability: true,
               },
             },
           },
