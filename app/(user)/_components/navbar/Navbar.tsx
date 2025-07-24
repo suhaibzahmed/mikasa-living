@@ -53,7 +53,7 @@ const Navbar = () => {
             <NavLinks />
 
             <div className="hidden lg:flex items-center gap-x-4">
-              <Button asChild variant="outline">
+              <Button asChild variant="secondary">
                 <Link href="/vendor/sign-in">For Vendors</Link>
               </Button>
               <Button asChild>

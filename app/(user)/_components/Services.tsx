@@ -1,10 +1,10 @@
 import SectionTitle from './SectionTitle'
 import { getServicesWithVendors } from '@/actions/user/fetch.actions'
-import { Separator } from '@/components/ui/separator'
-import { Star } from 'lucide-react'
+import { Crown } from 'lucide-react'
 import { Suspense } from 'react'
 import FeaturedVendorsList from './FeaturedVendorsList'
 import AllVendorsList from './AllVendorsList'
+import { Badge } from '@/components/ui/badge'
 
 const Services = async () => {
   const services = await getServicesWithVendors()
@@ -18,22 +18,24 @@ const Services = async () => {
           We Offer a Wide Range of Services to Meet Your Needs
         </h2>
 
-        <div className="my-16 flex flex-col gap-y-12 ">
+        <div className="my-16 flex flex-col gap-y-16 ">
           {services.map((service, index) => (
-            <div key={service.id} className="flex flex-col gap-y-12">
-              <h2>
+            <div key={service.id} className=" flex flex-col gap-y-12 ">
+              <h2 className="underline underline-offset-4 decoration-primary">
                 0{index + 1} {service.name}
               </h2>
 
               <div>
-                <div className="flex justify-between items-center gap-x-8">
-                  <Separator className="h-[2px] flex-1 bg-muted-foreground/30 rounded" />
-                  <p className="flex items-center gap-x-2 text-muted-foreground">
-                    <Star className="text-primary" fill="#f3c018" />
+                <div className="w-full flex justify-center items-center">
+                  <Badge
+                    variant="outline"
+                    className="text-base gap-x-2 flex items-center"
+                  >
+                    <Crown className="text-primary scale-150" fill="#f3c018" />
                     Featured Vendors
-                  </p>
-                  <Separator className="h-[2px] flex-1 bg-muted-foreground/30 rounded"></Separator>
+                  </Badge>
                 </div>
+
                 <Suspense fallback={<div>Loading...</div>}>
                   <FeaturedVendorsList
                     featuredVendors={service.featuredVendors}
@@ -42,12 +44,10 @@ const Services = async () => {
               </div>
 
               <div>
-                <div className="flex justify-between items-center gap-x-4">
-                  <Separator className="h-[2px] flex-1 bg-muted-foreground/30 rounded" />
-                  <p className="flex items-center gap-x-2 text-muted-foreground">
+                <div className="w-full flex justify-center items-center">
+                  <Badge variant="outline" className="text-base">
                     All Vendors
-                  </p>
-                  <Separator className="h-[2px] flex-1 bg-muted-foreground/30 rounded"></Separator>
+                  </Badge>
                 </div>
 
                 <Suspense fallback={<div>Loading...</div>}>

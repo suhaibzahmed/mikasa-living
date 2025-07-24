@@ -20,15 +20,16 @@ const HeroSection = () => {
           sit
         </p>
 
-        <SearchVendors />
-
-        <div className="flex justify-center gap-x-4 w-full">
-          <Button variant="outline">
-            <Link href="/#services">Our Services</Link>
-          </Button>
-          <Button>
-            <Link href="/#vendors">Browse Vendors</Link>
-          </Button>
+        <div className=" mt-4 flex flex-col gap-y-4">
+          <SearchVendors />
+          <div className="flex justify-center gap-x-4 w-full">
+            <Button variant="secondary">
+              <Link href="/#services">Our Services</Link>
+            </Button>
+            <Button>
+              <Link href="/#vendors">Browse Vendors</Link>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
