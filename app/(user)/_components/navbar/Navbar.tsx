@@ -19,8 +19,11 @@ import {
 import { Menu } from 'lucide-react'
 import { navlinks } from '@/constants/user.constants'
 import { usePathname } from 'next/navigation'
+import UserProfile from '../UserProfile'
+import { useAuth } from '@/components/AuthProvider'
 
 const Navbar = () => {
+  const { user, isLoading } = useAuth()
   const [isScrolled, setIsScrolled] = useState(false)
   const pathname = usePathname()
 
@@ -52,20 +55,28 @@ const Navbar = () => {
           <div className="flex items-center gap-x-4">
             <NavLinks />
 
-            <div className="hidden lg:flex items-center gap-x-4">
-              <Button asChild variant="secondary">
-                <Link href="/vendor/sign-in">For Vendors</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/user/sign-in">Login / Register</Link>
-              </Button>
+            <div className="flex items-center gap-x-4">
+              {isLoading ? (
+                <p>Loading...</p>
+              ) : user ? (
+                <UserProfile />
+              ) : (
+                <div className="hidden md:flex items-center gap-x-4">
+                  <Button asChild variant="secondary">
+                    <Link href="/vendor/sign-in">For Vendors</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link href="/user/sign-in">Login / Register</Link>
+                  </Button>
+                </div>
+              )}
               <ThemeToggle />
             </div>
 
             <div className="flex items-center justify-center lg:hidden">
               <Sheet>
                 <SheetTrigger className=" " asChild>
-                  <Button variant="outline" size="icon">
+                  <Button variant="secondary" size="icon">
                     <Menu className="size-6 text-primary" />
                   </Button>
                 </SheetTrigger>
@@ -75,7 +86,7 @@ const Navbar = () => {
                       <Logo />
                     </SheetTitle>
                     <SheetDescription className=" my-6 flex flex-col gap-y-4">
-                      <div className=" flex flex-col gap-y-4 md:hidden">
+                      <div className=" flex flex-col gap-y-4 ">
                         {navlinks.map((link) => (
                           <Button
                             key={link.name}
@@ -91,12 +102,16 @@ const Navbar = () => {
                           </Button>
                         ))}
                       </div>
-                      <Button className="w-full" variant="outline">
-                        <Link href="/vendor/sign-in">For Vendors</Link>
-                      </Button>
-                      <Button className="w-full">
-                        <Link href="/vendor/sign-in">Login / Register</Link>
-                      </Button>
+                      {!user && (
+                        <>
+                          <Button className="w-full" variant="outline">
+                            <Link href="/vendor/sign-in">For Vendors</Link>
+                          </Button>
+                          <Button className="w-full">
+                            <Link href="/vendor/sign-in">Login / Register</Link>
+                          </Button>{' '}
+                        </>
+                      )}
                     </SheetDescription>
                   </SheetHeader>
                 </SheetContent>

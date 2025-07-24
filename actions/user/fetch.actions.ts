@@ -163,10 +163,10 @@ export async function getServicesWithVendors() {
         nonFeaturedVendors,
       }
     })
-    console.log(
-      '🚀 ~ servicesWithVendors ~ servicesWithVendors:',
-      servicesWithVendors
-    )
+    // console.log(
+    //   '🚀 ~ servicesWithVendors ~ servicesWithVendors:',
+    //   servicesWithVendors
+    // )
 
     return servicesWithVendors
   } catch (error) {

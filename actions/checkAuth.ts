@@ -13,8 +13,8 @@ export async function getAuthenticatedUser() {
   console.log('🚀 ~ tokens ~ tokens:', tokens?.decodedToken)
 
   if (!tokens) {
-    throw new Error('Not authenticated')
-    // return null
+    return null
+    // throw new Error('Not authenticated')
   }
 
   return tokens?.decodedToken

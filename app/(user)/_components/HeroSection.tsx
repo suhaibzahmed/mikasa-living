@@ -6,7 +6,7 @@ import SearchVendors from './navbar/SearchVendors'
 
 const HeroSection = () => {
   return (
-    <div className="relative " id="/">
+    <div className="relative " id="home">
       <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-b from-[rgba(17,17,17,0.9)] via-[rgb(17,17,17,0.4)] to-[rgb(17,17,17,0.2)] z-10 "></div>
 
       <div className="h-[750px] max-h-[750px] w-full relative top-0 ">

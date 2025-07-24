@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation'
 
 const NavLinks = () => {
   const pathname = usePathname()
+
   return (
     <div className="hidden md:flex gap-x-2">
       {navlinks.map((link) => (
@@ -15,7 +16,7 @@ const NavLinks = () => {
           asChild
           variant="link"
           className={
-            pathname === link.href
+            pathname.substring(1) === link.href
               ? 'text-primary underline underline-offset-4'
               : 'text-white'
           }

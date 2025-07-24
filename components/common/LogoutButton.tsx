@@ -21,13 +21,14 @@ export function LogoutButton() {
     } else if (pathname.startsWith('/vendor')) {
       router.push('/vendor/sign-in')
     } else {
-      router.push('/user/sign-in')
+      router.refresh()
+      router.push('/')
     }
   }
 
   return (
-    <DropdownMenuItem onClick={handleLogout}>
-      <LogOut className="mr-2 h-4 w-4" />
+    <DropdownMenuItem onClick={handleLogout} variant="destructive">
+      <LogOut />
       Logout
     </DropdownMenuItem>
   )

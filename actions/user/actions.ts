@@ -164,3 +164,23 @@ export async function getAllServices() {
     throw error
   }
 }
+
+export async function getUserByFirebaseId(firebaseUid: string) {
+  try {
+    if (!firebaseUid) return null
+
+    const user = await prisma.user.findUnique({
+      where: {
+        firebaseUid,
+      },
+    })
+    console.log('🚀 ~ getUserByFirebaseId ~ user:', user)
+
+    if (!user) return null
+
+    return user
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
