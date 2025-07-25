@@ -72,7 +72,7 @@ const SingleVendorCard = async ({
 
         <div className="grid grid-cols-2 gap-x-4 items-center">
           <Button asChild variant="secondary">
-            <Link href={`/vendor/${vendorDetails.id}`}>View Profile</Link>
+            <Link href={`/view/vendor/${vendorDetails.id}`}>View Profile</Link>
           </Button>
           <BookConsultationButton vendorDetails={vendorDetails} />
         </div>

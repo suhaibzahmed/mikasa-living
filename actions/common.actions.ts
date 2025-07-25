@@ -123,6 +123,7 @@ export async function getVendorProfileDetails(id: string) {
         videos: true,
         availability: true,
         reviews: { include: { user: true }, orderBy: { createdAt: 'desc' } },
+        services: true,
       },
     })
     return vendor

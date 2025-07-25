@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+import { Service } from '@prisma/client'
 
-const VendorServices = ({ services }: { services: string[] }) => {
+const VendorServices = ({ services }: { services: Service[] }) => {
   return (
     <div>
       {services.length < 1 ? (
