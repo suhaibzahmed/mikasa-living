@@ -40,7 +40,7 @@ export const vendorServices = [
 ]
 
 export const navlinks = [
-  { name: 'Home', href: '#' },
+  { name: 'Home', href: '/' },
   { name: 'About', href: '#about' },
   { name: 'Services', href: '#services' },
   { name: 'Vendors', href: '/view/vendors' },

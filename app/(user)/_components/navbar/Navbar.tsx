@@ -49,7 +49,7 @@ const Navbar = () => {
       )}
     >
       <MaxWidthWrapper>
-        <div className=" sm:px-6 lg:px-8 mx-auto flex items-center justify-between gap-x-4 ">
+        <div className=" flex items-center justify-between gap-x-4 ">
           <Logo />
 
           <div className="flex items-center gap-x-4">

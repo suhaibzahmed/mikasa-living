@@ -51,7 +51,10 @@ const Services = async () => {
                 </div>
 
                 <Suspense fallback={<div>Loading...</div>}>
-                  <AllVendorsList vendors={service.nonFeaturedVendors} />
+                  <AllVendorsList
+                    vendors={service.nonFeaturedVendors}
+                    service={service.name}
+                  />
                 </Suspense>
               </div>
             </div>

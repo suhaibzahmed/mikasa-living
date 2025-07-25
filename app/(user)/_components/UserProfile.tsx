@@ -50,7 +50,7 @@ const UserProfile = () => {
             My Bookings
           </DropdownMenuItem>
         </Link>
-        <Link href="/bookings">
+        <Link href="/booking-history">
           <DropdownMenuItem>
             <History />
             Booking History

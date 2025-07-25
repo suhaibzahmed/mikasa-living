@@ -38,7 +38,7 @@ const SingleVendorCard = async ({
           <h5 className="truncate">{companyName}</h5>
           <Badge variant="outline">{plan.type}</Badge>
         </div>
-        <p className="text-muted-foreground  ">
+        <p className="text-muted-foreground ">
           {description && description?.length > 100
             ? description?.substring(0, 100) + '...'
             : description || 'No description available.'}
