@@ -86,6 +86,8 @@ export async function getAllVendors({
       include: {
         plan: true,
         reviews: true,
+        featured: true,
+        availability: true,
       },
     })
     // console.log('🚀 ~ vendors:', vendors)

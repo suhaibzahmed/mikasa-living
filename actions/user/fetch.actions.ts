@@ -49,6 +49,10 @@ export async function getUserBookings() {
   try {
     const checkAuth = await getAuthenticatedUser()
 
+    if (!checkAuth) {
+      throw new Error('User not authenticated')
+    }
+
     const user = await prisma.user.findUnique({
       where: {
         firebaseUid: checkAuth.uid,
@@ -67,6 +71,9 @@ export async function getUserBookings() {
       include: {
         vendor: true,
       },
+      orderBy: {
+        bookingDate: 'asc',
+      },
     })
 
     return bookings
@@ -79,6 +86,10 @@ export async function getUserBookings() {
 export async function getUserBookingHistory() {
   try {
     const checkAuth = await getAuthenticatedUser()
+
+    if (!checkAuth) {
+      throw new Error('User not authenticated')
+    }
 
     const user = await prisma.user.findUnique({
       where: {

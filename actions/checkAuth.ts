@@ -10,7 +10,7 @@ export async function getAuthenticatedUser() {
     cookieSignatureKeys: serverConfig.cookieSignatureKeys,
     serviceAccount: serverConfig.serviceAccount,
   })
-  console.log('🚀 ~ tokens ~ tokens:', tokens?.decodedToken)
+  // console.log('🚀 ~ tokens ~ tokens:', tokens?.decodedToken)
 
   if (!tokens) {
     return null

@@ -33,6 +33,7 @@ const VendorBookingForm = ({
       message: '',
     },
   })
+  console.log('Available slots:', availability)
 
   const generateTimeSlots = () => {
     if (!availability) return []

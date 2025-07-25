@@ -1,10 +1,14 @@
-import { Plan, Review, Vendor } from '@prisma/client'
+import { Availability, Plan, Review, Vendor } from '@prisma/client'
 import SingleVendorCard from '@/components/SingleVendorCard'
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links'
 import { VENDOR_PAGE_SIZE } from '@/constants/config'
 
 type VendorListProps = {
-  vendors: (Vendor & { plan: Plan; reviews: Review[] })[]
+  vendors: (Vendor & {
+    plan: Plan
+    reviews: Review[]
+    availability: Availability | null
+  })[]
   totalPages: number
 }
 

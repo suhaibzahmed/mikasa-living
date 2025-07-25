@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { Star } from 'lucide-react'
 import { Badge } from './ui/badge'
 import BookConsultationButton from '@/app/(user)/_components/BookConsultationButton'
+import Image from 'next/image'
+import bedroomImg from '@/public/images/bedroom.jpg'
 
 const SingleVendorCard = async ({
   vendorDetails,
@@ -26,12 +28,12 @@ const SingleVendorCard = async ({
     <div className="rounded-lg overflow-hidden shadow-lg bg-card text-card-foreground border relative">
       {/* <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-b from-[rgba(17,17,17,0.9)] via-[rgb(17,17,17,0.4)] to-[rgb(17,17,17,0.2)] z-10 "></div> */}
       <div className="relative h-48 w-full top-0">
-        {/* <Image
-          src={HeroImg || ''}
+        <Image
+          src={bedroomImg || ''}
           alt={companyName}
           fill
           className="object-cover "
-        /> */}
+        />
       </div>
       <div className="p-6 flex flex-col gap-y-4">
         <div className="flex items-center justify-between">
