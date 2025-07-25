@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Star } from 'lucide-react'
 import Image from 'next/image'
 
-const TestCard = () => {
+export const TestCard = () => {
   return (
     <div className="relative h-[450px] w-[350px] overflow-hidden rounded-3xl shadow-lg">
       <Image

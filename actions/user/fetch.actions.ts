@@ -69,7 +69,9 @@ export async function getUserBookings() {
         status: { notIn: [BookingStatus.REJECTED, BookingStatus.COMPLETED] },
       },
       include: {
-        vendor: true,
+        vendor: {
+          include: { plan: true },
+        },
       },
       orderBy: {
         bookingDate: 'asc',
@@ -107,7 +109,7 @@ export async function getUserBookingHistory() {
         status: { in: [BookingStatus.COMPLETED, BookingStatus.REJECTED] },
       },
       include: {
-        vendor: true,
+        vendor: { include: { plan: true } },
       },
     })
 
