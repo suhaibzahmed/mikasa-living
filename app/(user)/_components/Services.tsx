@@ -3,7 +3,6 @@ import { getServicesWithVendors } from '@/actions/user/fetch.actions'
 import { Crown } from 'lucide-react'
 import { Suspense } from 'react'
 import FeaturedVendorsList from './FeaturedVendorsList'
-import AllVendorsList from './AllVendorsList'
 import { Badge } from '@/components/ui/badge'
 
 const Services = async () => {
@@ -18,15 +17,15 @@ const Services = async () => {
           We Offer a Wide Range of Services to Meet Your Needs
         </h2>
 
-        <div className="my-16 flex flex-col gap-y-16 ">
-          {services.map((service, index) => (
-            <div key={service.id} className=" flex flex-col gap-y-12 ">
-              <h2 className="underline underline-offset-4 decoration-primary">
-                0{index + 1} {service.name}
+        <div className="my-16 flex flex-col gap-y-24 ">
+          {services.map((service) => (
+            <div key={service.id} className=" flex flex-col ">
+              <h2 className=" decoration-primary text-center ">
+                {service.name}
               </h2>
 
               <div>
-                <div className="w-full flex justify-center items-center">
+                {/* <div className="w-full flex justify-center items-center">
                   <Badge
                     variant="outline"
                     className="text-base gap-x-2 flex items-center"
@@ -34,16 +33,17 @@ const Services = async () => {
                     <Crown className="text-primary scale-150" fill="#f3c018" />
                     Featured Vendors
                   </Badge>
-                </div>
+                </div> */}
 
                 <Suspense fallback={<div>Loading...</div>}>
                   <FeaturedVendorsList
                     featuredVendors={service.featuredVendors}
+                    nonFeaturedVendors={service.nonFeaturedVendors}
                   />
                 </Suspense>
               </div>
 
-              <div>
+              {/* <div>
                 <div className="w-full flex justify-center items-center">
                   <Badge variant="outline" className="text-base">
                     All Vendors
@@ -56,7 +56,7 @@ const Services = async () => {
                     service={service.name}
                   />
                 </Suspense>
-              </div>
+              </div> */}
             </div>
           ))}
         </div>

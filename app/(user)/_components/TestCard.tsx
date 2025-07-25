@@ -36,4 +36,47 @@ const TestCard = () => {
   )
 }
 
-export default TestCard
+// const VendorCard1 = () => {
+//   return (
+//     <div className="rounded-lg overflow-hidden shadow-lg bg-card text-card-foreground border relative">
+//     <div className="relative h-48 w-full top-0">
+//     <Image
+//       src={bedroomImg || ''}
+//       alt={vendorDetails.companyName}
+//       fill
+//       className="object-cover "
+//     />
+//   </div>
+//   <div className="p-6 flex flex-col gap-y-6">
+//     <div className="flex items-center justify-between">
+//       <h5 className="truncate">{vendorDetails.companyName}</h5>
+//       <Badge variant="outline">{vendorDetails.plan.type}</Badge>
+//     </div>
+//     <p className="text-muted-foreground ">
+//       {vendorDetails.description && vendorDetails.description?.length > 100
+//         ? vendorDetails.description?.substring(0, 100) + '...'
+//         : vendorDetails.description || 'No description available.'}
+//     </p>
+//     <div className="flex items-center justify-between">
+//       <div className="flex items-center">
+//         <Star className="w-4 h-4 text-primary mr-1" fill="#f3c018" />
+//         <span className=" font-medium">{averageRating.toFixed(1)}</span>
+//         <span className=" text-muted-foreground ml-1">
+//           ({totalReviews} reviews)
+//         </span>
+//       </div>
+//       <span className=" text-muted-foreground ml-1">
+//         {startTime} - {endTime}
+//       </span>
+//     </div>
+
+//     <div className="flex flex-col gap-y-4 w-full items-center ">
+//       <Button asChild variant="secondary" className="w-full">
+//         <Link href={`/vendor/${vendorDetails.id}`}>View Profile</Link>
+//       </Button>
+
+//       <BookConsultationButton vendorDetails={vendorDetails} />
+//     </div>
+//   </div>
+// </div>
+//   )}
