@@ -74,33 +74,14 @@ const SingleVendorPage = async ({
         />
 
         <div className="mt-8">
-          <Tabs defaultValue="about" className="w-full">
-            <TabsList className="border-b border-border justify-start rounded-none bg-transparent p-0">
-              <TabsTrigger
-                value="about"
-                className="relative rounded-none border-b-2 border-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                About
-              </TabsTrigger>
-              <TabsTrigger
-                value="portfolio"
-                className="relative rounded-none border-b-2 border-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                Portfolio
-              </TabsTrigger>
-              <TabsTrigger
-                value="services"
-                className="relative rounded-none border-b-2 border-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                Services
-              </TabsTrigger>
-              <TabsTrigger
-                value="reviews"
-                className="relative rounded-none border-b-2 border-transparent bg-transparent px-4 pb-3 pt-2 font-semibold text-muted-foreground shadow-none transition-none data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
-              >
-                Reviews
-              </TabsTrigger>
+          <Tabs defaultValue="about" className="w-full flex flex-col gap-y-5">
+            <TabsList className="border-b w-full bg-transparent p-0">
+              <TabsTrigger value="about">About</TabsTrigger>
+              <TabsTrigger value="portfolio">Portfolio</TabsTrigger>
+              <TabsTrigger value="services">Services</TabsTrigger>
+              <TabsTrigger value="reviews">Reviews</TabsTrigger>
             </TabsList>
+
             <TabsContent value="about">
               <AboutVendor description={vendorDetails.description || ''} />
             </TabsContent>

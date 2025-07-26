@@ -1,7 +1,6 @@
 import { Photo, ThreeDimensional, Video } from '@prisma/client'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Image from 'next/image'
-import { Card } from '@/components/ui/card'
 
 type ViewVendorPortfolioProps = {
   portfolio: {
@@ -13,14 +12,34 @@ type ViewVendorPortfolioProps = {
 
 const ViewVendorPortfolio = ({ portfolio }: ViewVendorPortfolioProps) => {
   return (
-    <Card>
-      <Tabs defaultValue="photos" className="w-full">
-        <TabsList className="p-2">
-          <TabsTrigger value="photos">Photos</TabsTrigger>
-          <TabsTrigger value="videos">Videos</TabsTrigger>
-          <TabsTrigger value="3d">360° Videos</TabsTrigger>
-        </TabsList>
-        <TabsContent value="photos" className="p-4">
+    <Tabs
+      defaultValue="photos"
+      className=" w-full flex flex-row items-start gap-4 justify-center"
+      orientation="vertical"
+    >
+      <TabsList className="shrink-0 grid grid-cols-1 h-auto min-w-28 gap-1 p-0 bg-background border-r">
+        <TabsTrigger
+          value="photos"
+          className="border-l-2 border-transparent justify-start rounded-none data-[state=active]:shadow-none data-[state=active]:border-primary data-[state=active]:bg-primary/5 py-1.5"
+        >
+          Photos
+        </TabsTrigger>
+        <TabsTrigger
+          value="videos"
+          className="border-l-2 border-transparent justify-start rounded-none data-[state=active]:shadow-none data-[state=active]:border-primary data-[state=active]:bg-primary/5 py-1.5"
+        >
+          Videos
+        </TabsTrigger>
+        <TabsTrigger
+          value="3d"
+          className="border-l-2 border-transparent justify-start rounded-none data-[state=active]:shadow-none data-[state=active]:border-primary data-[state=active]:bg-primary/5 py-1.5 "
+        >
+          360° Videos
+        </TabsTrigger>
+      </TabsList>
+
+      <div className="flex-1 min-h-40 flex items-center justify-center w-full border rounded-md font-medium text-muted-foreground">
+        <TabsContent value="photos">
           {portfolio.images.length < 1 ? (
             <p className="text-muted-foreground">No photos found.</p>
           ) : (
@@ -38,7 +57,7 @@ const ViewVendorPortfolio = ({ portfolio }: ViewVendorPortfolioProps) => {
             </div>
           )}
         </TabsContent>
-        <TabsContent value="videos" className="p-4">
+        <TabsContent value="videos">
           {portfolio.videos.length < 1 ? (
             <p className="text-muted-foreground">No videos found.</p>
           ) : (
@@ -72,8 +91,8 @@ const ViewVendorPortfolio = ({ portfolio }: ViewVendorPortfolioProps) => {
             </div>
           )}
         </TabsContent>
-      </Tabs>
-    </Card>
+      </div>
+    </Tabs>
   )
 }
 export default ViewVendorPortfolio

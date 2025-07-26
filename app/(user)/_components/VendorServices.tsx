@@ -4,7 +4,7 @@ import { Wrench } from 'lucide-react'
 
 const VendorServices = ({ services }: { services: Service[] }) => {
   return (
-    <div className="p-4">
+    <div>
       {services.length < 1 ? (
         <p className="text-muted-foreground text-center">No services found.</p>
       ) : (
