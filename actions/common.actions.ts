@@ -42,46 +42,35 @@ export async function getAllVendors({
     const where: Prisma.VendorWhereInput = {
       verificationStatus: 'VERIFIED',
     }
-    let orderBy: Prisma.VendorOrderByWithRelationInput = {
-      plan: {
-        monthly: 'desc',
+    const orderBy: Prisma.VendorOrderByWithRelationInput[] = [
+      {
+        plan: {
+          monthly: 'desc',
+        },
       },
-    }
+    ]
 
     if (service && service !== 'all') {
-      if (service) {
-        where.services = {
-          some: {
-            service: {
-              slug: service,
-            },
+      where.services = {
+        some: {
+          service: {
+            slug: service,
           },
-        }
-        orderBy = {
-          plan: {
-            monthly: 'desc',
-          },
-        }
+        },
       }
     }
 
-    if (sort && sort !== 'all') {
+    if (sort) {
       if (sort === 'rating') {
-        orderBy = {
+        orderBy[1] = {
           reviews: {
             _count: 'desc',
           },
         }
       } else if (sort === 'reviews') {
-        orderBy = {
+        orderBy[1] = {
           reviews: {
             _count: 'desc',
-          },
-        }
-      } else if (sort === 'tier') {
-        orderBy = {
-          plan: {
-            monthly: 'desc',
           },
         }
       }

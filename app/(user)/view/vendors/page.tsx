@@ -1,6 +1,5 @@
 import { Suspense } from 'react'
 import VendorList from '../../_components/VendorList'
-import { getAllVendors } from '@/actions/common.actions'
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 
 const VendorsPage = async ({
@@ -10,22 +9,14 @@ const VendorsPage = async ({
 }) => {
   const params = await searchParams
   const sort = typeof params.sort === 'string' ? params.sort : 'all'
-  const service = typeof params.service === 'string' ? params.service : 'all'
+  const service =
+    typeof params.service === 'string' ? params.service : undefined
   const page = typeof params.page === 'string' ? Number(params.page) : 1
-
-  const vendors = await getAllVendors({
-    page,
-    sort,
-    service,
-  })
 
   return (
     <MaxWidthWrapper className="my-32">
       <Suspense fallback={<div>Loading...</div>}>
-        <VendorList
-          vendors={vendors.data.vendors}
-          totalPages={vendors.data.totalPages}
-        />
+        <VendorList sort={sort} service={service} page={page} />
       </Suspense>
     </MaxWidthWrapper>
   )

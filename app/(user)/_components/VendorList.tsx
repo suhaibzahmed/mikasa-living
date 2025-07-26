@@ -1,22 +1,34 @@
-import { Availability, Featured, Plan, Review, Vendor } from '@prisma/client'
 import SingleVendorCard from '@/components/SingleVendorCard'
 import { PaginationWithLinks } from '@/components/ui/pagination-with-links'
 import { VENDOR_PAGE_SIZE } from '@/constants/config'
 import SortVendors from './SortVendors'
+import { getAllVendors } from '@/actions/common.actions'
 
 type VendorListProps = {
-  vendors: (Vendor & {
-    plan: Plan
-    reviews: Review[]
-    availability: Availability | null
-    featured: Featured | null
-  })[]
-  totalPages: number
+  sort: string
+  service: string | undefined
+  page: number
 }
 
-const VendorList = ({ vendors, totalPages }: VendorListProps) => {
+const VendorList = async ({ sort, service, page }: VendorListProps) => {
+  const vendorData = await getAllVendors({
+    page,
+    sort,
+    service,
+  })
+
+  const { totalPages, vendors } = vendorData.data
+
   return (
     <div className="space-y-4">
+      {service && (
+        <p>
+          Showing vendors in{' '}
+          <span className="text-primary font-semibold">
+            {service.split('-').join(' ').toUpperCase()}
+          </span>
+        </p>
+      )}
       <div className="flex justify-end">
         <SortVendors />
       </div>
