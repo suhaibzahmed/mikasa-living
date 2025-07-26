@@ -21,7 +21,7 @@ const VendorProfileHeader = ({
 }: VendorProfileHeaderProps) => {
   return (
     <div className="bg-card p-6 rounded-lg shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-      <div className="flex items-start gap-6">
+      <div className="flex items-center gap-6">
         <Avatar className="h-24 w-24 border-4 border-background">
           <AvatarImage
             src={vendor.profileImage || ''}
@@ -31,22 +31,25 @@ const VendorProfileHeader = ({
             {vendor.companyName.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
+
         <div className="space-y-1">
           <div className="flex items-center gap-x-3">
-            <h1 className="text-3xl font-bold">{vendor.companyName}</h1>
+            <h3>{vendor.companyName}</h3>
             <Badge className="capitalize">
               {vendor.plan.type.toLowerCase()}
             </Badge>
           </div>
+
           <div className="flex items-center gap-x-4 text-muted-foreground">
             <div className="flex items-center gap-x-1">
               <Star className="h-5 w-5 text-primary" fill="currentColor" />
               <span className="font-semibold text-foreground">
                 {averageRating.toFixed(1)}
               </span>
-              <span>({totalReviews} reviews)</span>
+              <span>
+                ({totalReviews} review{totalReviews > 1 ? 's' : ''})
+              </span>
             </div>
-            {/* Location can be added here if available */}
           </div>
         </div>
       </div>

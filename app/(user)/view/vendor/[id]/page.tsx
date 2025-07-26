@@ -55,7 +55,7 @@ const SingleVendorPage = async ({
   //     : '/images/placeholder.png'
 
   return (
-    <div className="bg-background my-32">
+    <div className="bg-background my-20">
       <div className="relative h-80 w-full">
         <Image
           src={heroImg}

@@ -58,7 +58,7 @@ const SingleBookingCard = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 pt-4 border-t">
           {/* Left Column: Date & Time */}
-          <div className="space-y-3 text-sm text-muted-foreground">
+          <div className="space-y-3 text-sm ">
             <div className="flex items-center gap-x-3">
               <Calendar className="h-5 w-5 text-primary" />
               <span>{formatDate(bookingDate)}</span>
@@ -75,7 +75,7 @@ const SingleBookingCard = ({
               <Mail className="h-5 w-5 text-primary" />
               <a
                 href={`mailto:${vendor.email}`}
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className=" hover:text-primary transition-colors"
               >
                 {vendor.email}
               </a>
@@ -84,7 +84,7 @@ const SingleBookingCard = ({
               <Phone className="h-5 w-5 text-primary" />
               <a
                 href={`tel:${vendor.phone}`}
-                className="text-muted-foreground hover:text-primary transition-colors"
+                className=" hover:text-primary transition-colors"
               >
                 {vendor.phone}
               </a>
@@ -96,7 +96,7 @@ const SingleBookingCard = ({
           <div className="pt-4 border-t">
             <div className="flex items-start gap-x-3">
               <MessageSquare className="h-5 w-5 mt-1 text-primary" />
-              <p className="text-sm text-foreground italic">
+              <p className="text-sm text-muted-foreground italic">
                 &ldquo;{message}&rdquo;
               </p>
             </div>

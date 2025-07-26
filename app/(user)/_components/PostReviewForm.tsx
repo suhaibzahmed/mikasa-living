@@ -48,7 +48,6 @@ export function PostReviewForm({ vendorId, userAuth }: PostReviewFormProps) {
           <Rating
             allowFraction
             onClick={(rate) => {
-              console.log(rate)
               setRating(rate)
             }}
             transition

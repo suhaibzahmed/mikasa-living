@@ -64,7 +64,9 @@ const SingleVendorCard = async ({
             <Star className="w-4 h-4 text-primary mr-1" fill="currentColor" />
             <span>{averageRating.toFixed(1)}</span>
           </CustomBadge>
-          <CustomBadge>{totalReviews} reviews</CustomBadge>
+          <CustomBadge>
+            {totalReviews} review{totalReviews > 1 ? 's' : ''}
+          </CustomBadge>
           <CustomBadge>
             {startTime} - {endTime}
           </CustomBadge>

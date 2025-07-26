@@ -198,4 +198,8 @@
     display: inline;
     color: #ccc;
   }
+
+  .style-module_fillIcons__6---A filled-icons {
+    color: rgb(255, 180, 0) !important;
+  }
 }

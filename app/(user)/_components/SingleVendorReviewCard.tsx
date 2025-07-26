@@ -1,3 +1,4 @@
+'use client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { formatDate } from '@/utils/formatDate'
@@ -10,6 +11,7 @@ type SingleVendorReviewCardProps = {
 
 const SingleVendorReviewCard = ({ review }: SingleVendorReviewCardProps) => {
   const { user } = review
+  console.log('🚀 ~ SingleVendorReviewCard ~ review:', review)
 
   return (
     <div className="my-8 flex flex-col gap-y-4">
@@ -33,7 +35,15 @@ const SingleVendorReviewCard = ({ review }: SingleVendorReviewCardProps) => {
             touchAction: 'none',
           }}
         >
-          <Rating initialValue={review.rating} readonly size={24} />
+          <Rating
+            initialValue={review.rating || 0}
+            onClick={function noRefCheck() {}}
+            readonly
+            size={24}
+            // allowFraction
+            fillColor="#ffb400"
+            style={{ color: '#ffb400' }}
+          />
         </div>
       </div>
 
