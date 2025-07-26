@@ -30,7 +30,7 @@ const VendorReviews = ({
       <div>
         {/* <h5>Reviews</h5> */}
         <div className="flex items-center gap-x-2">
-          <h2 className="text-muted-foreground">{averageRating.toFixed(1)}</h2>
+          <h2>{averageRating.toFixed(1)}</h2>
           <div>
             <div
               style={{

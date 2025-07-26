@@ -15,7 +15,7 @@ const Services = async () => {
           We Offer a Wide Range of Services to Meet Your Needs
         </h2>
 
-        <div className="my-16 flex flex-col gap-y-24 ">
+        <div className="my-16 flex flex-col gap-y-20 ">
           {services.map((service) => (
             <div key={service.id} className=" flex flex-col ">
               <h2 className=" decoration-primary text-center ">
@@ -37,6 +37,8 @@ const Services = async () => {
                   <FeaturedVendorsList
                     featuredVendors={service.featuredVendors}
                     nonFeaturedVendors={service.nonFeaturedVendors}
+                    service={service.name}
+                    slug={service.slug}
                   />
                 </Suspense>
               </div>

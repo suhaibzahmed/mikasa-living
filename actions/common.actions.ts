@@ -43,7 +43,9 @@ export async function getAllVendors({
       verificationStatus: 'VERIFIED',
     }
     let orderBy: Prisma.VendorOrderByWithRelationInput = {
-      createdAt: 'desc',
+      plan: {
+        monthly: 'desc',
+      },
     }
 
     if (service && service !== 'all') {
@@ -53,6 +55,11 @@ export async function getAllVendors({
             service: {
               slug: service,
             },
+          },
+        }
+        orderBy = {
+          plan: {
+            monthly: 'desc',
           },
         }
       }
