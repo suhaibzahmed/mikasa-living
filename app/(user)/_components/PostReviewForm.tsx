@@ -1,17 +1,14 @@
 'use client'
 
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { Form } from '@/components/ui/form'
 import { postReview } from '@/actions/user/actions'
 import { toast } from 'sonner'
-import FormInput from '@/components/common/form/FormInput'
-import FormSubmitButton from '@/components/common/form/FormSubmitButton'
-import FormTextArea from '@/components/common/form/FormTextArea'
-import { PostReviewData, postReviewSchema } from '@/schemas/user.schema'
 import RedirectToLoginButton from '@/components/common/RedirectToLoginButton'
 import { DecodedIdToken } from 'firebase-admin/auth'
 import { redirect } from 'next/navigation'
+import { Rating } from 'react-simple-star-rating'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import React, { useState } from 'react'
 
 type PostReviewFormProps = {
   vendorId: string
@@ -19,48 +16,56 @@ type PostReviewFormProps = {
 }
 
 export function PostReviewForm({ vendorId, userAuth }: PostReviewFormProps) {
-  const form = useForm<PostReviewData>({
-    resolver: zodResolver(postReviewSchema),
-    defaultValues: {
-      comment: '',
-      rating: 0,
-    },
-  })
+  const [rating, setRating] = useState(0)
+  const [comment, setComment] = useState('')
 
-  async function onSubmit(values: PostReviewData) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    console.log(rating, comment)
     if (!userAuth) {
       return redirect('/user/sign-in')
     }
-    const res = await postReview(vendorId, values)
+    const res = await postReview(vendorId, rating, comment)
     if (res.success) {
       toast.success('Review posted successfully')
+      // Optionally, close the sheet/dialog here
     } else {
       toast.error(res.message)
     }
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormInput
-          control={form.control}
-          name="rating"
-          label="Rating"
-          type="number"
-        />
-        <FormTextArea
-          control={form.control}
-          name="comment"
-          label="Comment"
-          placeholder="Tell us about your experience"
+    <div className="my-4 flex flex-col gap-y-2">
+      <h5 className="">Leave you review</h5>
+      <form onSubmit={onSubmit} className="space-y-3">
+        <div
+          style={{
+            direction: 'ltr',
+            fontFamily: 'sans-serif',
+            touchAction: 'none',
+          }}
+        >
+          <Rating
+            allowFraction
+            onClick={(rate) => {
+              console.log(rate)
+              setRating(rate)
+            }}
+            transition
+            size={24}
+          />
+        </div>
+
+        <Textarea
+          placeholder="Tell us about your experience..."
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
         />
 
         {userAuth ? (
-          <FormSubmitButton
-            title="Submit Review"
-            pendingText="Submitting..."
-            isPending={form.formState.isSubmitting}
-          />
+          <Button type="submit" disabled={!rating}>
+            Submit Review
+          </Button>
         ) : (
           <RedirectToLoginButton
             toastMessage="You must be logged in to post a review"
@@ -68,6 +73,6 @@ export function PostReviewForm({ vendorId, userAuth }: PostReviewFormProps) {
           />
         )}
       </form>
-    </Form>
+    </div>
   )
 }

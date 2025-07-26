@@ -1,18 +1,21 @@
-import { Card, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Service } from '@prisma/client'
+import { Wrench } from 'lucide-react'
 
 const VendorServices = ({ services }: { services: Service[] }) => {
   return (
-    <div>
+    <div className="p-4">
       {services.length < 1 ? (
-        <p>No services found</p>
+        <p className="text-muted-foreground text-center">No services found.</p>
       ) : (
-        <div className="grid w-full grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {services.map((service) => (
-            <Card key={service} className="min-w-0">
-              <CardHeader>
-                <CardTitle>{service}</CardTitle>
-              </CardHeader>
+            <Card
+              key={service.id}
+              className="p-6 flex flex-col items-center justify-center gap-4 hover:shadow-lg transition-shadow"
+            >
+              <Wrench className="h-8 w-8 text-primary" />
+              <p className="font-semibold text-center">{service.name}</p>
             </Card>
           ))}
         </div>

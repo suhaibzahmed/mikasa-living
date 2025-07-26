@@ -1,9 +1,7 @@
 import SectionTitle from './SectionTitle'
 import { getServicesWithVendors } from '@/actions/user/fetch.actions'
-import { Crown } from 'lucide-react'
 import { Suspense } from 'react'
 import FeaturedVendorsList from './FeaturedVendorsList'
-import { Badge } from '@/components/ui/badge'
 
 const Services = async () => {
   const services = await getServicesWithVendors()

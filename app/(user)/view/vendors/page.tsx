@@ -1,7 +1,6 @@
 import { Suspense } from 'react'
 import VendorList from '../../_components/VendorList'
 import { getAllVendors } from '@/actions/common.actions'
-import SortVendors from '../../_components/SortVendors'
 import MaxWidthWrapper from '@/components/MaxWidthWrapper'
 
 const VendorsPage = async ({

@@ -193,4 +193,9 @@
   h6 {
     @apply text-lg font-bold;
   }
+
+  svg.star-svg {
+    display: inline;
+    color: #ccc;
+  }
 }

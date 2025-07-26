@@ -1,14 +1,10 @@
+'use client'
+
 import { Review, User } from '@prisma/client'
-import {
-  Card,
-  CardAction,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { PostReviewForm } from './PostReviewForm'
 import { DecodedIdToken } from 'firebase-admin/auth'
+import { Rating } from 'react-simple-star-rating'
+import SingleVendorReviewCard from './SingleVendorReviewCard'
 
 type VendorReviewsProps = {
   reviews: (Review & { user: User | null })[]
@@ -23,32 +19,51 @@ const VendorReviews = ({
   vendorId,
   userAuth,
 }: VendorReviewsProps) => {
+  const totalReviews = reviews.length
+  const averageRating =
+    totalReviews > 0
+      ? reviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews
+      : 0
+
   return (
     <div>
-      <h5>Reviews</h5>
+      <div>
+        {/* <h5>Reviews</h5> */}
+        <div className="flex items-center gap-x-2">
+          <h2 className="text-muted-foreground">{averageRating}</h2>
+          <div>
+            <div
+              style={{
+                direction: 'ltr',
+                fontFamily: 'sans-serif',
+                touchAction: 'none',
+              }}
+            >
+              <Rating
+                initialValue={averageRating}
+                onClick={function noRefCheck() {}}
+                readonly
+                emptyColor="#ccc"
+                size={20}
+              />
+            </div>
+            <p className="text-muted-foreground">({totalReviews} reviews)</p>
+          </div>
+        </div>
+      </div>
+
       {!hasReviewed && (
         <PostReviewForm vendorId={vendorId} userAuth={userAuth} />
       )}
-      {reviews.length < 1 ? (
-        <p>No reviews found</p>
-      ) : (
-        <div className="grid gir-cols-1 gap-4">
-          {reviews.map((review) => {
-            return (
-              <Card key={review.id}>
-                <CardHeader>
-                  <CardTitle>{review?.user?.name}</CardTitle>
-                  <CardDescription>{review.comment}</CardDescription>
-                  <CardAction>{review.rating}/5</CardAction>
-                </CardHeader>
 
-                <CardFooter className="text-gray-400 text-sm">
-                  {review.createdAt.toLocaleDateString()}
-                </CardFooter>
-              </Card>
-            )
-          })}
-        </div>
+      {totalReviews === 0 ? (
+        <p className="text-muted-foreground text-center my-6">
+          No reviews. Be the first to review this vendor!
+        </p>
+      ) : (
+        reviews.map((review) => {
+          return <SingleVendorReviewCard key={review.id} review={review} />
+        })
       )}
     </div>
   )

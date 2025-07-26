@@ -3,7 +3,6 @@
 import { prisma } from '@/lib/db'
 import { Prisma } from '@prisma/client'
 import { VENDOR_PAGE_SIZE } from '@/constants/config'
-import { vendorServices } from '@/constants/user.constants'
 
 export async function getFeaturedVendors() {
   try {
@@ -48,10 +47,13 @@ export async function getAllVendors({
     }
 
     if (service && service !== 'all') {
-      const serviceObject = vendorServices.find((s) => s.slug === service)
-      if (serviceObject) {
+      if (service) {
         where.services = {
-          has: serviceObject.title,
+          some: {
+            service: {
+              slug: service,
+            },
+          },
         }
       }
     }
@@ -121,9 +123,14 @@ export async function getVendorProfileDetails(id: string) {
         plan: true,
         photos: true,
         videos: true,
+        threeDimensional: true,
         availability: true,
         reviews: { include: { user: true }, orderBy: { createdAt: 'desc' } },
-        services: true,
+        services: {
+          include: {
+            service: true,
+          },
+        },
       },
     })
     return vendor

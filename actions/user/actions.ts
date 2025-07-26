@@ -8,11 +8,15 @@ import { setCustomClaims } from '@/lib/auth'
 
 export const createUser = async (data: UserSignUpData) => {
   try {
-    const checkUser = await getAuthenticatedUser()
+    const checkAuth = await getAuthenticatedUser()
+
+    if (!checkAuth) {
+      throw new Error('User not authenticated')
+    }
 
     const existingUser = await prisma.user.findUnique({
       where: {
-        firebaseUid: checkUser.uid,
+        firebaseUid: checkAuth.uid,
       },
     })
 
@@ -24,9 +28,9 @@ export const createUser = async (data: UserSignUpData) => {
     await prisma.user.create({
       data: {
         name: data.name,
-        phone: checkUser.phone_number!,
+        phone: checkAuth.phone_number!,
         email: data.email,
-        firebaseUid: checkUser.uid,
+        firebaseUid: checkAuth.uid,
       },
     })
     return { success: true, message: 'User created successfully' }
@@ -57,6 +61,11 @@ export const verifyUser = async (phone: string) => {
 export async function getUserSidebarDetails() {
   try {
     const checkAuth = await getAuthenticatedUser()
+
+    if (!checkAuth) {
+      throw new Error('User not authenticated')
+    }
+
     const user = await prisma.user.findUnique({
       where: {
         firebaseUid: checkAuth.uid,
@@ -76,10 +85,15 @@ export async function getUserSidebarDetails() {
 
 export async function postReview(
   vendorId: string,
-  values: { comment: string; rating: number }
+  rating: number,
+  comment: string
 ) {
   try {
     const checkAuth = await getAuthenticatedUser()
+
+    if (!checkAuth) {
+      throw new Error('User not authenticated')
+    }
 
     const user = await prisma.user.findUnique({
       where: {
@@ -95,8 +109,8 @@ export async function postReview(
       data: {
         vendorId,
         userId: user.id,
-        comment: values.comment,
-        rating: values.rating,
+        comment: comment,
+        rating: rating,
       },
     })
 
@@ -118,6 +132,10 @@ export async function bookVendor(
 ) {
   try {
     const checkAuth = await getAuthenticatedUser()
+
+    if (!checkAuth) {
+      throw new Error('User not authenticated')
+    }
 
     const user = await prisma.user.findUnique({
       where: {
